@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
 import 'package:philgo/chat/room/chat.room.message_bubble.dart';
+import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
@@ -55,28 +56,31 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
     super.dispose();
   }
 
-  /// Extract all image URLs from the current messages
+  /// Extract all media URLs (images + videos) from the current messages
   /// Returns a map with unique keys to preserve duplicate URLs
   /// Key format: 'messageId_imageIndex' to ensure uniqueness
-  Map<String, String> _extractAllImageUrls(List<DataSnapshot> messageDocs) {
-    final Map<String, String> allImageUrls = {};
+  Map<String, String> _extractAllMediaUrls(List<DataSnapshot> messageDocs) {
+    final Map<String, String> allMediaUrls = {};
 
     // Iterate through messages as they are (newest first from ListView)
     for (final messageDoc in messageDocs) {
       final message = ChatMessage.fromDataSnapshot(messageDoc);
       if (message.urls != null && message.urls!.isNotEmpty) {
-        // Add all URLs from this message in reverse order
+        // Add only image/video URLs from this message in reverse order
         // This preserves duplicates by using message ID and index
         for (int i = 0; i < message.urls!.length; i++) {
           // Access URLs in reverse order to maintain proper display order
           final url = message.urls![message.urls!.length - 1 - i];
-          final key = '${message.id}_$i';
-          allImageUrls[key] = url;
+          final type = getMediaType(toAbsoluteUrl(url));
+          if (type == MediaType.image || type == MediaType.video) {
+            final key = '${message.id}_$i';
+            allMediaUrls[key] = toAbsoluteUrl(url);
+          }
         }
       }
     }
 
-    return allImageUrls;
+    return allMediaUrls;
   }
 
   @override
@@ -167,21 +171,22 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                       false, // isSingleChat ? false : showSenderInfo,
                   roomId: widget.roomId,
                   onImageTap: (String url) async {
-                    // Extract all image URLs from current messages as a map
-                    final allImageUrlsMap = _extractAllImageUrls(snapshot.docs);
+                    // Extract all media URLs (images + videos) from current messages
+                    final allMediaUrlsMap = _extractAllMediaUrls(snapshot.docs);
 
                     // Convert map values to list to preserve order including duplicates
-                    final imageUrlsList = allImageUrlsMap.values.toList();
+                    final mediaUrlsList = allMediaUrlsMap.values.toList();
 
-                    // Find the index of the tapped image in the list
-                    final initialIndex = imageUrlsList.indexOf(url);
+                    // Find the index of the tapped media in the list
+                    final absoluteUrl = toAbsoluteUrl(url);
+                    final initialIndex = mediaUrlsList.indexOf(absoluteUrl);
 
                     // Use await to prevent widget rebuild on navigation back
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => FullScreenImageViewer(
-                          imageUrls: imageUrlsList,
+                          mediaUrls: mediaUrlsList,
                           initialIndex: initialIndex >= 0 ? initialIndex : 0,
                         ),
                         // Maintain the route state to avoid rebuilding previous screen

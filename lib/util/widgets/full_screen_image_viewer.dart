@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:philgo/file/file.functions.dart';
+import 'package:philgo/file/widgets/video_thumbnail.dart';
+import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
 
-/// Full screen image viewer with pinch-to-zoom functionality
+/// Full screen media viewer with pinch-to-zoom for images and video playback
 class FullScreenImageViewer extends StatefulWidget {
-  final List<String> imageUrls;
+  final List<String> mediaUrls;
   final int initialIndex;
 
   const FullScreenImageViewer({
     super.key,
-    required this.imageUrls,
+    required this.mediaUrls,
     this.initialIndex = 0,
   });
 
@@ -46,7 +49,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
 
   /// Navigate to next image
   void _goToNextImage() {
-    if (_currentIndex < widget.imageUrls.length - 1) {
+    if (_currentIndex < widget.mediaUrls.length - 1) {
       _pageController.animateToPage(
         _currentIndex + 1,
         duration: const Duration(milliseconds: 300),
@@ -63,18 +66,18 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
         backgroundColor: Colors.black,
         iconTheme: const IconThemeData(color: Colors.white),
         title: Text(
-          '${_currentIndex + 1} / ${widget.imageUrls.length}',
+          '${_currentIndex + 1} / ${widget.mediaUrls.length}',
           style: const TextStyle(color: Colors.white),
         ),
         elevation: 0,
       ),
       body: Column(
         children: [
-          /// Main image viewer with zoom capability and navigation buttons
+          /// Main media viewer with zoom capability and navigation buttons
           Expanded(
             child: Stack(
               children: [
-                // PageView for swiping between images
+                // PageView for swiping between media
                 PageView.builder(
                   controller: _pageController,
                   onPageChanged: (index) {
@@ -82,9 +85,9 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                       _currentIndex = index;
                     });
                   },
-                  itemCount: widget.imageUrls.length,
+                  itemCount: widget.mediaUrls.length,
                   itemBuilder: (context, index) {
-                    return _buildImagePage(widget.imageUrls[index]);
+                    return _buildMediaPage(widget.mediaUrls[index]);
                   },
                 ),
                 // Left navigation button
@@ -101,7 +104,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
                     ),
                   ),
                 // Right navigation button
-                if (_currentIndex < widget.imageUrls.length - 1)
+                if (_currentIndex < widget.mediaUrls.length - 1)
                   Positioned(
                     right: 16,
                     top: 0,
@@ -123,7 +126,15 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
     );
   }
 
-  Widget _buildImagePage(String imageUrl) {
+  Widget _buildMediaPage(String url) {
+    final type = getMediaType(url);
+
+    if (type == MediaType.video) {
+      return Center(
+        child: UploadedVideoPlayer(url: url),
+      );
+    }
+
     return InteractiveViewer(
       panEnabled: true,
       boundaryMargin: const EdgeInsets.all(20),
@@ -131,7 +142,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
       maxScale: 4.0,
       child: Center(
         child: CachedNetworkImage(
-          imageUrl: imageUrl,
+          imageUrl: url,
           fit: BoxFit.contain,
           placeholder: (context, url) => Container(
             color: Colors.black,
@@ -173,7 +184,7 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: widget.imageUrls.length,
+        itemCount: widget.mediaUrls.length,
         itemBuilder: (context, index) {
           return _buildThumbnailItem(index);
         },
@@ -206,10 +217,12 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
   /// Builds individual thumbnail item with selection indicator
   Widget _buildThumbnailItem(int index) {
     final isSelected = index == _currentIndex;
+    final url = widget.mediaUrls[index];
+    final type = getMediaType(url);
 
     return GestureDetector(
       onTap: () {
-        // Navigate to selected image
+        // Navigate to selected media
         _pageController.animateToPage(
           index,
           duration: const Duration(milliseconds: 300),
@@ -228,27 +241,29 @@ class _FullScreenImageViewerState extends State<FullScreenImageViewer> {
             width: 2,
           ),
         ),
-        child: CachedNetworkImage(
-          imageUrl: widget.imageUrls[index],
-          fit: BoxFit.cover,
-          placeholder: (context, url) => Container(
-            color: Colors.grey[800],
-            child: const Center(
-              child: CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 2,
+        child: type == MediaType.video
+            ? VideoThumbnail(url: url, size: 80, borderRadius: 0)
+            : CachedNetworkImage(
+                imageUrl: url,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[800],
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.white,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: Colors.grey[800],
+                  child: const Icon(
+                    Icons.error_outline,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
               ),
-            ),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Colors.grey[800],
-            child: const Icon(
-              Icons.error_outline,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-        ),
       ),
     );
   }
