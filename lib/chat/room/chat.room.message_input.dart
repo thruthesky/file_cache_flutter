@@ -96,14 +96,16 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
       child: Row(
         children: [
-          ..._uploadedFiles.map((file) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: UploadedFilePreview(
-                  file: file,
-                  size: 72,
-                  onDelete: () => _removeFileAt(_uploadedFiles.indexOf(file)),
-                ),
-              )),
+          ..._uploadedFiles.map(
+            (file) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: UploadedFilePreview(
+                file: file,
+                size: 72,
+                onDelete: () => _removeFileAt(_uploadedFiles.indexOf(file)),
+              ),
+            ),
+          ),
           if (_isUploading)
             const Padding(
               padding: EdgeInsets.only(right: 8),
@@ -156,8 +158,8 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                       FileUpload(
                         module: 'chat',
                         code: 'message',
-                        camera: true,
-                        gallery: true,
+                        cameraVideo: true,
+                        file: true,
                         imageQuality: 80,
                         maxWidth: 1024,
                         maxHeight: 1024,

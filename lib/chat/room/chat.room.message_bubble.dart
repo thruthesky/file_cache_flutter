@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
+import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/chat/chat.defines.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -294,45 +295,67 @@ class ChatRoomMessageBubble extends StatelessWidget {
     }
   }
 
-  /// Build multiple images vertically
+  /// Build multiple files vertically (images, videos, and other files)
   Widget _buildMultipleImages(BuildContext context) {
     if (message.urls == null || message.urls!.isEmpty) {
       return const SizedBox.shrink();
     }
 
     final urls = message.urls!;
+    final mediaUrls = urls.where((u) {
+      final type = getMediaType(toAbsoluteUrl(u));
+      return type == MediaType.image || type == MediaType.video;
+    }).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (int i = 0; i < urls.length; i++) ...[
           GestureDetector(
-            onTap: () => onImageTap != null
-                ? onImageTap!(urls[i])
-                : _showFullScreenImage(context, urls, i),
+            onTap: () {
+              final absoluteUrl = toAbsoluteUrl(urls[i]);
+              final type = getMediaType(absoluteUrl);
+              if (type == MediaType.file) {
+                launchUrl(
+                  Uri.parse(absoluteUrl),
+                  mode: LaunchMode.externalApplication,
+                );
+              } else if (onImageTap != null) {
+                onImageTap!(urls[i]);
+              } else {
+                final mediaIndex = mediaUrls.indexOf(urls[i]);
+                _showFullScreenMedia(
+                  context,
+                  mediaUrls.map((u) => toAbsoluteUrl(u)).toList(),
+                  mediaIndex >= 0 ? mediaIndex : 0,
+                );
+              }
+            },
             child: DisplayThumbnail(
               url: urls[i],
               size: bubbleImageWidth,
             ),
           ),
-          // Add spacing between images except for the last one
+          // Add spacing between files except for the last one
           if (i < urls.length - 1) SizedBox(height: imageSpacing),
         ],
       ],
     );
   }
 
-  /// Show full screen image viewer
-  void _showFullScreenImage(
+  /// Show full screen media viewer (images and videos)
+  void _showFullScreenMedia(
     BuildContext context,
-    List<String> urls,
+    List<String> mediaUrls,
     int initialIndex,
   ) async {
     // Use await to prevent widget rebuild on navigation back
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            FullScreenImageViewer(imageUrls: urls, initialIndex: initialIndex),
+        builder: (context) => FullScreenImageViewer(
+          mediaUrls: mediaUrls,
+          initialIndex: initialIndex,
+        ),
         // Maintain the route state to avoid rebuilding previous screen
         maintainState: true,
       ),
