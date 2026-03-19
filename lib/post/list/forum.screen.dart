@@ -106,7 +106,9 @@ class _ForumScreenState extends State<ForumScreen> {
         );
     _applySelectedForum(postId, category);
 
-    final isBuyAndSell = postId == 'buyandsell';
+    // PHP Config::masonryCategories()와 동일한 로직: category ?? postId 로 판별
+    final masonryCategoryOrPostId = category ?? postId;
+    final isMasonryLayout = masonryCategories.contains(masonryCategoryOrPostId);
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -130,7 +132,7 @@ class _ForumScreenState extends State<ForumScreen> {
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
-                child: isBuyAndSell
+                child: isMasonryLayout
                     ? PostListMasonryView(
                         pagingController: _pagingController,
                         onPostTap: _openPostView,
