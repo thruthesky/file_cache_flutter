@@ -250,6 +250,7 @@ class _MasonryCardState extends State<MasonryCard> {
 
   /// CachedNetworkImage로 이미지 표시 + 비율 기반 높이 자동 조절
   Widget _buildImage(ColorScheme scheme) {
+    debugPrint('🖼️ MasonryCard 이미지 로드 시도: ${widget.imageUrl}');
     return LayoutBuilder(
       builder: (context, constraints) {
         return CachedNetworkImage(
@@ -279,10 +280,14 @@ class _MasonryCardState extends State<MasonryCard> {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
           ),
-          errorWidget: (_, _, _) => Container(
-            color: scheme.surfaceContainerHigh,
-            child: Icon(Icons.broken_image, color: scheme.outline),
-          ),
+          errorWidget: (_, url, error) {
+            debugPrint('❌ MasonryCard 이미지 로드 실패: $url');
+            debugPrint('❌ 에러: $error');
+            return Container(
+              color: scheme.surfaceContainerHigh,
+              child: Icon(Icons.broken_image, color: scheme.outline),
+            );
+          },
         );
       },
     );
