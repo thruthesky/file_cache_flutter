@@ -319,7 +319,9 @@ class UserService {
     debugPrint('[UserService] ✅ Test unread count set successfully');
     debugPrint('[UserService] 📊 Current values:');
     debugPrint('  - unreadSingleCount: $unreadSingleCount');
-    debugPrint('  - unreadSingleCountStream.value: ${unreadSingleCountStream.value}');
+    debugPrint(
+      '  - unreadSingleCountStream.value: ${unreadSingleCountStream.value}',
+    );
     debugPrint('');
   }
 }
