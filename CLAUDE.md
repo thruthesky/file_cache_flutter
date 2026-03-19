@@ -38,7 +38,8 @@ This project is a Flutter app for building PhilGo v7 application.
 
 - 사용자가 "subtree 업데이트", "서브트리 pull", "subtree push" 등을 요청하면, **모든 git subtree를 병렬로 pull한 후 병렬로 push**해야 한다.
 - Subtree 목록과 상세 명령어는 `.claude/skills/v7-skill/SKILL.md`의 "Git Subtree 관리" 섹션을 참조한다.
-- **작업 순서**: (1) 현재 변경사항 커밋 → (2) 모든 subtree 병렬 pull (`--squash`) → (3) 모든 subtree 병렬 push → (4) 메인 저장소 push
+- **작업 순서**: (1) 현재 변경사항 커밋 → (2) 모든 subtree 병렬 pull (`--squash`) → (3) 모든 subtree 병렬 `split --rejoin` (push 속도 최적화) → (4) 모든 subtree 병렬 push → (5) 메인 저장소 push
+- `git subtree split --prefix=<path> --rejoin`은 이미 처리된 커밋 히스토리를 캐싱하여 push 시 전체 히스토리 순회를 방지한다. **push 전에 반드시 실행**한다.
 - 병렬 실행 시 각 subtree 작업을 별도의 Agent 또는 백그라운드 Bash 명령으로 동시에 실행한다.
 
 ## Never use packages/philgo_api/
