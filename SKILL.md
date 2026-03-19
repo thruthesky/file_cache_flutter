@@ -5,6 +5,21 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
 
 # 필고 v7 시스템 개발 가이드
 
+## ⛔⛔⛔⛔⛔ v7 테스트 URL 절대 규칙 — 모든 브라우저 테스트에 적용 ⛔⛔⛔⛔⛔
+
+> **🔴🔴🔴 v7 페이지 테스트 시 반드시 `https://v7-local.philgo.com`을 사용한다. 🔴🔴🔴**
+> **🔴🔴🔴 `https://local.philgo.com/v7/...` 경로로 접속하는 것은 절대 금지한다. 🔴🔴🔴**
+>
+> | 올바른 URL | 잘못된 URL (절대 금지) |
+> |-----------|----------------------|
+> | `https://v7-local.philgo.com/` | ~~`https://local.philgo.com/v7/`~~ |
+> | `https://v7-local.philgo.com/post/list.php?post_id=freetalk` | ~~`https://local.philgo.com/v7/post/list.php?post_id=freetalk`~~ |
+>
+> **이유:** `local.philgo.com/v7/...`로 접속하면 v7 프론트 컨트롤러(v7.php)를 거치지 않아 PSR-4 오토로더, Route, Config 등 v7 핵심 클래스가 로드되지 않고 Fatal Error가 발생한다.
+> Chrome DevTools MCP, Playwright, PEST 브라우저 테스트, 수동 테스트 등 **모든 v7 브라우저 테스트**에서 이 규칙을 따른다.
+
+---
+
 ## 🔴🔴🔴 Mandatory Workflow — Follow for ALL Tasks 🔴🔴🔴
 
 > **Every v7 task MUST follow this workflow. No exceptions.**
