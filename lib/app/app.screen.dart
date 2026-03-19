@@ -66,23 +66,23 @@ class _AppScreenState extends State<AppScreen> {
             },
             items: [
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.house),
+                icon: const FaIcon(FontAwesomeIcons.lightHouse),
                 label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.clipboard),
+                icon: const FaIcon(FontAwesomeIcons.lightClipboard),
                 label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.building),
+                icon: const FaIcon(FontAwesomeIcons.lightBuilding),
                 label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.commentDots),
+                icon: const FaIcon(FontAwesomeIcons.lightCommentDots),
                 label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.bars),
+                icon: const FaIcon(FontAwesomeIcons.lightBars),
                 label: '메뉴'.tr(),
               ),
             ],

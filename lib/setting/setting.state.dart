@@ -20,6 +20,13 @@ class SettingsState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// 스타벅스 쿠폰 수량 업데이트 (스핀 결과 반영)
+  void updateAvailableStarbucksCoupons(int count) {
+    if (_settings == null) return;
+    _settings = _settings!.copyWith(availableStarbucksCoupons: count);
+    notifyListeners();
+  }
+
   /// Provider에서 SettingsState 읽기
   static SettingsState of(BuildContext context) =>
       context.read<SettingsState>();

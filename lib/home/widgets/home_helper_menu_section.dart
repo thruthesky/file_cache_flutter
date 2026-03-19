@@ -1,16 +1,22 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/event/company_event.screen.dart';
+import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/setting/setting.state.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
 ///
 /// 대사관, 한인회, 환율, 날씨, 긴급연락처 등 필수 정보 링크를
 /// 둥근 사각형 아이콘 그리드로 표시한다 (스크롤 없이 한 번에 표시).
+/// 업소이벤트/이벤트응모는 서버 설정에 따라 조건부로 표시한다.
 class HomeHelperMenuSection extends StatelessWidget {
   const HomeHelperMenuSection({super.key});
 
+  /// 기본 메뉴 항목 (항상 표시)
   static const _items = <(String, IconData, Color, String?)>[
     ('내 정보', FontAwesomeIcons.circleUser, Color(0xFF5C6BC0), null),
     ('필수정보', FontAwesomeIcons.circleInfo, Color(0xFFEF5350), null),
@@ -26,19 +32,62 @@ class HomeHelperMenuSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return Selector<SettingsState, ({bool qr, bool event})>(
+      selector: (_, state) => (
+        qr: state.settings?.companyQrEventEnabled ?? false,
+        event: state.settings?.eventEntryEnabled ?? false,
+      ),
+      builder: (context, flags, _) => _buildContent(context, flags),
+    );
+  }
+
+  Widget _buildContent(
+    BuildContext context,
+    ({bool qr, bool event}) flags,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Wrap(
         spacing: 12,
         runSpacing: 8,
-        children: _items.map((item) {
-          final (label, icon, iconColor, url) = item;
-          return _buildItem(context, label, icon, iconColor, url);
-        }).toList(),
+        children: [
+          // 내 정보 (항상 첫 번째)
+          _buildItem(context, '내 정보', FontAwesomeIcons.circleUser,
+              const Color(0xFF5C6BC0), null),
+
+          // 업소이벤트 (설정 활성화 시 표시)
+          if (flags.qr)
+            _buildEventItem(
+              context,
+              '업소이벤트',
+              FontAwesomeIcons.lightStore,
+              color.secondaryContainer,
+              color.onSecondaryContainer,
+              () => CompanyEventScreen.push(context),
+            ),
+
+          // 이벤트응모 (설정 활성화 시 표시)
+          if (flags.event)
+            _buildEventItem(
+              context,
+              '이벤트응모',
+              FontAwesomeIcons.lightGift,
+              color.errorContainer,
+              color.onErrorContainer,
+              () => EventEntryScreen.push(context),
+            ),
+
+          // 나머지 메뉴 (내 정보 제외)
+          ..._items.skip(1).map((item) {
+            final (label, icon, iconColor, url) = item;
+            return _buildItem(context, label, icon, iconColor, url);
+          }),
+        ],
       ),
     );
   }
 
+  /// 일반 메뉴 아이템
   Widget _buildItem(
     BuildContext context,
     String label,
@@ -68,6 +117,46 @@ class HomeHelperMenuSection extends StatelessWidget {
               ),
               child: Center(
                 child: FaIcon(icon, size: 18, color: iconColor),
+              ),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              label.tr(),
+              style: text.labelSmall?.copyWith(fontSize: 10),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 이벤트 메뉴 아이템 (강조색 배경)
+  Widget _buildEventItem(
+    BuildContext context,
+    String label,
+    IconData icon,
+    Color bgColor,
+    Color fgColor,
+    VoidCallback onTap,
+  ) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: 56,
+        child: Column(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: FaIcon(icon, size: 18, color: fgColor),
               ),
             ),
             const SizedBox(height: 3),
