@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/post.model.dart';
@@ -78,7 +79,7 @@ class _CommentListViewState extends State<CommentListView> {
               ),
               const SizedBox(width: 6),
               Text(
-                '댓글 ${widget.noOfComment}',
+                '${'댓글'.tr()} ${widget.noOfComment}',
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
                   fontWeight: FontWeight.w600,
@@ -98,7 +99,7 @@ class _CommentListViewState extends State<CommentListView> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: Text(
-              '댓글이 없습니다.',
+              '댓글이 없습니다.'.tr(),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),

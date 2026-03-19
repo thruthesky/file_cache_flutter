@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/api/api.service.dart';
@@ -61,7 +62,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('게시글 작성 실패: $e')));
+      ).showSnackBar(SnackBar(content: Text('${'게시글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -79,7 +80,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         foregroundColor: scheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 1,
-        title: Text('글쓰기', style: theme.textTheme.titleMedium),
+        title: Text('글쓰기'.tr(), style: theme.textTheme.titleMedium),
         actions: [
           // 제출 버튼
           Padding(
@@ -142,7 +143,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
-                hintText: '제목',
+                hintText: '제목'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -154,7 +155,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               maxLength: 255,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '제목을 입력하세요';
+                  return '제목을 입력하세요'.tr();
                 }
                 return null;
               },
@@ -165,7 +166,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             TextFormField(
               controller: _contentController,
               decoration: InputDecoration(
-                hintText: '내용을 입력하세요',
+                hintText: '내용을 입력하세요'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -178,7 +179,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               minLines: 8,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return '내용을 입력하세요';
+                  return '내용을 입력하세요'.tr();
                 }
                 return null;
               },
@@ -207,9 +208,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     setState(() => _uploadedFiles.add(model));
                   },
                   onError: (e) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('업로드 실패: $e')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${'업로드 실패'.tr()}: $e')),
+                    );
                   },
                   child: FaIcon(
                     FontAwesomeIcons.lightCamera,

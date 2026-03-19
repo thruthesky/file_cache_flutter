@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
@@ -61,12 +62,11 @@ class _PostCommentBarState extends State<PostCommentBar> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('댓글 작성 실패: $e')));
+      ).showSnackBar(SnackBar(content: Text('${'댓글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSending = false);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
     final userState = Provider.of<UserState>(context, listen: false);
     final isLoggedIn = userState.isLoggedIn;
     final isReplying = widget.replyTo != null;
-    final hintText = isReplying ? '답글을 입력하세요' : '댓글을 입력하세요';
+    final hintText = isReplying ? '답글을 입력하세요'.tr() : '댓글을 입력하세요'.tr();
 
     return Container(
       decoration: BoxDecoration(
@@ -170,7 +170,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                   vertical: 12,
                 ),
                 child: Text(
-                  '댓글을 작성하려면 로그인이 필요합니다.',
+                  '댓글을 작성하려면 로그인이 필요합니다.'.tr(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
                   ),
@@ -190,6 +190,8 @@ class _PostCommentBarState extends State<PostCommentBar> {
                       code: 'comment',
                       camera: true,
                       gallery: true,
+                      cameraVideo: true,
+                      file: true,
                       onUploadingChanged: (uploading) {
                         setState(() => _isUploading = uploading);
                       },
@@ -199,7 +201,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                       onError: (e) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('파일 업로드 실패: $e')),
+                          SnackBar(content: Text('${'파일 업로드 실패'.tr()}: $e')),
                         );
                       },
                       child: Padding(
@@ -215,18 +217,16 @@ class _PostCommentBarState extends State<PostCommentBar> {
                                   ),
                                 ),
                               )
-                            : IconButton(
-                                onPressed: null,
-                                icon: FaIcon(
-                                  FontAwesomeIcons.lightCamera,
-                                  size: 20,
-                                  color: scheme.onSurfaceVariant,
+                            : SizedBox(
+                                width: 36,
+                                height: 36,
+                                child: Center(
+                                  child: FaIcon(
+                                    FontAwesomeIcons.lightCamera,
+                                    size: 20,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
                                 ),
-                                constraints: const BoxConstraints(
-                                  minWidth: 36,
-                                  minHeight: 36,
-                                ),
-                                padding: EdgeInsets.zero,
                               ),
                       ),
                     ),

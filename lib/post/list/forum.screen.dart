@@ -10,7 +10,9 @@ import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
 class ForumScreen extends StatefulWidget {
@@ -181,11 +183,45 @@ class _ForumScreenState extends State<ForumScreen> {
   }
 
   Future<void> _openPostView(Post post) async {
+    // 차단된 사용자의 글이면 차단 해제 확인 다이얼로그 표시
+    if (post.blocked) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('차단된 사용자'),
+          content: const Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('취소'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('차단 해제'),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true || !mounted) return;
+
+      try {
+        await toggleBlockUserByIdx(post.idxMember);
+      } catch (e) {
+        if (mounted) showErrorSnackBar(context, '$e');
+        return;
+      }
+      // 차단 해제 후 목록 새로고침하여 정상 타일로 표시
+      if (!mounted) return;
+      _pagingController.refresh();
+      return;
+    }
+
     final result = await Navigator.of(context).push<dynamic>(
       MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
     );
 
-    if ((result == 'deleted' || result is Post) && mounted) {
+    if ((result == 'deleted' || result == 'blocked' || result is Post) &&
+        mounted) {
       _pagingController.refresh();
     }
   }

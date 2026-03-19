@@ -48,7 +48,7 @@ DatabaseReference myBlockedUserRef(String uid) {
   return myBlockedUsersRef().child(uid);
 }
 
-/// Block a user
+/// Block a user by Firebase UID
 Future toggleBlockUser(String otherUserUid) async {
   if (loginUid() == null) {
     throw ('User must login first');
@@ -65,6 +65,20 @@ Future toggleBlockUser(String otherUserUid) async {
   );
   log(res.toString(), name: 'toggleBlockUser::');
   return res['blocked'];
+}
+
+/// Block/unblock a user by member idx (게시글/댓글 작성자 차단용)
+///
+/// 반환: true = 차단됨, false = 차단 해제됨
+Future<bool> toggleBlockUserByIdx(int idxBlockee) async {
+  if (loginUid() == null) {
+    throw ('User must login first');
+  }
+  final res = await ApiService.instance.v7api(
+    'user.toggleBlock',
+    data: {'idx_blockee': idxBlockee},
+  );
+  return res['blocked'] == true;
 }
 
 /// Show user profile dialog with Comic design

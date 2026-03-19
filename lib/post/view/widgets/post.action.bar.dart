@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
@@ -14,6 +15,10 @@ class PostActionBar extends StatelessWidget {
   final VoidCallback onDelete;
   final bool bookmarked;
   final VoidCallback? onBookmark;
+  final bool reported;
+  final VoidCallback? onReport;
+  final bool blocked;
+  final VoidCallback? onBlock;
 
   const PostActionBar({
     super.key,
@@ -26,6 +31,10 @@ class PostActionBar extends StatelessWidget {
     required this.onDelete,
     this.bookmarked = false,
     this.onBookmark,
+    this.reported = false,
+    this.onReport,
+    this.blocked = false,
+    this.onBlock,
   });
 
   @override
@@ -46,8 +55,8 @@ class PostActionBar extends StatelessWidget {
         const SizedBox(width: 8),
         // 댓글
         PostActionButton(
-          icon: FontAwesomeIcons.lightComment,
-          label: '${post.noOfComment > 0 ? post.noOfComment : ''}',
+          icon: FontAwesomeIcons.message,
+          label: '',
           color: scheme.onSurfaceVariant,
           onTap: () {
             ChatRoomScreen.push(context, post.userFirebaseUid);
@@ -73,7 +82,7 @@ class PostActionBar extends StatelessWidget {
           // 수정
           PostActionButton(
             icon: FontAwesomeIcons.lightPenToSquare,
-            label: '수정',
+            label: '수정'.tr(),
             color: scheme.onSurfaceVariant,
             onTap: onEdit,
           ),
@@ -81,25 +90,29 @@ class PostActionBar extends StatelessWidget {
           // 삭제
           PostActionButton(
             icon: FontAwesomeIcons.lightTrashCan,
-            label: '삭제',
+            label: '삭제'.tr(),
             color: scheme.error,
             onTap: onDelete,
           ),
         ] else ...[
           // 신고
           PostActionButton(
-            icon: FontAwesomeIcons.lightFlag,
-            label: '신고',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
+            icon: reported
+                ? FontAwesomeIcons.solidFlag
+                : FontAwesomeIcons.lightFlag,
+            label: reported ? '신고됨'.tr() : '신고'.tr(),
+            color: reported ? scheme.error : scheme.onSurfaceVariant,
+            onTap: onReport ?? () {},
           ),
           const SizedBox(width: 8),
           // 차단
           PostActionButton(
-            icon: FontAwesomeIcons.lightBan,
-            label: '차단',
-            color: scheme.onSurfaceVariant,
-            onTap: () {},
+            icon: blocked
+                ? FontAwesomeIcons.solidBan
+                : FontAwesomeIcons.lightBan,
+            label: blocked ? '차단 해제'.tr() : '차단'.tr(),
+            color: blocked ? scheme.error : scheme.onSurfaceVariant,
+            onTap: onBlock ?? () {},
           ),
         ],
       ],

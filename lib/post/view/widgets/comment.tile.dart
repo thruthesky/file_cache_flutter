@@ -8,7 +8,9 @@ import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
 import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
+import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
 /// 세로선 색상 (Reddit 스타일)
@@ -62,11 +64,14 @@ class CommentTile extends StatefulWidget {
 class _CommentTileState extends State<CommentTile> {
   bool _liked = false;
   late int _goodCount;
+  bool _reported = false;
 
   @override
   void initState() {
     super.initState();
+    _liked = widget.comment.liked;
     _goodCount = widget.comment.good;
+    _reported = widget.comment.reported;
   }
 
   void _openUserProfile(BuildContext context, int idxMember) {
@@ -83,6 +88,69 @@ class _CommentTileState extends State<CommentTile> {
         _goodCount = result.good;
       });
     } catch (_) {}
+  }
+
+  Future<void> _reportComment() async {
+    if (_reported) {
+      showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
+      return;
+    }
+    try {
+      await PostService.report(idx: widget.comment.idx, type: 'comment');
+      if (!mounted) return;
+      setState(() => _reported = true);
+      showSuccessSnackBar(context, '신고가 접수되었습니다'.tr());
+    } catch (e) {
+      if (!mounted) return;
+      final msg = e.toString();
+      if (msg.contains('already-reported')) {
+        setState(() => _reported = true);
+        showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
+      } else {
+        showErrorSnackBar(context, msg);
+      }
+    }
+  }
+
+  Future<void> _blockCommentAuthor() async {
+    final name = widget.comment.userName.isNotEmpty
+        ? widget.comment.userName
+        : '이름없음'.tr();
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('차단'.tr()),
+        content: Text(
+          '{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name}) +
+              '\n' +
+              '차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('취소'.tr()),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text('차단'.tr()),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true || !mounted) return;
+
+    try {
+      final blocked = await toggleBlockUserByIdx(widget.comment.idxMember);
+      if (!mounted) return;
+      showSuccessSnackBar(
+        context,
+        blocked ? '사용자를 차단했습니다'.tr() : '차단이 해제되었습니다'.tr(),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      showErrorSnackBar(context, '$e');
+    }
   }
 
   @override
@@ -279,7 +347,7 @@ class _CommentTileState extends State<CommentTile> {
                 // 답글
                 PostActionButton(
                   icon: FontAwesomeIcons.lightReply,
-                  label: '답글',
+                  label: '답글'.tr(),
                   color: scheme.tertiary,
                   onTap: () {
                     widget.onReplyTap?.call(widget.comment);
@@ -306,7 +374,7 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightPenToSquare,
-                      label: '수정',
+                      label: '수정'.tr(),
                       color: scheme.tertiary,
                       onTap: () => _showEditDialog(context),
                     ),
@@ -314,10 +382,73 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightTrashCan,
-                      label: '삭제',
+                      label: '삭제'.tr(),
                       color: scheme.error,
                       onTap: () => _confirmDelete(context),
                     ),
+                ],
+
+                // 신고/차단 (타인의 댓글에만 표시)
+                if (!isMine) ...[
+                  const SizedBox(width: 4),
+                  PopupMenuButton<String>(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    iconSize: 14,
+                    icon: FaIcon(
+                      FontAwesomeIcons.lightEllipsis,
+                      size: 14,
+                      color: scheme.tertiary,
+                    ),
+                    onSelected: (value) {
+                      switch (value) {
+                        case 'report':
+                          _reportComment();
+                        case 'block':
+                          _blockCommentAuthor();
+                      }
+                    },
+                    itemBuilder: (ctx) {
+                      final popScheme = Theme.of(ctx).colorScheme;
+                      return [
+                        PopupMenuItem(
+                          value: 'report',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FaIcon(
+                                _reported
+                                    ? FontAwesomeIcons.solidFlag
+                                    : FontAwesomeIcons.lightFlag,
+                                size: 14,
+                                color: popScheme.error,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                _reported ? '신고됨'.tr() : '신고'.tr(),
+                                style: TextStyle(color: popScheme.error),
+                              ),
+                            ],
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'block',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              FaIcon(
+                                FontAwesomeIcons.lightBan,
+                                size: 14,
+                                color: popScheme.onSurface,
+                              ),
+                              const SizedBox(width: 8),
+                              Text('차단'.tr()),
+                            ],
+                          ),
+                        ),
+                      ];
+                    },
+                  ),
                 ],
               ],
             ),
@@ -333,21 +464,21 @@ class _CommentTileState extends State<CommentTile> {
     final content = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('댓글 수정'),
+        title: Text('댓글 수정'.tr()),
         content: TextField(
           controller: controller,
           autofocus: true,
           minLines: 2,
           maxLines: 8,
-          decoration: const InputDecoration(
-            hintText: '댓글 내용을 입력하세요',
+          decoration: InputDecoration(
+            hintText: '댓글 내용을 입력하세요'.tr(),
             border: OutlineInputBorder(),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('취소'),
+            child: Text('취소'.tr()),
           ),
           FilledButton(
             onPressed: () {
@@ -355,7 +486,7 @@ class _CommentTileState extends State<CommentTile> {
               if (text.isEmpty) return;
               Navigator.pop(ctx, text);
             },
-            child: const Text('수정'),
+            child: Text('수정'.tr()),
           ),
         ],
       ),
@@ -371,17 +502,17 @@ class _CommentTileState extends State<CommentTile> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('댓글 삭제'),
-        content: const Text('정말 이 댓글을 삭제하시겠습니까?'),
+        title: Text('댓글 삭제'.tr()),
+        content: Text('정말 이 댓글을 삭제하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('취소'),
+            child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text('삭제'),
+            child: Text('삭제'.tr()),
           ),
         ],
       ),

@@ -15,7 +15,7 @@ final String v7ApiEndpoint = const String.fromEnvironment(
 final String v7BaseUrl = () {
   final uri = Uri.tryParse(v7ApiEndpoint);
   if (uri == null) return 'https://philgo.com';
-  return 'https://${uri.host}';
+  return '${uri.scheme}://${uri.host}';
 }();
 
 /// 포럼 카테고리 데이터 (postId, category, 한글 라벨)

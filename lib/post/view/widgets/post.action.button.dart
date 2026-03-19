@@ -20,7 +20,7 @@ class PostActionButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Padding(
+      child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -28,11 +28,12 @@ class PostActionButton extends StatelessWidget {
             FaIcon(icon, size: 16, color: color),
             if (label.isNotEmpty) ...[
               const SizedBox(width: 5),
-              Text(label,
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium
-                      ?.copyWith(color: color)),
+              Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(color: color),
+              ),
             ],
           ],
         ),
