@@ -9,7 +9,7 @@ import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
-import 'package:philgo/common_widgets/full_screen_image_viewer.dart';
+import 'package:philgo/common_widgets/full_screen_media_viewer.dart';
 
 class SingleChatRoomMessageListController {
   late final SingleChatRoomMessageListState state;
@@ -185,7 +185,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                     await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => FullScreenImageViewer(
+                        builder: (context) => FullScreenMediaViewer(
                           mediaUrls: mediaUrlsList,
                           initialIndex: initialIndex >= 0 ? initialIndex : 0,
                         ),

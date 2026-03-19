@@ -32,15 +32,14 @@ class HomeMenuCategories extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         itemCount: _homeCategories.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 0),
+        separatorBuilder: (_, _) => const SizedBox(width: 0),
         itemBuilder: (context, index) {
           final (postId, category, label) = _homeCategories[index];
           return GestureDetector(
             onTap: () {
-              AppNavigationState.of(context).openForumScreen(
-                postId: postId,
-                category: category,
-              );
+              AppNavigationState.of(
+                context,
+              ).openForumScreen(postId: postId, category: category);
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

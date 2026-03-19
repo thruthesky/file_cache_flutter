@@ -12,6 +12,7 @@ import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat_sound.service.dart';
 import 'package:philgo/firebase_options.dart';
+import 'package:philgo/init/init.functions.dart';
 import 'package:philgo/l10n/code_asset_loader.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/theme.dart';
@@ -115,6 +116,11 @@ class _MyAppState extends State<PhilGoV7App> {
         },
       );
       ChatSoundService.instance.initialize();
+      // Initialize messaging service
+      initMessagingService();
+
+      /// Initialize receive share service
+      initializeReceiveShareService();
     });
     FirebaseAnalytics.instance.logAppOpen();
   }

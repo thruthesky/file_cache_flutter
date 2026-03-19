@@ -675,8 +675,7 @@ class SingleChatRoomHeader extends StatelessWidget {
   }
 }
 
-/// 즐겨찾기 아이콘 버튼 - 실시간으로 즐겨찾기 상태를 확인하여 아이콘 표시
-/// Firebase의 chat/favorites 경로를 직접 구독하여 실시간 업데이트
+/// 북마크 아이콘 버튼 - API로 북마크 상태를 확인하여 아이콘 표시
 class _FavoriteIconButton extends StatefulWidget {
   final String roomId;
 
@@ -687,35 +686,57 @@ class _FavoriteIconButton extends StatefulWidget {
 }
 
 class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
-  final _isFavoritedNotifier = ValueNotifier<bool>(false);
+  bool? _isBookmarked;
 
   @override
-  void dispose() {
-    _isFavoritedNotifier.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _checkBookmarkStatus();
+  }
+
+  Future<void> _checkBookmarkStatus() async {
+    final ids = await BookmarkService.instance.myBookmarkedIds(
+      entityType: 'chat_room',
+    );
+    if (mounted) {
+      setState(() {
+        _isBookmarked = ids.contains(widget.roomId);
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _isFavoritedNotifier,
-      builder: (context, isFavorited, child) {
-        return IconButton(
-          onPressed: () => _onTap(context),
-          icon: Icon(
-            isFavorited ? Icons.star : Icons.star_border,
-            color: isFavorited ? Colors.amberAccent : null,
+    if (_isBookmarked == null) {
+      return const SizedBox(
+        width: 48,
+        height: 48,
+        child: Center(
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator.adaptive(strokeWidth: 2),
           ),
-          tooltip: '즐겨찾기에 추가'.tr(),
-        );
-      },
+        ),
+      );
+    }
+    return IconButton(
+      onPressed: () => _onTap(context),
+      icon: FaIcon(
+        _isBookmarked!
+            ? FontAwesomeIcons.solidStar
+            : FontAwesomeIcons.star,
+        color: _isBookmarked! ? Colors.amberAccent : null,
+        size: 20,
+      ),
+      tooltip: '즐겨찾기에 추가'.tr(),
     );
   }
 
   Future<void> _onTap(BuildContext context) async {
     final result = await showBookmarkGroupPicker(
       context: context,
-      isBookmarked: _isFavoritedNotifier.value,
+      isBookmarked: _isBookmarked ?? false,
     );
     if (result == null || !context.mounted) return;
 
@@ -724,14 +745,14 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
         entityType: 'chat_room',
         entityId: widget.roomId,
       );
-      _isFavoritedNotifier.value = false;
+      setState(() => _isBookmarked = false);
     } else {
       await BookmarkService.instance.add(
         entityType: 'chat_room',
         entityId: widget.roomId,
         groupName: result.groupName ?? '',
       );
-      _isFavoritedNotifier.value = true;
+      setState(() => _isBookmarked = true);
     }
   }
 }

@@ -96,28 +96,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
   }
 
   Future<void> _toggleLike() async {
-    // Optimistic UI update
-    final prevLiked = _liked;
-    final prevCount = _goodCount;
-    setState(() {
-      _liked = !_liked;
-      _goodCount = _liked ? _goodCount + 1 : _goodCount - 1;
-    });
-
     try {
       final result = await PostService.like(_post.idx);
       if (!mounted) return;
       setState(() {
-        _liked = result.liked;
+        _liked = !_liked;
         _goodCount = result.good;
       });
     } catch (e) {
       if (!mounted) return;
-      // Revert on error
-      setState(() {
-        _liked = prevLiked;
-        _goodCount = prevCount;
-      });
       showErrorSnackBar(context, '$e');
     }
   }
@@ -471,7 +458,11 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
-                                          Text(_post.blocked ? '차단 해제'.tr() : '차단'.tr()),
+                                          Text(
+                                            _post.blocked
+                                                ? '차단 해제'.tr()
+                                                : '차단'.tr(),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -488,7 +479,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
-                                            _post.reported ? '신고됨'.tr() : '신고'.tr(),
+                                            _post.reported
+                                                ? '신고됨'.tr()
+                                                : '신고'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
                                             ),

@@ -16,7 +16,7 @@ import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
 import 'package:philgo/util/util.functions.dart';
-import 'package:philgo/common_widgets/full_screen_image_viewer.dart';
+import 'package:philgo/common_widgets/full_screen_media_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Message bubble widget for displaying chat messages
@@ -352,7 +352,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
     // Use await to prevent widget rebuild on navigation back
     await Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => FullScreenImageViewer(
+        builder: (context) => FullScreenMediaViewer(
           mediaUrls: mediaUrls,
           initialIndex: initialIndex,
         ),

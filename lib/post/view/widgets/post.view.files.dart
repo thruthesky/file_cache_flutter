@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:philgo/common_widgets/full_screen_image_viewer.dart';
+import 'package:philgo/common_widgets/full_screen_media_viewer.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/uploaded_video_player.dart';
@@ -176,7 +176,7 @@ class PostViewFiles extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (context) => FullScreenImageViewer(
+        builder: (context) => FullScreenMediaViewer(
           mediaUrls: mediaUrls,
           initialIndex: initialIndex,
         ),

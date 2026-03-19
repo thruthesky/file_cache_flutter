@@ -3,10 +3,10 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/messaging/messaging.service.dart';
@@ -19,7 +19,6 @@ import 'package:philgo/router.dart';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
-import 'package:shorebird_code_push/shorebird_code_push.dart';
 
 Future<void> initMessagingService() async {
   // Initialize messaging service
@@ -123,11 +122,7 @@ void initializeReceiveShareService() {
   /// 외부 공유 수신 서비스 초기화
   /// Initialize receive share service
   ReceiveShareService.instance.initialize(
-    /// PhilgoCategory.majorCategories()를 사용하여 카테고리 목록 설정
-    /// Set category list using PhilgoCategory.majorCategories()
-    // return first string from forumCategories list, which is the category name
-    categories:
-        [], // forumCategories.map(((String, String?, String) ($,$$,$$$)) => $).toList(),
+    categories: majorForumCategories(),
     onCategorySelect:
         (String postId, String? category, List<SharedMediaFile> data) async {
           // log(
@@ -207,98 +202,4 @@ void initializeReceiveShareService() {
       showReceiveShareDialog(globalContext, data);
     },
   );
-}
-
-/// Shorebird 업데이트 확인 타이머 (Shorebird Update Check Timer)
-///
-/// 주기적으로 업데이트를 확인하기 위한 타이머
-/// Timer for periodic update checking
-Timer? _shorebirdTimer;
-
-/// Shorebird 코드 푸시 초기화 및 주기적 업데이트 확인
-/// Initialize Shorebird Code Push and check for updates periodically
-///
-/// ## 업데이트 확인 타이밍 (Update Check Timing)
-/// - 최초 실행: 30초 후 1회 확인
-/// - 이후: 180초(3분)마다 주기적 확인
-///
-/// ## 동작 흐름 (Flow)
-/// 1. 앱 시작 → 30초 후 첫 번째 업데이트 확인
-/// 2. 업데이트 있음 → 다운로드 → 다이얼로그 표시 → 타이머 종료
-/// 3. 업데이트 없음 → 180초 주기 타이머 시작
-///
-/// 중요: kReleaseMode에서만 동작합니다 (디버그 모드에서는 에러 발생)
-/// Important: Only works in kReleaseMode (errors occur in debug mode)
-void initShorebirdCodePush() async {
-  /// 릴리즈 모드에서만 동작 (디버그 모드에서 Shorebird 에러 발생 방지)
-  /// Only works in release mode (prevents Shorebird errors in debug mode)
-  if (!kReleaseMode) {
-    return;
-  }
-
-  try {
-    /// ShorebirdUpdater 인스턴스 생성 (Recommended API)
-    /// Create ShorebirdUpdater instance (Recommended API)
-    final updater = ShorebirdUpdater();
-
-    /// [1단계] 최초 30초 후 첫 번째 업데이트 확인
-    /// [Step 1] First update check after 30 seconds
-    _shorebirdTimer = Timer(const Duration(seconds: 30), () async {
-      final hasUpdate = await _checkAndDownloadUpdate(updater);
-
-      /// [2단계] 업데이트가 없으면 180초 주기 타이머 시작
-      /// [Step 2] If no update, start periodic timer (180 seconds)
-      if (!hasUpdate) {
-        _startPeriodicUpdateCheck(updater);
-      }
-    });
-  } catch (e) {
-    // Shorebird 초기화 오류 무시
-  }
-}
-
-/// 180초 주기 업데이트 확인 타이머 시작
-/// Start periodic update check timer (180 seconds)
-void _startPeriodicUpdateCheck(ShorebirdUpdater updater) {
-  _shorebirdTimer = Timer.periodic(const Duration(seconds: 180), (_) async {
-    final hasUpdate = await _checkAndDownloadUpdate(updater);
-
-    /// 업데이트 다운로드 완료 시 타이머 중지
-    /// Stop timer when update download is complete
-    if (hasUpdate) {
-      _shorebirdTimer?.cancel();
-    }
-  });
-}
-
-/// 업데이트 확인 및 다운로드 실행
-/// Check for update and download if available
-///
-/// 반환값: 업데이트가 있어서 다운로드했으면 true, 없으면 false
-/// Returns: true if update was downloaded, false otherwise
-Future<bool> _checkAndDownloadUpdate(ShorebirdUpdater updater) async {
-  try {
-    /// 새 패치 버전이 다운로드 가능한지 확인
-    /// Check if a new patch version is available for download
-    final status = await updater.checkForUpdate();
-
-    if (status == UpdateStatus.outdated) {
-      /// 업데이트 다운로드
-      /// Download update
-      await updater.update();
-
-      /// 다이얼로그 표시 (globalContext가 유효한 경우)
-      /// Show dialog (if globalContext is valid)
-      if (globalContext.mounted) {
-        // showShorebirdUpdateDialog();
-      }
-
-      return true;
-    }
-
-    return false;
-  } catch (e) {
-    // Shorebird 업데이트 확인 오류 무시
-    return false;
-  }
 }
