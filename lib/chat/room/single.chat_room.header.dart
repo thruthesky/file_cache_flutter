@@ -11,7 +11,6 @@ import 'package:philgo/bookmark/widgets/bookmark_group_picker.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
-import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/chat/chat.functions.dart';
@@ -183,7 +182,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             /// Pin/Unpin menu item - Real-time pin status
                             ValueListenableBuilder<Set<String>>(
                               valueListenable:
-                                  UserService.instance.pinnedChatRoomsStream,
+                                  ChatService.instance.pinnedChatRoomsStream,
                               builder: (context, pinnedRooms, _) {
                                 final isPinned = pinnedRooms.contains(join.id);
                                 return _buildComicMenuItem(
@@ -196,7 +195,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                                       context,
                                     ).colorScheme.primary,
                                   ),
-                                  title: isPinned ? '채팅 고정 해제'.tr() : '채팅 고정'.tr(),
+                                  title: isPinned
+                                      ? '채팅 고정 해제'.tr()
+                                      : '채팅 고정'.tr(),
                                   onTap: () async {
                                     Navigator.of(context).pop();
                                     await togglePinned(parentContext);
@@ -388,9 +389,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                       onPressed: () =>
                           Navigator.of(context).pop('block_and_leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(
-                          dialogElevation,
-                        ),
+                        elevation: WidgetStateProperty.all(dialogElevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -408,9 +407,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                         foregroundColor: WidgetStateProperty.all(
                           colorScheme.onError,
                         ),
-                        padding: WidgetStateProperty.all(
-                          actionButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
@@ -423,9 +420,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop('leave'),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(
-                          dialogElevation,
-                        ),
+                        elevation: WidgetStateProperty.all(dialogElevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -444,9 +439,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                         foregroundColor: WidgetStateProperty.all(
                           colorScheme.error,
                         ),
-                        padding: WidgetStateProperty.all(
-                          actionButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
@@ -459,9 +452,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () => Navigator.of(context).pop(),
                       style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(
-                          dialogElevation,
-                        ),
+                        elevation: WidgetStateProperty.all(dialogElevation),
                         shape: WidgetStateProperty.all(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(
@@ -479,9 +470,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                         foregroundColor: WidgetStateProperty.all(
                           colorScheme.onSurface,
                         ),
-                        padding: WidgetStateProperty.all(
-                          actionButtonPadding,
-                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
                           theme.textTheme.bodyMedium,
                         ),
@@ -562,7 +551,7 @@ class SingleChatRoomHeader extends StatelessWidget {
       );
 
       // Check current pin status
-      final isPinned = UserService.instance.pinnedChatRooms.contains(join.id);
+      final isPinned = ChatService.instance.pinnedChatRooms.contains(join.id);
 
       if (isPinned) {
         // Unpin: Remove from Firebase
@@ -656,9 +645,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         padding: dialogItemPadding,
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(
-            dialogItemBorderRadius,
-          ),
+          borderRadius: BorderRadius.circular(dialogItemBorderRadius),
 
           /// Comic design: 2.0px border with outline color
           border: Border.all(

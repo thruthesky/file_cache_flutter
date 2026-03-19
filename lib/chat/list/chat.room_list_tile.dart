@@ -44,7 +44,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
   /// 채팅방 고정 여부 확인
   bool get isPinned {
-    return UserService.instance.pinnedChatRooms.contains(roomId);
+    return ChatService.instance.pinnedChatRooms.contains(roomId);
   }
 
   /// 채팅방 고정/고정 해제 토글
@@ -268,7 +268,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     return ValueListenableBuilder<Set<String>>(
-      valueListenable: UserService.instance.pinnedChatRoomsStream,
+      valueListenable: ChatService.instance.pinnedChatRoomsStream,
       builder: (context, pinnedRooms, _) {
         final isPinnedNow = pinnedRooms.contains(roomId);
         if (!isPinnedNow) return const SizedBox.shrink();
