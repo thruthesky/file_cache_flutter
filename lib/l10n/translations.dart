@@ -81,6 +81,11 @@ class Translations {
     'Google로 로그인': 'Google로 로그인',
 
     // 홈 섹션
+    '필고': '필고',
+    '설정': '설정',
+    '회원': '회원',
+    '최근 댓글': '최근 댓글',
+    '(이름 없음)': '(이름 없음)',
     '더보기': '더보기',
     '인기글': '인기글',
     '주요 게시판': '주요 게시판',
@@ -360,6 +365,22 @@ class Translations {
     '탭하여 선택': '탭하여 선택',
     '업로드 실패: {}': '업로드 실패: {}',
     '사진이 삭제되었습니다': '사진이 삭제되었습니다',
+    '사업자등록증': '사업자등록증',
+    '사업자등록증 사진을 업로드하세요': '사업자등록증 사진을 업로드하세요',
+    '사업자등록증 선택': '사업자등록증 선택',
+    '사무실/매장 내부 사진': '사무실/매장 내부 사진',
+    '사무실/매장': '사무실/매장',
+
+    // 업소 편집 - 카카오톡 QR
+    '카카오톡 QR 코드': '카카오톡 QR 코드',
+    '선택': '선택',
+    'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다': 'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다',
+    '카카오톡 QR 이미지 업로드': '카카오톡 QR 이미지 업로드',
+    '카카오톡 채널 URL': '카카오톡 채널 URL',
+    'QR 이미지 업로드 시 자동 입력됩니다': 'QR 이미지 업로드 시 자동 입력됩니다',
+    '채널 URL': '채널 URL',
+    'QR 코드': 'QR 코드',
+    '등록됨': '등록됨',
 
     // 업소 편집 - 검토
     '기본 정보': '기본 정보',
@@ -387,6 +408,7 @@ class Translations {
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
     '다시 시도': '다시 시도',
     '업소 정보': '업소 정보',
+    '아직 후기가 없습니다': '아직 후기가 없습니다',
 
     // 북마크
     '북마크': '북마크',
@@ -415,6 +437,36 @@ class Translations {
     '파일 삭제 실패': '파일 삭제 실패',
     '수정': '수정',
     '게시글 삭제': '게시글 삭제',
+
+    // 구인(hiring) 전용 폼
+    '구인': '구인',
+    '구직': '구직',
+    '구인 글 제목을 입력하세요': '구인 글 제목을 입력하세요',
+    '제목을 입력해주세요': '제목을 입력해주세요',
+    '회사 이름': '회사 이름',
+    '채용 회사명을 입력하세요': '채용 회사명을 입력하세요',
+    '회사 이름을 입력해주세요': '회사 이름을 입력해주세요',
+    '회사 소개': '회사 소개',
+    '회사 소개를 입력하세요': '회사 소개를 입력하세요',
+    '회사 소개를 입력해주세요': '회사 소개를 입력해주세요',
+    '업무 범위': '업무 범위',
+    '예: IT, 마케팅, 영업': '예: IT, 마케팅, 영업',
+    '업무 범위를 입력해주세요': '업무 범위를 입력해주세요',
+    '필리핀 전체 주소': '필리핀 전체 주소',
+    '예: 123 Sample St., Makati City': '예: 123 Sample St., Makati City',
+    '주소를 입력해주세요': '주소를 입력해주세요',
+    '필리핀 전화번호': '필리핀 전화번호',
+    '예: 09171234567': '예: 09171234567',
+    '전화번호를 입력해주세요': '전화번호를 입력해주세요',
+    '이메일 주소': '이메일 주소',
+    '예: hr@company.com': '예: hr@company.com',
+    '이메일을 입력해주세요': '이메일을 입력해주세요',
+    '급여 (페소)': '급여 (페소)',
+    '예: 50000': '예: 50000',
+    '급여를 입력해주세요': '급여를 입력해주세요',
+    '근무제': '근무제',
+    '예: 주 5일, 월-금': '예: 주 5일, 월-금',
+    '근무제를 입력해주세요': '근무제를 입력해주세요',
     '정말 이 게시글을 삭제하시겠습니까?': '정말 이 게시글을 삭제하시겠습니까?',
     '내용을 불러올 수 없습니다': '내용을 불러올 수 없습니다',
 
@@ -455,22 +507,18 @@ class Translations {
     '이메일 앱을 열 수 없습니다.': '이메일 앱을 열 수 없습니다.',
 
     // 앱 사용 안내
-    '앱 사용 안내': '앱 사용 안내',
     '필고에 오신 것을 환영합니다!': '필고에 오신 것을 환영합니다!',
     '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.',
     '시작하기': '시작하기',
     '둘러보기': '둘러보기',
     '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.',
-    '글쓰기': '글쓰기',
     '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.': '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.',
     '소통하기': '소통하기',
     '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.',
     '주요 기능': '주요 기능',
-    '커뮤니티': '커뮤니티',
     '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.',
     '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.',
     '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.',
-    '회원장터': '회원장터',
     '사고팔기, 구인구직 게시판에서 거래하세요.': '사고팔기, 구인구직 게시판에서 거래하세요.',
 
     // 업소이벤트
@@ -485,6 +533,76 @@ class Translations {
     'Step 3. 포인트 응모': 'Step 3. 포인트 응모',
     '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!': '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!',
     'QR 코드 스캔하기': 'QR 코드 스캔하기',
+
+    // QR 코드 화면
+    'QR 코드 보기': 'QR 코드 보기',
+    '로딩 중...': '로딩 중...',
+    '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.': '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.',
+    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.': '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.',
+    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.': '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.',
+    '공유': '공유',
+    '다운로드': '다운로드',
+    '업소 보기': '업소 보기',
+    'QR 코드가 갤러리에 저장되었습니다.': 'QR 코드가 갤러리에 저장되었습니다.',
+    '이벤트 참여': '이벤트 참여',
+    '음식/음료': '음식/음료',
+    '건강/병원': '건강/병원',
+    '쇼핑/마트': '쇼핑/마트',
+    '은행/금융': '은행/금융',
+    '전자제품': '전자제품',
+    '여행/관광': '여행/관광',
+    '미용/웰빙': '미용/웰빙',
+    '엔터테인먼트': '엔터테인먼트',
+    '스파/휴식': '스파/휴식',
+    '기타 서비스': '기타 서비스',
+
+    // QR 스캐너 화면
+    'QR 코드 스캔': 'QR 코드 스캔',
+    '유효하지 않은 QR 코드입니다.': '유효하지 않은 QR 코드입니다.',
+    '카메라를 사용할 수 없습니다.': '카메라를 사용할 수 없습니다.',
+    '업소의 QR 코드를 프레임 안에 맞춰주세요': '업소의 QR 코드를 프레임 안에 맞춰주세요',
+
+    // QR 스캔 결과 화면
+    '포인트 이벤트': '포인트 이벤트',
+    '방문자 정보': '방문자 정보',
+    'QR 스캔 결과': 'QR 스캔 결과',
+    '상세보기': '상세보기',
+    '스캔 오류': '스캔 오류',
+    '알 수 없는 오류가 발생했습니다.': '알 수 없는 오류가 발생했습니다.',
+    '24시간 이내 중복 스캔': '24시간 이내 중복 스캔',
+    '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.': '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.',
+    '만료된 QR 코드': '만료된 QR 코드',
+    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.': 'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.',
+    '유효하지 않은 QR 코드': '유효하지 않은 QR 코드',
+    '올바른 필고 업소 QR 코드를 스캔해 주세요.': '올바른 필고 업소 QR 코드를 스캔해 주세요.',
+    '비활성화된 QR 코드': '비활성화된 QR 코드',
+    '이 업소의 QR 코드가 비활성화되어 있습니다.': '이 업소의 QR 코드가 비활성화되어 있습니다.',
+    '업소 확인 불가': '업소 확인 불가',
+    '업소 정보를 확인할 수 없습니다.': '업소 정보를 확인할 수 없습니다.',
+    'QR 코드 검증 중...': 'QR 코드 검증 중...',
+    'QR 코드 스캔 성공!': 'QR 코드 스캔 성공!',
+    '추가 포인트를 받으세요!': '추가 포인트를 받으세요!',
+    '재방문 포인트 추첨': '재방문 포인트 추첨',
+    '후기 작성으로 포인트 받기': '후기 작성으로 포인트 받기',
+
+    // 방문 후기 작성 화면
+    '방문 후기': '방문 후기',
+    '후기 내용을 10자 이상 입력해 주세요.': '후기 내용을 10자 이상 입력해 주세요.',
+    '사진을 1장 이상 첨부해 주세요.': '사진을 1장 이상 첨부해 주세요.',
+    '후기 작성 시 포인트를 드립니다!': '후기 작성 시 포인트를 드립니다!',
+    '방문 후기를 작성해 주세요. (10자 이상)': '방문 후기를 작성해 주세요. (10자 이상)',
+    '사진 추가': '사진 추가',
+    '업로드 중...': '업로드 중...',
+    '저장 중...': '저장 중...',
+    '후기 저장': '후기 저장',
+
+    // 후기 포인트 결과 화면
+    '후기 포인트 결과': '후기 포인트 결과',
+    '업소 정보 보기': '업소 정보 보기',
+
+    // 재방문 포인트 결과 화면
+    '재방문 포인트 결과': '재방문 포인트 결과',
+    '포인트 추첨 중...': '포인트 추첨 중...',
   };
 
   static const Map<String, dynamic> en = {
@@ -562,6 +680,11 @@ class Translations {
     'Google로 로그인': 'Sign in with Google',
 
     // 홈 섹션
+    '필고': 'PhilGo',
+    '설정': 'Settings',
+    '회원': 'Members',
+    '최근 댓글': 'Latest Comments',
+    '(이름 없음)': '(No name)',
     '더보기': 'More',
     '인기글': 'Popular Posts',
     '주요 게시판': 'Major Forums',
@@ -836,6 +959,22 @@ class Translations {
     '탭하여 선택': 'Tap to select',
     '업로드 실패: {}': 'Upload failed: {}',
     '사진이 삭제되었습니다': 'Photo has been deleted',
+    '사업자등록증': 'Business License',
+    '사업자등록증 사진을 업로드하세요': 'Upload your business license photo',
+    '사업자등록증 선택': 'Select Business License',
+    '사무실/매장 내부 사진': 'Office/Store Interior Photo',
+    '사무실/매장': 'Office/Store',
+
+    // 업소 편집 - 카카오톡 QR
+    '카카오톡 QR 코드': 'KakaoTalk QR Code',
+    '선택': 'Optional',
+    'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다': 'Channel URL will be auto-filled when QR image is uploaded',
+    '카카오톡 QR 이미지 업로드': 'Upload KakaoTalk QR Image',
+    '카카오톡 채널 URL': 'KakaoTalk Channel URL',
+    'QR 이미지 업로드 시 자동 입력됩니다': 'Auto-filled when QR image is uploaded',
+    '채널 URL': 'Channel URL',
+    'QR 코드': 'QR Code',
+    '등록됨': 'Registered',
 
     // 업소 편집 - 검토
     '기본 정보': 'Basic Info',
@@ -863,6 +1002,7 @@ class Translations {
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',
     '다시 시도': 'Try Again',
     '업소 정보': 'Business Info',
+    '아직 후기가 없습니다': 'No reviews yet',
 
     // 북마크
     '북마크': 'Bookmark',
@@ -891,6 +1031,36 @@ class Translations {
     '파일 삭제 실패': 'Failed to delete file',
     '수정': 'Edit',
     '게시글 삭제': 'Delete Post',
+
+    // Hiring form
+    '구인': 'Hiring',
+    '구직': 'Job Seeking',
+    '구인 글 제목을 입력하세요': 'Enter job posting title',
+    '제목을 입력해주세요': 'Please enter a title',
+    '회사 이름': 'Company Name',
+    '채용 회사명을 입력하세요': 'Enter company name',
+    '회사 이름을 입력해주세요': 'Please enter company name',
+    '회사 소개': 'Company Introduction',
+    '회사 소개를 입력하세요': 'Enter company introduction',
+    '회사 소개를 입력해주세요': 'Please enter company introduction',
+    '업무 범위': 'Job Scope',
+    '예: IT, 마케팅, 영업': 'e.g. IT, Marketing, Sales',
+    '업무 범위를 입력해주세요': 'Please enter job scope',
+    '필리핀 전체 주소': 'Philippines Full Address',
+    '예: 123 Sample St., Makati City': 'e.g. 123 Sample St., Makati City',
+    '주소를 입력해주세요': 'Please enter address',
+    '필리핀 전화번호': 'Philippines Phone Number',
+    '예: 09171234567': 'e.g. 09171234567',
+    '전화번호를 입력해주세요': 'Please enter phone number',
+    '이메일 주소': 'Email Address',
+    '예: hr@company.com': 'e.g. hr@company.com',
+    '이메일을 입력해주세요': 'Please enter email',
+    '급여 (페소)': 'Salary (Peso)',
+    '예: 50000': 'e.g. 50000',
+    '급여를 입력해주세요': 'Please enter salary',
+    '근무제': 'Work Schedule',
+    '예: 주 5일, 월-금': 'e.g. 5 days/week, Mon-Fri',
+    '근무제를 입력해주세요': 'Please enter work schedule',
     '정말 이 게시글을 삭제하시겠습니까?': 'Are you sure you want to delete this post?',
     '내용을 불러올 수 없습니다': 'Unable to load content',
 
@@ -931,22 +1101,18 @@ class Translations {
     '이메일 앱을 열 수 없습니다.': 'Unable to open email app.',
 
     // 앱 사용 안내
-    '앱 사용 안내': 'App Guide',
     '필고에 오신 것을 환영합니다!': 'Welcome to PhilGo!',
     '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': 'Discover everything about life in the Philippines on PhilGo. Community, chat, business directory and more.',
     '시작하기': 'Getting Started',
     '둘러보기': 'Explore',
     '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': 'Browse forums, business directory, chat, and more.',
-    '글쓰기': 'Write',
     '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.': 'Post freely in the community forum, Q&A, and more.',
     '소통하기': 'Connect',
     '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': 'Chat with other members in real-time via open chat rooms.',
     '주요 기능': 'Key Features',
-    '커뮤니티': 'Community',
     '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': 'Share information across various forums including free board, Q&A, and blogs.',
     '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': 'Join open chat rooms or have 1:1 conversations.',
     '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': 'Search local business info and register your own business.',
-    '회원장터': 'Marketplace',
     '사고팔기, 구인구직 게시판에서 거래하세요.': 'Buy, sell, and find jobs in the marketplace.',
 
     // 업소이벤트
@@ -961,5 +1127,75 @@ class Translations {
     'Step 3. 포인트 응모': 'Step 3. Enter Draw',
     '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!': 'Use your points on the spinning wheel to win coupons!',
     'QR 코드 스캔하기': 'Scan QR Code',
+
+    // QR 코드 화면
+    'QR 코드 보기': 'View QR Code',
+    '로딩 중...': 'Loading...',
+    '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.': 'Scan this QR code to participate in PhilGo business events.',
+    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.': 'QR code for this business is not yet available.\nPlease wait for admin approval.',
+    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.': 'Warning: Businesses that misuse this QR code will be removed from the directory.',
+    '공유': 'Share',
+    '다운로드': 'Download',
+    '업소 보기': 'View Business',
+    'QR 코드가 갤러리에 저장되었습니다.': 'QR code saved to gallery.',
+    '이벤트 참여': 'Join Event',
+    '음식/음료': 'Food & Drink',
+    '건강/병원': 'Health/Hospital',
+    '쇼핑/마트': 'Shopping/Mart',
+    '은행/금융': 'Bank/Finance',
+    '전자제품': 'Electronics',
+    '여행/관광': 'Travel/Tourism',
+    '미용/웰빙': 'Beauty/Wellness',
+    '엔터테인먼트': 'Entertainment',
+    '스파/휴식': 'Spa/Relaxation',
+    '기타 서비스': 'Other Services',
+
+    // QR 스캐너 화면
+    'QR 코드 스캔': 'Scan QR Code',
+    '유효하지 않은 QR 코드입니다.': 'Invalid QR code.',
+    '카메라를 사용할 수 없습니다.': 'Camera is unavailable.',
+    '업소의 QR 코드를 프레임 안에 맞춰주세요': 'Align the business QR code within the frame',
+
+    // QR 스캔 결과 화면
+    '포인트 이벤트': 'Point Event',
+    '방문자 정보': 'Visitor Info',
+    'QR 스캔 결과': 'QR Scan Result',
+    '상세보기': 'Details',
+    '스캔 오류': 'Scan Error',
+    '알 수 없는 오류가 발생했습니다.': 'An unknown error occurred.',
+    '24시간 이내 중복 스캔': 'Duplicate scan within 24 hours',
+    '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.': 'You can only scan once per business within 24 hours.',
+    '만료된 QR 코드': 'Expired QR Code',
+    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.': 'This QR code has expired. Please request a new one from the business.',
+    '유효하지 않은 QR 코드': 'Invalid QR Code',
+    '올바른 필고 업소 QR 코드를 스캔해 주세요.': 'Please scan a valid PhilGo business QR code.',
+    '비활성화된 QR 코드': 'Disabled QR Code',
+    '이 업소의 QR 코드가 비활성화되어 있습니다.': 'This business QR code has been disabled.',
+    '업소 확인 불가': 'Business Unavailable',
+    '업소 정보를 확인할 수 없습니다.': 'Unable to verify business information.',
+    'QR 코드 검증 중...': 'Verifying QR code...',
+    'QR 코드 스캔 성공!': 'QR code scan successful!',
+    '추가 포인트를 받으세요!': 'Earn extra points!',
+    '재방문 포인트 추첨': 'Revisit Point Draw',
+    '후기 작성으로 포인트 받기': 'Earn Points by Writing a Review',
+
+    // 방문 후기 작성 화면
+    '방문 후기': 'Visit Review',
+    '후기 내용을 10자 이상 입력해 주세요.': 'Please write at least 10 characters for the review.',
+    '사진을 1장 이상 첨부해 주세요.': 'Please attach at least 1 photo.',
+    '후기 작성 시 포인트를 드립니다!': 'Earn points by writing a review!',
+    '방문 후기를 작성해 주세요. (10자 이상)': 'Write your visit review. (min. 10 characters)',
+    '사진 추가': 'Add Photo',
+    '업로드 중...': 'Uploading...',
+    '저장 중...': 'Saving...',
+    '후기 저장': 'Save Review',
+
+    // 후기 포인트 결과 화면
+    '후기 포인트 결과': 'Review Point Result',
+    '업소 정보 보기': 'View Business Info',
+
+    // 재방문 포인트 결과 화면
+    '재방문 포인트 결과': 'Revisit Point Result',
+    '포인트 추첨 중...': 'Drawing points...',
   };
 }

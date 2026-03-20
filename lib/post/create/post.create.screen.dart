@@ -11,6 +11,7 @@ import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/point/point_advertisement.service.dart';
 import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
+import 'package:philgo/post/create/widgets/wanted_hiring_form.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
@@ -75,11 +76,16 @@ class PostCreateScreen extends StatefulWidget {
 
 class _PostCreateScreenState extends State<PostCreateScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _hiringFormKey = GlobalKey<WantedHiringFormState>();
   final _titleController = TextEditingController();
   final _contentController = TextEditingController();
   bool _isSubmitting = false;
   final List<FileUploadModel> _uploadedFiles = [];
   int _uploadingCount = 0;
+
+  /// 현재 구인(hiring) 폼을 표시 중인지 여부
+  bool get _isHiringMode =>
+      _selectedPostId == 'wanted' && _selectedCategory == 'hiring';
 
   /// 선택된 게시판 ID (드롭다운으로 변경 가능)
   late String _selectedPostId;
@@ -448,7 +454,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     ),
                   )
                 : IconButton(
-                    onPressed: _submit,
+                    onPressed: _isHiringMode
+                        ? () => _hiringFormKey.currentState?.submit()
+                        : _submit,
                     icon: FaIcon(
                       FontAwesomeIcons.lightPaperPlaneTop,
                       size: 20,
@@ -458,7 +466,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           ),
         ],
       ),
-      body: Form(
+      body: _isHiringMode
+          ? WantedHiringForm(key: _hiringFormKey)
+          : Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
