@@ -5,10 +5,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
+import 'package:philgo/api/api.service.dart';
 import 'package:philgo/messaging/messaging.defines.dart';
 import 'package:philgo/messaging/messaging.functions.dart';
-
-// import 'dart:developer';
 
 /// Firebase Cloud Messaging service for push notifications
 class MessagingService {
@@ -132,14 +131,16 @@ class MessagingService {
       return;
     }
 
-    // // Update last saved token with token + uid if logged in
-    lastSavedToken = tokenCache; // Subscribe to all users topic via API
+    lastSavedToken = tokenCache;
 
-    // @TODO: ADD MessagingSaveTokenApi
-    // await func<Map<String, dynamic>>(
-    //   MessagingConfig.messagingSaveTokenApi,
-    //   data: data,
-    // );
+    try {
+      await ApiService.instance.v7api(
+        MessagingConfig.messagingSaveTokenApi,
+        data: data,
+      );
+    } catch (e) {
+      debugPrint('Error saving FCM token: $e');
+    }
   }
 
   /// Setup message handlers for foreground, background, and terminated states
