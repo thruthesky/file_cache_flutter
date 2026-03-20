@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/point/point_advertisement.model.dart';
 import 'package:philgo/point/widgets/point_advertisements.dart';
 import 'package:philgo/post/list/widgets/post_list_masonry_view.dart';
@@ -10,6 +12,8 @@ import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/search/search.screen.dart';
+import 'package:philgo/search/search_dialog.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/util/util.functions.dart';
@@ -92,6 +96,14 @@ class _ForumScreenState extends State<ForumScreen> {
     });
   }
 
+  /// 검색 다이얼로그 표시 → 검색어 입력 → SearchScreen으로 이동
+  void _openSearch(BuildContext context) async {
+    final searchTerm = await SearchDialog.show(context);
+    if (searchTerm != null && searchTerm.isNotEmpty && mounted) {
+      SearchScreen.push(context, searchTerm);
+    }
+  }
+
   bool _handleScrollNotification(ScrollNotification notification) {
     if (notification is ScrollUpdateNotification) {
       final delta = notification.scrollDelta ?? 0;
@@ -132,10 +144,38 @@ class _ForumScreenState extends State<ForumScreen> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
-                child: PostListHeaderCategories(
-                  categories: Config.forumCategories,
-                  selectedIndex: _selectedIndex,
-                  onCategoryTap: _onCategoryTap,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: PostListHeaderCategories(
+                        categories: Config.forumCategories,
+                        selectedIndex: _selectedIndex,
+                        onCategoryTap: _onCategoryTap,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8, top: 8),
+                      child: GestureDetector(
+                        onTap: () => _openSearch(context),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: color.surfaceContainerHighest,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.lightMagnifyingGlass,
+                              size: 16,
+                              color: color.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

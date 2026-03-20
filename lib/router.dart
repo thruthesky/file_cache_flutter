@@ -12,6 +12,7 @@ import 'package:philgo/deeplink/deeplink.service.dart';
 import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
+import 'package:philgo/guide/app_guide.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -20,8 +21,10 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
-import 'package:philgo/guide/app_guide.screen.dart';
+import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
+import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 import 'package:provider/provider.dart';
 
@@ -55,10 +58,7 @@ final router = GoRouter(
 
     // 채팅방: /chat/index.php?id=xxx
     if (result.isChatRoom && result.chatRoomId != null) {
-      return ChatRoomScreen.routeName.replaceFirst(
-        ':id',
-        result.chatRoomId!,
-      );
+      return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
     }
 
     // 업소록 보기: /company/view?idx=5422 또는 /company/view.php?idx=1025
@@ -208,8 +208,7 @@ final router = GoRouter(
           return CompanyViewScreen(company: state.extra as CompanyModel);
         }
         // 2. query parameters fallback (딥링크)
-        final idx =
-            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         return CompanyViewScreen(company: CompanyModel.minimal(idx: idx));
       },
     ),
@@ -249,6 +248,14 @@ final router = GoRouter(
       builder: (context, state) => const EventCouponScreen(),
     ),
     GoRoute(
+      path: SearchScreen.routeName,
+      name: SearchScreen.routeName,
+      builder: (context, state) {
+        final searchTerm = state.extra as String? ?? '';
+        return SearchScreen(searchTerm: searchTerm);
+      },
+    ),
+    GoRoute(
       path: AppInfoScreen.routeName,
       name: AppInfoScreen.routeName,
       builder: (context, state) => const AppInfoScreen(),
@@ -262,6 +269,16 @@ final router = GoRouter(
       path: AppGuideScreen.routeName,
       name: AppGuideScreen.routeName,
       builder: (context, state) => const AppGuideScreen(),
+    ),
+    GoRoute(
+      path: WeatherScreen.routeName,
+      name: WeatherScreen.routeName,
+      builder: (context, state) => const WeatherScreen(),
+    ),
+    GoRoute(
+      path: ExchangeRateScreen.routeName,
+      name: ExchangeRateScreen.routeName,
+      builder: (context, state) => const ExchangeRateScreen(),
     ),
   ],
 );

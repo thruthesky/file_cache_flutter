@@ -7,9 +7,13 @@ import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
+import 'package:philgo/point/point_advertisement.service.dart';
+import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
+import 'package:provider/provider.dart';
 
 /// 게시글 수정 화면
 ///
@@ -49,6 +53,12 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
 
   int _uploadingCount = 0;
 
+  /// 포인트 광고 설정
+  PointAdvertisementConfig? _adConfig;
+
+  /// 선택된 광고 기간 (null이면 광고 안 함)
+  int? _advertisementDays;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +72,41 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               .where((e) => e.isNotEmpty)
               .toList()
         : [];
+    _loadAdConfig();
+  }
+
+  /// 포인트 광고 설정 로드
+  Future<void> _loadAdConfig() async {
+    try {
+      final config = await PointAdvertisementService.getConfig(
+        postId: widget.post.postId,
+        category: widget.post.category,
+      );
+      if (mounted) setState(() => _adConfig = config);
+    } catch (_) {}
+  }
+
+  /// 포인트 광고 선택 바텀시트 표시
+  void _showAdSelectionSheet() {
+    final config = _adConfig;
+    if (config == null || !config.eligible) return;
+
+    final userPoints = context.read<UserState>().point;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => PointAdSelectionBottomSheet(
+        config: config,
+        userPoints: userPoints,
+        initialSelectedDays: _advertisementDays,
+        onDaysSelected: (days) {
+          Navigator.pop(context);
+          setState(() => _advertisementDays = days);
+        },
+      ),
+    );
   }
 
   @override
@@ -114,6 +159,23 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
         content: _contentController.text.trim(),
         files: allFiles,
       );
+
+      // 포인트 광고 등록/연장 (선택한 경우)
+      if (_advertisementDays != null && _advertisementDays! > 0) {
+        try {
+          final adResult = await PointAdvertisementService.advertise(
+            idx: widget.post.idx,
+            days: _advertisementDays!,
+          );
+          _latestPost = _latestPost.copyWith(adEndTime: adResult.adEndTime);
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${'포인트 광고 등록 실패'.tr()}: $e')),
+            );
+          }
+        }
+      }
 
       if (!mounted) return;
       Navigator.of(context).pop(_latestPost);
@@ -221,6 +283,81 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               },
             ),
             const SizedBox(height: 12),
+
+            // 포인트 광고 선택 버튼 (적격 게시판인 경우만)
+            if (_adConfig != null && _adConfig!.eligible)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: InkWell(
+                  onTap: _isSubmitting ? null : _showAdSelectionSheet,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: (_advertisementDays != null ||
+                              widget.post.isAdActive)
+                          ? scheme.primaryContainer.withValues(alpha: 0.3)
+                          : scheme.surfaceContainerHighest.withValues(
+                              alpha: 0.5,
+                            ),
+                      borderRadius: BorderRadius.circular(8),
+                      border: (_advertisementDays != null ||
+                              widget.post.isAdActive)
+                          ? Border.all(color: scheme.primary, width: 1)
+                          : Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                    ),
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.lightBullhorn,
+                          size: 14,
+                          color: (_advertisementDays != null ||
+                                  widget.post.isAdActive)
+                              ? scheme.primary
+                              : scheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            _advertisementDays != null
+                                ? (widget.post.isAdActive
+                                    ? '${'포인트 광고 연장'.tr()}: +$_advertisementDays${'일'.tr()}'
+                                    : '${'포인트 광고'.tr()}: $_advertisementDays${'일'.tr()}')
+                                : (widget.post.isAdActive
+                                    ? '${'포인트 광고 중'.tr()} (D-${widget.post.adRemainingDays})'
+                                    : '포인트 광고'.tr()),
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: (_advertisementDays != null ||
+                                      widget.post.isAdActive)
+                                  ? scheme.primary
+                                  : scheme.onSurfaceVariant,
+                              fontWeight: (_advertisementDays != null ||
+                                      widget.post.isAdActive)
+                                  ? FontWeight.w600
+                                  : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                        FaIcon(
+                          FontAwesomeIcons.lightChevronDown,
+                          size: 12,
+                          color: (_advertisementDays != null ||
+                                  widget.post.isAdActive)
+                              ? scheme.primary
+                              : scheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
             // 파일 업로드 버튼 + 미리보기
             Column(
