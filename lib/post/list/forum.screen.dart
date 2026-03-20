@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
+import 'package:philgo/point/point_advertisement.model.dart';
+import 'package:philgo/point/widgets/point_advertisements.dart';
 import 'package:philgo/post/list/widgets/post_list_masonry_view.dart';
 import 'package:philgo/post/list/widgets/post_list_view.dart';
 import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
@@ -12,6 +14,7 @@ import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -25,6 +28,9 @@ class _ForumScreenState extends State<ForumScreen> {
   bool _showHeader = true;
   static const _headerHideThreshold = 48.0;
   static const _pageSize = 20;
+
+  /// 포인트 광고 목록 (1페이지에서만 로드)
+  List<PointAdvertisement> _pointAdvertisements = [];
 
   late final PagingController<int, Post> _pagingController;
 
@@ -56,6 +62,12 @@ class _ForumScreenState extends State<ForumScreen> {
       limit: _pageSize,
       page: page,
     );
+    // 1페이지일 때 포인트 광고 목록 업데이트
+    if (page == 1 && mounted) {
+      setState(() {
+        _pointAdvertisements = result.pointAdvertisements;
+      });
+    }
     if (page > 1 && result.posts.isEmpty) return [];
     return result.posts;
   }
@@ -128,6 +140,12 @@ class _ForumScreenState extends State<ForumScreen> {
               ),
             ),
             Container(height: 1, color: scheme.outlineVariant),
+            // 포인트 광고 (일반 레이아웃에서만 표시)
+            if (_pointAdvertisements.isNotEmpty && !isMasonryLayout)
+              PointAdvertisements(
+                advertisements: _pointAdvertisements,
+                onTap: _onAdTap,
+              ),
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
@@ -150,6 +168,24 @@ class _ForumScreenState extends State<ForumScreen> {
       ),
       // FAB는 AppScreen에서 통합 관리
     );
+  }
+
+  /// 포인트 광고 클릭 시 글 보기 화면으로 이동
+  void _onAdTap(PointAdvertisement ad) {
+    // 외부 링크가 있으면 브라우저로 열기
+    if (ad.link.isNotEmpty) {
+      final uri = Uri.tryParse(ad.link);
+      if (uri != null) launchUrl(uri, mode: LaunchMode.externalApplication);
+      return;
+    }
+    // 내부 글이면 PostViewScreen으로 이동
+    PostService.get(ad.idx).then((post) {
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
+        );
+      }
+    });
   }
 
   Future<void> _openPostView(Post post) async {
