@@ -367,7 +367,8 @@ public static function listByAccessCodePrefix(string $prefix): array
  * DB에서 access_code가 설정된 모든 info 게시글의 레지스트리 반환.
  * 웹/앱에서 동일한 access_code 목록을 공유하기 위한 Single Source of Truth.
  *
- * access_code에서 module과 region을 자동 추출하여 필터링 지원.
+ * module 필터: access_code 접두사 LIKE 쿼리.
+ * region 필터: sf_post_data.region 컬럼으로 SQL WHERE 조건.
  */
 public static function getRegistry(string $module = '', string $region = ''): array
 {
@@ -375,9 +376,16 @@ public static function getRegistry(string $module = '', string $region = ''): ar
               "p.access_code IS NOT NULL", "p.access_code != ''"];
     $params = [];
 
+    // 모듈 필터 (access_code 접두사)
     if (!empty($module)) {
         $where[] = "p.access_code LIKE ?";
         $params[] = "info:{$module}:%";
+    }
+
+    // 지역 필터 (sf_post_data.region 컬럼 사용)
+    if (!empty($region)) {
+        $where[] = "p.region = ?";
+        $params[] = $region;
     }
 
     $whereClause = implode(' AND ', $where);
@@ -393,21 +401,17 @@ public static function getRegistry(string $module = '', string $region = ''): ar
     $registry = [];
     foreach ($rows as $row) {
         $code = (string)$row['access_code'];
+
+        // access_code에서 모듈 추출 (info:<모듈>:...)
         $segments = explode(':', $code);
         $rowModule = $segments[1] ?? '';
-        $rowRegion = count($segments) >= 4 ? ($segments[2] ?? '') : '';
-
-        // 지역 필터
-        if (!empty($region) && $rowRegion !== $region) {
-            continue;
-        }
 
         $registry[$code] = [
             'name' => (string)$row['subject'],
             'icon' => (string)$row['icon'],
             'description' => (string)$row['description'],
             'module' => $rowModule,
-            'region' => $rowRegion,
+            'region' => (string)$row['region'],
             'city' => (string)$row['city'],
             'post_id' => (string)$row['post_id'],
             'category' => (string)$row['category'],
