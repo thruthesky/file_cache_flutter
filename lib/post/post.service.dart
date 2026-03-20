@@ -52,7 +52,7 @@ class PostService {
 
   /// 게시글 단건 조회
   ///
-  /// API: post.get (인증 불필요)
+  /// API: post.get (인증 불필 t요)
   ///
   /// [idx] 게시글 고유번호
   /// 반환: Post 객체
@@ -60,6 +60,7 @@ class PostService {
     final result = await ApiService.instance.v7api(
       'post.get',
       data: {'idx': idx},
+      debug: true,
     );
     return Post.fromJson(result);
   }
