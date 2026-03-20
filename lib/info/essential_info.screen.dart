@@ -39,6 +39,7 @@ class EssentialInfoScreen extends StatelessWidget {
       _MenuItem(FontAwesomeIcons.peopleGroup, '한인회', accessCode: InfoAccessCodes.koreanAssociation),
       _MenuItem(FontAwesomeIcons.buildingShield, '경찰서', accessCode: InfoAccessCodes.policeStations),
       _MenuItem(FontAwesomeIcons.hospital, '병원', accessCode: InfoAccessCodes.hospitals),
+      _MenuItem(FontAwesomeIcons.buildingColumns, '기관 연락처', accessCode: InfoAccessCodes.otherAgencies),
     ]),
     // 2. 출입국 & 비자 여권
     _Section('출입국 & 비자 여권', [
