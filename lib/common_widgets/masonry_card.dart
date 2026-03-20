@@ -243,38 +243,33 @@ class _MasonryCardState extends State<MasonryCard> {
     );
   }
 
+  /// 이미지 비율에 따라 높이를 조절하는 공통 메서드 (빌드 중 setState 방지)
+  void _updateResolvedHeight(ImageProvider imageProvider, double cardWidth) {
+    if (_resolvedHeight != null) return;
+    imageProvider.resolve(ImageConfiguration.empty).addListener(
+      ImageStreamListener((info, _) {
+        final imgW = info.image.width.toDouble();
+        final imgH = info.image.height.toDouble();
+        final resolved = (imgH / imgW) * cardWidth;
+        final clamped = resolved.clamp(widget.minHeight, widget.maxHeight);
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _resolvedHeight = clamped);
+          });
+        }
+      }),
+    );
+  }
+
   /// CachedNetworkImage로 이미지 표시 + 비율 기반 높이 자동 조절
   Widget _buildImage(ColorScheme scheme) {
-    debugPrint('🖼️ MasonryCard 이미지 로드 시도: ${widget.imageUrl}');
     return LayoutBuilder(
       builder: (context, constraints) {
         return CachedNetworkImage(
           imageUrl: widget.imageUrl!,
           fit: BoxFit.cover,
           imageBuilder: (context, imageProvider) {
-            if (_resolvedHeight == null) {
-              imageProvider
-                  .resolve(ImageConfiguration.empty)
-                  .addListener(
-                    ImageStreamListener((info, _) {
-                      final imgW = info.image.width.toDouble();
-                      final imgH = info.image.height.toDouble();
-                      final cardW = constraints.maxWidth;
-                      final resolved = (imgH / imgW) * cardW;
-                      final clamped = resolved.clamp(
-                        widget.minHeight,
-                        widget.maxHeight,
-                      );
-                      if (mounted) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            setState(() => _resolvedHeight = clamped);
-                          }
-                        });
-                      }
-                    }),
-                  );
-            }
+            _updateResolvedHeight(imageProvider, constraints.maxWidth);
             return Image(image: imageProvider, fit: BoxFit.cover);
           },
           placeholder: (_, _) => Container(
@@ -283,14 +278,10 @@ class _MasonryCardState extends State<MasonryCard> {
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
           ),
-          errorWidget: (_, url, error) {
-            debugPrint('❌ MasonryCard 이미지 로드 실패: $url');
-            debugPrint('❌ 에러: $error');
-            return Container(
-              color: scheme.surfaceContainerHigh,
-              child: Icon(Icons.broken_image, color: scheme.outline),
-            );
-          },
+          errorWidget: (_, _, _) => Container(
+            color: scheme.surfaceContainerHigh,
+            child: Icon(Icons.broken_image, color: scheme.outline),
+          ),
         );
       },
     );
@@ -304,29 +295,7 @@ class _MasonryCardState extends State<MasonryCard> {
           imageUrl: url,
           fit: BoxFit.cover,
           imageBuilder: (context, imageProvider) {
-            if (_resolvedHeight == null) {
-              imageProvider
-                  .resolve(ImageConfiguration.empty)
-                  .addListener(
-                    ImageStreamListener((info, _) {
-                      final imgW = info.image.width.toDouble();
-                      final imgH = info.image.height.toDouble();
-                      final cardW = constraints.maxWidth;
-                      final resolved = (imgH / imgW) * cardW;
-                      final clamped = resolved.clamp(
-                        widget.minHeight,
-                        widget.maxHeight,
-                      );
-                      if (mounted) {
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          if (mounted) {
-                            setState(() => _resolvedHeight = clamped);
-                          }
-                        });
-                      }
-                    }),
-                  );
-            }
+            _updateResolvedHeight(imageProvider, constraints.maxWidth);
             return Image(image: imageProvider, fit: BoxFit.cover);
           },
           placeholder: (_, _) => Container(

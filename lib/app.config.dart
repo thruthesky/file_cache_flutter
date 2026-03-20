@@ -1,97 +1,121 @@
-/// 카카오 네이티브 앱 키 (Flutter/iOS/Android용)
-const String kakaoNativeAppKey = 'cf75184c7c72f507d6bb5e39627925d3';
+/// 앱 전역 설정 클래스
+///
+/// 모든 설정값을 static 멤버로 관리한다.
+/// 사용: Config.v7ApiEndpoint, Config.forumCategories 등
+class Config {
+  Config._(); // 인스턴스화 방지
 
-// fallback: 'RaHIcr45pvPzYdcDIv6JoW8DnSH2' (관리자 UID)
-const String chatAdminUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
+  /// 카카오 네이티브 앱 키 (Flutter/iOS/Android용)
+  static const String kakaoNativeAppKey =
+      'cf75184c7c72f507d6bb5e39627925d3';
 
-/// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
-final String v7ApiEndpoint = const String.fromEnvironment(
-  'V7_API_ENDPOINT',
-  defaultValue: 'https://philgo.com/api.php',
-);
+  /// 채팅 관리자 UID (fallback)
+  static const String chatAdminUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
 
-/// v7 서버 베이스 URL (파일/이미지 URL 조합에 사용)
-/// 예: 'https://philgo.com' 또는 'https://v7-local.philgo.com'
-final String v7BaseUrl = () {
-  final uri = Uri.tryParse(v7ApiEndpoint);
-  if (uri == null) return 'https://philgo.com';
-  return '${uri.scheme}://${uri.host}';
-}();
+  /// v7 API 엔드포인트 (--dart-define=V7_API_ENDPOINT 으로 설정 가능)
+  static final String v7ApiEndpoint = const String.fromEnvironment(
+    'V7_API_ENDPOINT',
+    defaultValue: 'https://philgo.com/api.php',
+  );
 
-/// Masonry 레이아웃을 사용하는 게시판/카테고리 목록
-/// v7/utils/Config.php의 masonryCategories()와 동일
-const masonryCategories = <String>{
-  'rest',
-  'youtube',
-  '주택임대',
-  '사진',
-  '먹방',
-  '유튜브',
-  '중고차',
-  '호텔',
-  '렌트카',
-  'buyandsell',
-  'real_estate',
-};
+  /// v7 서버 베이스 URL (파일/이미지 URL 조합에 사용)
+  /// 예: 'https://philgo.com' 또는 'https://v7-local.philgo.com'
+  static final String v7BaseUrl = () {
+    final uri = Uri.tryParse(v7ApiEndpoint);
+    if (uri == null) return 'https://philgo.com';
+    return '${uri.scheme}://${uri.host}';
+  }();
 
-/// 포럼 카테고리 데이터 (postId, category, 한글 라벨)
-const forumCategories = <(String, String?, String)>[
-  ('freetalk', null, '자유게시판'),
-  ('qna', null, '질문답변'),
-  ('buyandsell', null, '사고팔기'),
-  ('wanted', null, '구인구직'),
-  ('travel', null, '여행'),
-  ('massage', null, '마사지'),
-  ('buyandsell', 'real_estate', '부동산'),
-  ('freetalk', '뉴스', '뉴스'),
-  ('buyandsell', '골프', '골프'),
-  ('buyandsell', '렌트카', '렌트카'),
-  ('freetalk', 'info', '정보'),
-  ('freetalk', '코필커플', '코필커플'),
-  ('freetalk', '코피노', '코피노'),
-  ('freetalk', '이민', '이민'),
-  ('freetalk', '국제결혼', '국제결혼'),
-  ('freetalk', '먹방', '먹방'),
-  ('freetalk', '경험담', '경험담'),
-  ('freetalk', '마닐라', '마닐라'),
-  ('freetalk', '세부', '세부'),
-  ('freetalk', '앙헬레스', '앙헬레스'),
-  ('freetalk', '행방불명', '행방불명'),
-  ('buyandsell', '핸드폰', '핸드폰'),
-  ('buyandsell', '컴퓨터/인터넷', '컴퓨터/인터넷'),
-  ('buyandsell', '페소환전', '페소환전'),
-  ('buyandsell', '개인장터', '개인장터'),
-  ('buyandsell', '사업/동업구함', '사업/동업구함'),
-  ('buyandsell', '가전/생활용품', '가전/생활용품'),
-  ('boarding_house', null, '하숙/기숙사'),
-  ('business', null, '비즈니스'),
-  ('school', null, '학교'),
-  ('study', null, '스터디'),
-  ('caution', null, '주의사항'),
-  ('greeting', null, '인사'),
-  ('food_delivery', null, '음식배달'),
-  ('rest', null, '레스토랑'),
-  ('youtube', null, '유튜브'),
-  ('blog', null, '블로그'),
-];
-
-List<String> majorForumCategories({bool includeTemp = false}) {
-  return [
-    if (includeTemp) 'temp', // 임시, Test forum.
-    'freetalk', // 행불 포함
-    'qna',
-    'buyandsell',
-    'wanted', // 구인구직
-    'massage',
-    'boarding_house',
-    'travel',
-    'business',
-    'school',
-    'caution', // 주의사항
-    'greeting',
-    'food_delivery',
+  /// Masonry 레이아웃을 사용하는 게시판/카테고리 목록
+  /// v7/utils/Config.php의 masonryCategories()와 동일
+  static const masonryCategories = <String>{
     'rest',
-    'blog',
     'youtube',
+    '주택임대',
+    '사진',
+    '먹방',
+    '유튜브',
+    '중고차',
+    '호텔',
+    '렌트카',
+    'buyandsell',
+    'real_estate',
+  };
+
+  /// 포럼 카테고리 데이터 (postId, category, 한글 라벨)
+  static const forumCategories = <(String, String?, String)>[
+    ('freetalk', null, '자유게시판'),
+    ('qna', null, '질문답변'),
+    ('buyandsell', null, '사고팔기'),
+    ('wanted', null, '구인구직'),
+    ('travel', null, '여행'),
+    ('massage', null, '마사지'),
+    ('buyandsell', 'real_estate', '부동산'),
+    ('freetalk', '뉴스', '뉴스'),
+    ('buyandsell', '골프', '골프'),
+    ('buyandsell', '렌트카', '렌트카'),
+    ('freetalk', 'info', '정보'),
+    ('freetalk', '코필커플', '코필커플'),
+    ('freetalk', '코피노', '코피노'),
+    ('freetalk', '이민', '이민'),
+    ('freetalk', '국제결혼', '국제결혼'),
+    ('freetalk', '먹방', '먹방'),
+    ('freetalk', '경험담', '경험담'),
+    ('freetalk', '마닐라', '마닐라'),
+    ('freetalk', '세부', '세부'),
+    ('freetalk', '앙헬레스', '앙헬레스'),
+    ('freetalk', '행방불명', '행방불명'),
+    ('buyandsell', '핸드폰', '핸드폰'),
+    ('buyandsell', '컴퓨터/인터넷', '컴퓨터/인터넷'),
+    ('buyandsell', '페소환전', '페소환전'),
+    ('buyandsell', '개인장터', '개인장터'),
+    ('buyandsell', '사업/동업구함', '사업/동업구함'),
+    ('buyandsell', '가전/생활용품', '가전/생활용품'),
+    ('boarding_house', null, '하숙/기숙사'),
+    ('business', null, '비즈니스'),
+    ('school', null, '학교'),
+    ('study', null, '스터디'),
+    ('caution', null, '주의사항'),
+    ('greeting', null, '인사'),
+    ('food_delivery', null, '음식배달'),
+    ('rest', null, '레스토랑'),
+    ('youtube', null, '유튜브'),
+    ('blog', null, '블로그'),
+  ];
+
+  /// 주요 게시판 ID 목록
+  static List<String> majorForumCategories({bool includeTemp = false}) {
+    return [
+      if (includeTemp) 'temp', // 임시, Test forum.
+      'freetalk', // 행불 포함
+      'qna',
+      'buyandsell',
+      'wanted', // 구인구직
+      'massage',
+      'boarding_house',
+      'travel',
+      'business',
+      'school',
+      'caution', // 주의사항
+      'greeting',
+      'food_delivery',
+      'rest',
+      'blog',
+      'youtube',
+    ];
+  }
+
+  /// 홈 화면에 표시할 주요 카테고리 (postId, category, label)
+  static const homeTopCategories = <(String, String?, String)>[
+    ('freetalk', null, '자유게시판'),
+    ('qna', null, '질문답변'),
+    ('buyandsell', null, '사고팔기'),
+    ('wanted', null, '구인구직'),
+    ('travel', null, '여행'),
+    ('massage', null, '마사지'),
+    ('buyandsell', 'real_estate', '부동산'),
+    ('freetalk', '뉴스', '뉴스'),
+    ('youtube', null, '유튜브'),
+    ('blog', null, '블로그'),
   ];
 }

@@ -120,9 +120,11 @@ lib/
 - Instead, use the global getters defined in `lib/globals.dart`: `color` for `ColorScheme` and `text` for `TextTheme`.
 - Examples: `text.titleLarge`, `color.primary`, `color.surface`.
 
-## Font Awesome icons only
+## Font Awesome Pro 아이콘 사용
 
-- Use only Font Awesome icons for all UI elements to maintain visual consistency and reduce asset management overhead.
+- Font Awesome Pro 버전(Font Awesome Pro 유료 버전 7.2)이 설치되어 있다. Pro 전용 아이콘(Light, Thin, Duotone 등)을 자유롭게 사용할 수 있다.
+- 모든 UI 요소에 Font Awesome 아이콘만 사용한다. 다른 아이콘 패키지(Material Icons 등)는 사용하지 않는다.
+- Light 아이콘 예시: `FontAwesomeIcons.lightHouse`, `FontAwesomeIcons.lightCamera`
 
 
 

@@ -6,7 +6,9 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
+import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -157,6 +159,16 @@ final router = GoRouter(
         final extra = state.extra as Map<String, String>;
         return WebViewScreen(url: extra['url']!, title: extra['title']!);
       },
+    ),
+    GoRoute(
+      path: CompanyEventScreen.routeName,
+      name: CompanyEventScreen.routeName,
+      builder: (context, state) => const CompanyEventScreen(),
+    ),
+    GoRoute(
+      path: EventEntryScreen.routeName,
+      name: EventEntryScreen.routeName,
+      builder: (context, state) => const EventEntryScreen(),
     ),
     GoRoute(
       path: EventCouponScreen.routeName,

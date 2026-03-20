@@ -53,6 +53,24 @@ class Settings {
     );
   }
 
+  /// availableStarbucksCoupons만 변경한 새 Settings 객체 반환
+  Settings copyWith({int? availableStarbucksCoupons}) {
+    return Settings(
+      appVersionAndroid: appVersionAndroid,
+      appVersionAndroidBuild: appVersionAndroidBuild,
+      appVersionIos: appVersionIos,
+      appVersionIosBuild: appVersionIosBuild,
+      companyQrEventEnabled: companyQrEventEnabled,
+      eventEntryEnabled: eventEntryEnabled,
+      adminUids: adminUids,
+      chatAdmin: chatAdmin,
+      availableStarbucksCoupons:
+          availableStarbucksCoupons ?? this.availableStarbucksCoupons,
+      spinCost: spinCost,
+      spinSections: spinSections,
+    );
+  }
+
   static int _toInt(dynamic value) {
     if (value == null) return 0;
     if (value is int) return value;

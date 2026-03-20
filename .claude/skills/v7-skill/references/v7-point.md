@@ -962,80 +962,290 @@ if (PointConfig::$event_throttling_minutes > 0) {
 
 ### 개념
 
-사용자의 포인트를 사용하여 글을 게시판 상단에 노출하는 기능.
+사용자의 포인트를 사용하여 자신의 글을 게시판 목록 상단에 고정 노출하는 기능.
+v6의 `advertise_point_post()` 함수와 100% 동일한 로직을 v7 아키텍처(Controller + Service + Repository)로 구현.
+
+### DB 필드 매핑 (sf_post_data)
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| `int_5` | INT | 광고 종료 Unix timestamp — **핵심 필드** (`int_5 > time()` = 활성) |
+| `int_6` | INT | 마지막 광고 등록/연장 시간 |
+| `int_7` | INT | 마지막 등록 기간 (일) |
+| `int_8` | INT | 마지막 등록에 소비한 포인트 |
 
 ### 광고 비용
 
 ```php
-public static $point_adv_cost_per_hour = 240;  // 시간당 240포인트
+// PostService 상수
+private const POINT_ADV_COST_PER_HOUR = 240;  // 시간당 240포인트
 ```
 
 | 광고 기간 | 필요 포인트 (240 × 24 × days) |
 |----------|-------------------------------|
 | 3일 | 17,280 |
+| 5일 | 28,800 |
 | 7일 | 40,320 |
+| 10일 | 57,600 |
+| 15일 | 86,400 |
 | 30일 | 172,800 |
 | 90일 | 518,400 |
 | 365일 | 2,102,400 |
 
-### 광고 허용 게시판
+### 광고 허용 게시판 (24개)
 
 ```php
-const POINT_ADVERTISEMENT_POST_CATEGORIES = [
-    'boarding_house', 'business', 'buyandsell', 'massage',
-    'promotion', 'real_estate', 'rest', 'study', 'travel',
-    'wanted', 'blog', ...
+// PostService 상수
+private const POINT_ADV_CATEGORIES = [
+    'boarding_house', 'business', 'buyandsell', 'massage', 'promotion',
+    'real_estate', 'rest', 'study', 'travel', 'wanted', 'blog',
+    '가전/생활용품', '개인장터', '골프', '렌트카', '주택임대', '중고차',
+    '여권/비자', '이민', '컴퓨터/인터넷', '페소환전', '핸드폰', '호텔', 'temp'
 ];
 ```
 
-### 광고 기간 옵션
+제외: `freetalk`(자유게시판), `qna`(질문답변)
+
+### 기간 옵션
 
 ```php
-const POINT_ADVERTISEMENT_DAYS = [3, 5, 7, 10, 15, 30, 60, 90, 180, 365];
+private const POINT_ADV_DAYS = [3, 5, 7, 10, 15, 30, 60, 90, 180, 365];
 ```
 
-### v6 원본 코드 (advertise_point_post)
+### v7 백엔드 구현
+
+#### 소스코드 파일
+
+| 파일 | 클래스/메서드 | 설명 |
+|------|-------------|------|
+| `lib/post/PostController.php` | `advertisementConfig()` | 광고 설정 조회 API |
+| `lib/post/PostController.php` | `advertise()` | 광고 등록/연장 API |
+| `lib/post/PostService.php` | `getAdvertisementConfig()` | 적격 여부 + 기간별 비용 반환 |
+| `lib/post/PostService.php` | `advertise()` | 등록/연장 핵심 로직 |
+| `lib/post/PostService.php` | `listPointAdvertisements()` | 활성 광고 목록 조회 |
+| `lib/post/PostRepository.php` | `findPointAdvertisements()` | DB 쿼리 (USE INDEX) |
+
+#### 핵심 로직: PostService::advertise()
 
 ```php
-// lib/point.functions.php 라인 696-776
-function advertise_point_post(array $in, array $login_user): array
+// lib/post/PostService.php (라인 682-764)
+public static function advertise(array $input): PostEntity
 {
-    // 권한 확인 (본인 글만)
-    if ($login_user[IDX] != $post[IDX_MEMBER]) error('not-authorized');
+    $idx = (int)($input['idx'] ?? 0);
+    $days = (int)($input['days'] ?? 0);
+    $idxMember = (int)($input['idx_member'] ?? 0);
 
-    // 게시판 확인 (광고 허용 게시판만)
-    if (!in_array($cat, PointConfig::$advertising_post_categories)) error('invalid-post-id');
+    // 1. 글 조회 + 본인 확인
+    $post = PostRepository::findByIdx($idx);
+    if ($post->idx_member !== $idxMember) throw new RuntimeException('본인 글만 가능');
 
-    // 비용 계산
-    $required_points = 240 * 24 * $days;
+    // 2. 적격 게시판 확인
+    if (!in_array($post->post_id, self::POINT_ADV_CATEGORIES, true)
+        && !in_array($post->category, self::POINT_ADV_CATEGORIES, true)) {
+        throw new RuntimeException('이 게시판에서는 포인트 광고를 사용할 수 없습니다.');
+    }
 
-    // 포인트 차감
-    change_user_points(
-        points: $required_points * -1,
-        module: 'adv',
-        action: 'point-post-advertisement',
-        etc: 'post_on_top'
-    );
+    // 3. 포인트 계산 + 잔액 확인
+    $requiredPoints = self::POINT_ADV_COST_PER_HOUR * 24 * $days;
+    $userRow = Db::fetch("SELECT point FROM sf_member WHERE idx = ?", [$idxMember]);
+    if ((int)$userRow['point'] < $requiredPoints) {
+        throw new RuntimeException('포인트가 부족합니다.');
+    }
 
-    // 광고 종료 시간 계산 (기존 광고 연장 지원)
-    $end_time = $expiry > $now ? $expiry + $time_to_extends : $now + $time_to_extends;
+    // 4. 포인트 차감
+    PointLogService::changePoints($requiredPoints * -1, $idxMember, $idxMember,
+        'adv', 'point-post-advertisement', $idx, 'point_adv');
 
-    // DB 업데이트
-    update_post([
-        'int_5' => $end_time,       // 광고 종료 시간
-        'int_6' => $now,            // 광고 시작 시간
-        'int_7' => $days,           // 광고 기간
-        'int_8' => $required_points // 사용 포인트
+    // 5. 광고 종료 시간 계산 (연장 지원)
+    $now = time();
+    $extensionSeconds = 86400 * $days;
+    $currentExpiry = $post->int_5;
+    // 핵심: 기존 광고 유효 → 연장, 만료 → 신규
+    $endTime = ($currentExpiry > $now)
+        ? $currentExpiry + $extensionSeconds
+        : $now + $extensionSeconds;
+
+    // 6. DB 업데이트
+    PostRepository::update($idx, [
+        'int_5' => $endTime,        // 광고 종료 시간
+        'int_6' => $now,            // 등록 시간
+        'int_7' => $days,           // 기간 (일)
+        'int_8' => $requiredPoints, // 소비 포인트
     ]);
+
+    return PostRepository::findByIdx($idx);
 }
 ```
 
-### 광고 활성 조건
+#### 광고 목록 조회: PostRepository::findPointAdvertisements()
 
-```sql
--- 현재 활성인 광고 조회
-SELECT * FROM sf_post_data WHERE int_5 > UNIX_TIMESTAMP()
+```php
+// lib/post/PostRepository.php (라인 938-952)
+public static function findPointAdvertisements(string $postId, string $category = ''): array
+{
+    $sql = "SELECT * FROM sf_post_data USE INDEX(int_5) "
+        . "WHERE int_5 > :stamp AND post_id = :post_id AND category = :category "
+        . "ORDER BY int_5 DESC LIMIT 100";
+    $rows = Db::fetchAll($sql, ['stamp' => time(), 'post_id' => $postId, 'category' => $category]);
+    return array_map(fn(array $row) => PostEntity::fromArray($row), $rows);
+}
 ```
+
+### v7 프론트엔드 구현
+
+#### 소스코드 파일
+
+| 파일 | 설명 |
+|------|------|
+| `v7/widgets/advertisement/point-advertisements.php` | 게시판 목록 상단 포인트 광고 표시 위젯 |
+| `v7/widgets/advertisement/point-advertisements.css` | 광고 표시 CSS |
+| `v7/widgets/post/view/post-view-point-adv.php` | 글 보기 페이지 광고 등록/연장 위젯 |
+| `v7/widgets/post/view/post-view-point-adv.css` | 글 보기 광고 위젯 CSS |
+| `v7/js/post-form.js` | 글 작성/수정 시 포인트 광고 UI + API 호출 |
+
+#### 게시판 목록에서 포인트 광고 조회 (list.php)
+
+```php
+// v7/post/list.php (라인 137-141)
+$v7_point_ads = [];
+if ($page <= 1) {
+    $v7_point_ads = PostService::listPointAdvertisements($postId, $category);
+}
+// → v7/widgets/advertisement/point-advertisements.php에서 렌더링
+```
+
+#### 글 작성 폼에서 포인트 광고 선택 (post-form.js)
+
+```javascript
+// v7/js/post-form.js — 글 작성/수정 모두에서 표시
+// 적격 게시판이면 기간 선택 드롭다운 + 등록/연장 버튼 표시
+// 글 작성 완료 후 자동으로 post.advertise API 호출
+
+// 광고 설정 로드
+var data = await v7api('post.advertisementConfig', {
+    post_id: this.postId, category: this.category
+});
+this.advEligible = data.eligible;
+this.advDayOptions = data.days;
+
+// 광고 등록/연장
+var data = await v7api('post.advertise', {
+    idx: this.idx, days: this.advSelectedDays
+});
+```
+
+#### 목록 위젯 핵심 코드 (point-advertisements.php)
+
+```php
+// v7/widgets/advertisement/point-advertisements.php
+/** @var PostEntity[] $v7_point_ads */
+$v7_point_ads = $v7_point_ads ?? [];
+if (empty($v7_point_ads)) return;
+
+foreach ($v7_point_ads as $_paAd):
+    // URL: link 필드가 있으면 사용, 없으면 글 보기 페이지
+    $_paUrl = !empty($_paAd->link)
+        ? htmlspecialchars($_paAd->link)
+        : Route::postView($_paAd->idx, $_paAd->post_id);
+    $_paThumb = $_paAd->resolved_thumbnail;
+    // 렌더링: 썸네일 + 제목 + "포인트 광고" 배지 + 종료일 + 조회수 + 댓글수
+endforeach;
+```
+
+#### 글 보기 페이지 광고 위젯 (post-view-point-adv.php)
+
+```php
+// v7/widgets/post/view/post-view-point-adv.php
+// post-view-default.php에서 include됨
+use V7\Utils\Config;
+
+// 조건 1: 미로그인 또는 타인 글이면 표시 안 함
+if ($loginIdxMember <= 0 || $post->idx_member !== $loginIdxMember) return;
+
+// 조건 2: 적격 게시판 확인 (Config::pointAdvertisementPostCategories())
+$advCategories = Config::pointAdvertisementPostCategories();
+$cat = $post->category !== '' ? $post->category : $post->post_id;
+if (!in_array($post->post_id, $advCategories, true)
+    && !in_array($cat, $advCategories, true)) return;
+
+// 설정 로드
+$advDays = Config::pointAdvertisementDays();    // [3, 5, 7, ...]
+$costPerHour = Config::pointAdvCostPerHour();   // 240
+$isActive = $post->int_5 > time();
+$remainingDays = $isActive ? (int)ceil(($post->int_5 - time()) / 86400) : 0;
+
+// HTML: 기간 선택 드롭다운 + 등록/연장 버튼
+// JS: v7api('post.advertise', { idx, days }) 호출 후 location.reload()
+```
+
+#### 글 작성/수정 폼 광고 UI (post-form.js 핵심 코드)
+
+```javascript
+// v7/js/post-form.js — Vue.js Options API data
+advEligible: false,       // 적격 게시판 여부
+advDayOptions: [],        // [{days:3, points:17280}, ...]
+advCostPerHour: 0,        // 240
+advSelectedDays: 0,       // 사용자 선택한 일수
+advCurrentExpiry: 0,      // 현재 광고 종료 timestamp
+advSubmitting: false,     // 제출 중 플래그
+
+// computed
+advRequiredPoints: function() { return this.advCostPerHour * 24 * this.advSelectedDays; },
+advIsActive: function() { return this.advCurrentExpiry > Math.floor(Date.now() / 1000); },
+
+// 글 작성 완료 후 자동 광고 등록 (post-form.js 라인 896-907)
+if (!this.isUpdate && this.advSelectedDays > 0 && resultIdx) {
+    await v7api('post.advertise', { idx: resultIdx, days: this.advSelectedDays });
+}
+
+// 템플릿: v-if="advEligible"로 적격 게시판에서만 표시
+// 작성 모드: "글 작성 완료 시 포인트 광고가 자동으로 등록됩니다." 안내 표시
+// 수정 모드: advIsActive이면 "광고 진행 중 — N일 N시간 남음" 배지 표시
+```
+
+### 전체 흐름도
+
+```
+[사용자] → 글 작성/수정/보기 페이지에서 "기간 선택" + "광고 등록" 클릭
+    ↓
+[JS] v7api('post.advertise', { idx, days }) 호출
+    ↓
+[PostController::advertise()] → 인증(세션/Firebase)
+    ↓
+[PostService::advertise()] 핵심 로직
+    ├─ 본인 글 확인
+    ├─ 적격 게시판 확인
+    ├─ 포인트 계산 (240 × 24 × days)
+    ├─ 포인트 잔액 확인 (부족 시 에러)
+    ├─ PointLogService::changePoints() 포인트 차감
+    ├─ 종료 시간 계산 (기존 유효 → 연장, 만료 → 신규)
+    └─ PostRepository::update() DB 업데이트 (int_5/6/7/8)
+    ↓
+[게시판 목록 로드] list.php
+    ├─ PostService::listPointAdvertisements() 호출 (첫 페이지만)
+    ├─ PostRepository::findPointAdvertisements() SQL 쿼리
+    │   └─ WHERE int_5 > time() AND post_id = ? ORDER BY int_5 DESC
+    └─ point-advertisements.php 위젯에서 상단에 렌더링
+```
+
+### 에러 케이스
+
+| 상황 | 에러 메시지 |
+|------|-----------|
+| 미로그인 | "로그인이 필요합니다." |
+| 타인 글 | "본인이 작성한 글만 포인트 광고로 올릴 수 있습니다." |
+| 비적격 게시판 | "이 게시판에서는 포인트 광고를 사용할 수 없습니다." |
+| 포인트 부족 | "포인트가 부족합니다. 필요: N포인트, 보유: N포인트" |
+
+### 포인트 로그 기록
+
+| 필드 | 값 |
+|------|-----|
+| module | `adv` |
+| action | `point-post-advertisement` |
+| etc | `point_adv` |
+| point | 음수 (차감) |
+| idx_post | 광고 글 번호 |
 
 ---
 

@@ -78,8 +78,8 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
               ),
               _buildInfoCard(
                 children: [
-                  _buildInfoRow('API 서버 주소'.tr(), v7ApiEndpoint),
-                  _buildInfoRow('서버 베이스 URL'.tr(), v7BaseUrl),
+                  _buildInfoRow('API 서버 주소'.tr(), Config.v7ApiEndpoint),
+                  _buildInfoRow('서버 베이스 URL'.tr(), Config.v7BaseUrl),
                 ],
               ),
               const SizedBox(height: 24),
@@ -93,7 +93,7 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
                 children: [
                   _buildInfoRow(
                     '환경 모드'.tr(),
-                    v7ApiEndpoint.contains('local')
+                    Config.v7ApiEndpoint.contains('local')
                         ? 'Development'
                         : 'Production',
                   ),

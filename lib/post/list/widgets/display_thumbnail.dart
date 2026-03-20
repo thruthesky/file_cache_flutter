@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
@@ -69,11 +68,14 @@ class DisplayThumbnail extends StatelessWidget {
   Widget _build(MediaType type, String absoluteUrl, ColorScheme scheme) {
     switch (type) {
       case MediaType.image:
-        return CachedNetworkImage(
-          imageUrl: absoluteUrl,
+        return Image.network(
+          absoluteUrl,
           fit: BoxFit.cover,
-          placeholder: (_, _) => _placeholder(scheme),
-          errorWidget: (_, _, _) => _placeholder(scheme),
+          loadingBuilder: (_, child, progress) {
+            if (progress == null) return child;
+            return _placeholder(scheme);
+          },
+          errorBuilder: (_, _, _) => _placeholder(scheme),
         );
 
       case MediaType.video:

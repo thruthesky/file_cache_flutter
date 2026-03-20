@@ -903,7 +903,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '배너 광고'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/adv/banner',
+          url: '${Config.v7BaseUrl}/adv/banner',
           title: '배너 광고'.tr(),
         ),
       ),
@@ -925,7 +925,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '이용 약관'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/help/terms',
+          url: '${Config.v7BaseUrl}/help/terms',
           title: '이용 약관'.tr(),
         ),
       ),
@@ -934,7 +934,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '개인정보 처리방침'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/help/privacy',
+          url: '${Config.v7BaseUrl}/help/privacy',
           title: '개인정보 처리방침'.tr(),
         ),
       ),

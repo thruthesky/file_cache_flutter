@@ -4,12 +4,9 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
 import 'package:philgo/common_widgets/masonry_card.dart';
-import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
-import 'package:philgo/user/user.service.dart';
-
 class CompanyListScreen extends StatefulWidget {
   const CompanyListScreen({super.key});
 
@@ -101,21 +98,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
-      floatingActionButton: !UserService.isLoggedIn
-          ? null
-          : ValueListenableBuilder<CompanyModel?>(
-              valueListenable: CompanyService.instance.companyNotifier,
-              builder: (context, myCompany, _) {
-                return FloatingActionButton(
-                  heroTag: 'company_list_fab',
-                  onPressed: myCompany != null
-                      ? () =>
-                          CompanyEditScreen.push(context, company: myCompany)
-                      : null,
-                  child: const FaIcon(FontAwesomeIcons.penToSquare),
-                );
-              },
-            ),
+      // FAB는 AppScreen에서 통합 관리
       body: SafeArea(
         child: Column(
           children: [

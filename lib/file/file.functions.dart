@@ -138,5 +138,5 @@ String? getYouTubeVideoId(String url) {
 /// 상대 URL → 절대 URL 변환
 String toAbsoluteUrl(String url) {
   if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return '$v7BaseUrl$url';
+  return '${Config.v7BaseUrl}$url';
 }

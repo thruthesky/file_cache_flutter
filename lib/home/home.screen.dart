@@ -8,6 +8,7 @@ import 'widgets/home_major_forum_section.dart';
 import 'widgets/home_helper_menu_section.dart';
 import 'widgets/home_notices_section.dart';
 import 'widgets/home_dev_mode_banner.dart';
+import 'widgets/home_quick_post_box.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +18,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  /// 섹션 간 여백
+  static const _sectionGap = SliverToBoxAdapter(child: SizedBox(height: 16));
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
+          /// [가짜 글쓰기 입력창] 클릭 시 게시판 선택 후 글 작성
+          const SliverToBoxAdapter(child: HomeQuickPostBox()),
+
           /// [개발 모드] API 연결 상태 표시 (디버그 모드에서만)
           const SliverToBoxAdapter(child: HomeDevModeBanner()),
 
@@ -44,20 +51,32 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
+          _sectionGap,
+
           /// [상단 배너] 좌/우 배너 로테이션
           const SliverToBoxAdapter(child: HomeTopBanners()),
+
+          _sectionGap,
 
           /// [최신글] 6개 게시판 캐러셀 (2열 × 3페이지)
           const SliverToBoxAdapter(child: HomeLatestPostsSection()),
 
+          _sectionGap,
+
           /// [날개 배너] 5열 그리드
           const SliverToBoxAdapter(child: HomeWingBanners()),
+
+          _sectionGap,
 
           /// [공지사항] 최신 공지
           const SliverToBoxAdapter(child: HomeNoticesSection()),
 
+          _sectionGap,
+
           /// [인기글] 댓글 많은 게시글
           const SliverToBoxAdapter(child: HomePopularPostSection()),
+
+          _sectionGap,
 
           /// [주요 게시판] Wrap 레이아웃 포럼 칩
           const SliverToBoxAdapter(child: HomeMajorForumSection()),
