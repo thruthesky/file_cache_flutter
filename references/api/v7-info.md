@@ -20,6 +20,7 @@
 14. [Flutter/웹 호출 예시](#14-flutter웹-호출-예시)
 15. [Travel 시스템과의 관계](#15-travel-시스템과의-관계)
 16. [테스트](#16-테스트)
+17. [access_code 기반 콘텐츠 관리 시스템](#17-access_code-기반-콘텐츠-관리-시스템)
 
 ---
 
@@ -1375,3 +1376,22 @@ const result = await v7api('post.create', {
 - 카테고리 메타 검색 (getCategoryMeta, findCategoryBySubcategory)
 - group_id=info 보호 (post.create에서 차단)
 - 필터 조건 (category, city, region, month)
+- access_code 기반 CRUD (create, getByAccessCode, upsertByAccessCode, listByPrefix, registry)
+
+---
+
+## 17. access_code 기반 콘텐츠 관리 시스템 → [v7-info-access-code.md](v7-info-access-code.md)
+
+`sf_post_data.access_code`(UNIQUE KEY, varchar(255), DEFAULT NULL)를 info 콘텐츠의
+고유 식별자로 활용하여, 로컬 개발 환경에서 생성한 데이터를 프로덕션 DB로 동기화하고
+웹과 앱에서 동일한 access_code로 콘텐츠를 조회하는 시스템이다.
+`info:<모듈>:<지역>:<세부코드>` 형식의 계층적 명명 규칙을 사용하여 LIKE 쿼리로
+지역별/모듈별 일괄 조회가 가능하다. InfoService에 `getByAccessCode()`(단건 조회),
+`upsertByAccessCode()`(INSERT/UPDATE 자동 분기), `listByAccessCodePrefix()`(접두사 목록),
+`getRegistry()`(웹/앱 공유 레지스트리) 4개 메서드를 추가하고, InfoController에
+`info.getByAccessCode`, `info.upsertByAccessCode`, `info.registry`, `info.listByPrefix`
+4개 API 엔드포인트를 추가했다. 동기화는 `scripts/info-sync-export.php`(로컬→JSON)와
+`scripts/info-sync-import.php`(JSON→프로덕션 UPSERT, dry-run 지원)로 수행한다.
+text_1에 JSON 배열로 디자인 속성(icon, badge, badge_color, highlight, tags)을 포함한
+구조화 데이터를 저장하고, content에는 게시판 표시+SEO용 마크다운을 저장한다.
+PEST 유닛 테스트 8개(27 assertions)로 전체 CRUD 흐름을 검증했다.
