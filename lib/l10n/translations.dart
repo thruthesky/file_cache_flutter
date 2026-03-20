@@ -393,7 +393,8 @@ class Translations {
     '연락처 정보가 없습니다': '연락처 정보가 없습니다',
     '로고': '로고',
     '미등록': '미등록',
-    '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.': '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
+    '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.':
+        '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.',
 
     // 업소 편집 - 저장
     '업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.': '업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.',
@@ -482,6 +483,19 @@ class Translations {
     '댓글을 작성하려면 로그인이 필요합니다.': '댓글을 작성하려면 로그인이 필요합니다.',
     '파일 업로드 실패': '파일 업로드 실패',
 
+    // 공유 받기
+    '공유 받기': '공유 받기',
+    '게시글 또는 채팅 선택': '게시글 또는 채팅 선택',
+    '채팅 선택': '채팅 선택',
+    '게시글 작성': '게시글 작성',
+    '채팅 친구에게 보내기': '채팅 친구에게 보내기',
+    '2. 보낼 친구를 선택하세요': '2. 보낼 친구를 선택하세요',
+    '2. 게시할 카테고리를 선택하세요': '2. 게시할 카테고리를 선택하세요',
+    '보내기': '보내기',
+    '열기': '열기',
+    '이름 없음': '이름 없음',
+    '방 이름 없음': '방 이름 없음',
+
     // 회원 탈퇴
     '회원 탈퇴': '회원 탈퇴',
     '회원 탈퇴 안내': '회원 탈퇴 안내',
@@ -493,22 +507,28 @@ class Translations {
     '게시글, 댓글, 채팅 기록, 포인트 등 서비스 이용 기록': '게시글, 댓글, 채팅 기록, 포인트 등 서비스 이용 기록',
     '기타 데이터': '기타 데이터',
     '업소 등록 정보, 북마크, 알림 설정 등 기타 저장된 데이터': '업소 등록 정보, 북마크, 알림 설정 등 기타 저장된 데이터',
-    '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.': '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.',
+    '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.':
+        '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.',
     '삭제 방법': '삭제 방법',
     '이메일로 탈퇴를 요청합니다.': '이메일로 탈퇴를 요청합니다.',
     '처리 기간': '처리 기간',
-    '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.': '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.',
-    '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.': '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.',
+    '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.':
+        '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.',
+    '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.':
+        '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.',
     '데이터 보관 예외': '데이터 보관 예외',
-    '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)': '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)',
+    '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)':
+        '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)',
     '문의': '문의',
-    '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.': '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.',
+    '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.':
+        '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.',
     '탈퇴 요청하기': '탈퇴 요청하기',
     '이메일 앱을 열 수 없습니다.': '이메일 앱을 열 수 없습니다.',
 
     // 앱 사용 안내
     '필고에 오신 것을 환영합니다!': '필고에 오신 것을 환영합니다!',
-    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.',
+    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.':
+        '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.',
     '시작하기': '시작하기',
     '둘러보기': '둘러보기',
     '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.',
@@ -516,14 +536,16 @@ class Translations {
     '소통하기': '소통하기',
     '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.',
     '주요 기능': '주요 기능',
-    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.',
+    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.':
+        '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.',
     '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.',
     '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.',
     '사고팔기, 구인구직 게시판에서 거래하세요.': '사고팔기, 구인구직 게시판에서 거래하세요.',
 
     // 업소이벤트
     '업소이벤트': '업소이벤트',
-    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!': '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!',
+    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!':
+        '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!',
     '삼단콤보 이벤트': '삼단콤보 이벤트',
     'QR 스캔 → 포인트 획득 → 포인트 응모': 'QR 스캔 → 포인트 획득 → 포인트 응모',
     'Step 1. QR 코드 스캔': 'Step 1. QR 코드 스캔',
@@ -538,8 +560,10 @@ class Translations {
     'QR 코드 보기': 'QR 코드 보기',
     '로딩 중...': '로딩 중...',
     '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.': '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.',
-    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.': '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.',
-    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.': '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.',
+    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.':
+        '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.',
+    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.':
+        '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.',
     '공유': '공유',
     '다운로드': '다운로드',
     '업소 보기': '업소 보기',
@@ -572,7 +596,8 @@ class Translations {
     '24시간 이내 중복 스캔': '24시간 이내 중복 스캔',
     '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.': '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.',
     '만료된 QR 코드': '만료된 QR 코드',
-    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.': 'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.',
+    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.':
+        'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.',
     '유효하지 않은 QR 코드': '유효하지 않은 QR 코드',
     '올바른 필고 업소 QR 코드를 스캔해 주세요.': '올바른 필고 업소 QR 코드를 스캔해 주세요.',
     '비활성화된 QR 코드': '비활성화된 QR 코드',
@@ -741,7 +766,8 @@ class Translations {
     '오류: {}': 'Error: {}',
     '이미 신고하셨습니다.': 'You already have reported this.',
     '차단 및 나가기': 'Block & Leave',
-    '이 사용자를 차단하고 채팅방을 나가시겠습니까?': 'Are you sure you want to block this user and leave the chat?',
+    '이 사용자를 차단하고 채팅방을 나가시겠습니까?':
+        'Are you sure you want to block this user and leave the chat?',
     '나': 'You',
     '채팅방이 생성되었습니다': 'Room has been created',
     '{}님이 입장했습니다': '{} has joined the room',
@@ -755,7 +781,8 @@ class Translations {
     '차단 해제': 'Unblock User',
     '사용자 차단': 'Block User',
     '차단된 사용자 옵션': 'Blocked User Options',
-    '이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.': 'Unblock this user to view their messages.',
+    '이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.':
+        'Unblock this user to view their messages.',
     '차단된 사용자의 메시지': 'Message from blocked user',
     '고정 해제': 'Unpin',
     '고정': 'Pin',
@@ -848,11 +875,13 @@ class Translations {
     '신고가 접수되었습니다': 'Report submitted successfully',
     '{name}님을 차단하시겠습니까?': 'Do you want to block {name}?',
     '{name}님의 차단을 해제하시겠습니까?': 'Do you want to unblock {name}?',
-    '차단하면 이 사용자의 글이 목록에서 숨겨집니다': 'Blocking this user will hide their posts from the list',
+    '차단하면 이 사용자의 글이 목록에서 숨겨집니다':
+        'Blocking this user will hide their posts from the list',
     '사용자를 차단했습니다': 'User has been blocked',
     '차단이 해제되었습니다': 'User has been unblocked',
     '차단된 사용자의 글입니다': 'Post from a blocked user',
-    '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?': 'This user is blocked. Do you want to unblock them to view the post?',
+    '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?':
+        'This user is blocked. Do you want to unblock them to view the post?',
     '차단된 사용자가 없습니다': 'No blocked users',
     '차단 목록을 불러오는 중 오류가 발생했습니다': 'Failed to load blocked users list',
     '채팅 기능은 준비 중입니다.': 'Chat feature is coming soon.',
@@ -968,7 +997,8 @@ class Translations {
     // 업소 편집 - 카카오톡 QR
     '카카오톡 QR 코드': 'KakaoTalk QR Code',
     '선택': 'Optional',
-    'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다': 'Channel URL will be auto-filled when QR image is uploaded',
+    'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다':
+        'Channel URL will be auto-filled when QR image is uploaded',
     '카카오톡 QR 이미지 업로드': 'Upload KakaoTalk QR Image',
     '카카오톡 채널 URL': 'KakaoTalk Channel URL',
     'QR 이미지 업로드 시 자동 입력됩니다': 'Auto-filled when QR image is uploaded',
@@ -987,10 +1017,12 @@ class Translations {
     '연락처 정보가 없습니다': 'No contact information',
     '로고': 'Logo',
     '미등록': 'Not uploaded',
-    '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.': 'Your listing will be reviewed by admin after saving.\nChanges to name, category, description, or images require re-review.',
+    '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.':
+        'Your listing will be reviewed by admin after saving.\nChanges to name, category, description, or images require re-review.',
 
     // 업소 편집 - 저장
-    '업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.': 'Business info saved. It will be reflected after admin review.',
+    '업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.':
+        'Business info saved. It will be reflected after admin review.',
     '저장 실패: {}': 'Save failed: {}',
 
     // 업소 목록
@@ -1076,64 +1108,97 @@ class Translations {
     '댓글을 작성하려면 로그인이 필요합니다.': 'Please login to write a comment.',
     '파일 업로드 실패': 'File upload failed',
 
+    // 공유 받기
+    '공유 받기': 'Receive Share',
+    '게시글 또는 채팅 선택': 'Choose Post or Chat',
+    '채팅 선택': 'Choose Chat',
+    '게시글 작성': 'Create Post',
+    '채팅 친구에게 보내기': 'Send to chat friend',
+    '2. 보낼 친구를 선택하세요': '2. Select a friend to send',
+    '2. 게시할 카테고리를 선택하세요': '2. Select a category to post',
+    '보내기': 'Send',
+    '열기': 'Open',
+    '이름 없음': 'no name',
+    '방 이름 없음': 'No room name',
     // 회원 탈퇴
     '회원 탈퇴': 'Account Withdrawal',
     '회원 탈퇴 안내': 'Account Withdrawal Guide',
     '탈퇴 전 아래 내용을 꼭 확인해 주세요.': 'Please review the following before proceeding.',
     '삭제되는 데이터': 'Data to be deleted',
     '계정 정보': 'Account Information',
-    '이메일, 이름, 프로필 사진 등 계정과 관련된 모든 개인 정보': 'All personal information including email, name, profile photo, etc.',
+    '이메일, 이름, 프로필 사진 등 계정과 관련된 모든 개인 정보':
+        'All personal information including email, name, profile photo, etc.',
     '이용 기록': 'Usage History',
-    '게시글, 댓글, 채팅 기록, 포인트 등 서비스 이용 기록': 'Posts, comments, chat history, points, and other usage records.',
+    '게시글, 댓글, 채팅 기록, 포인트 등 서비스 이용 기록':
+        'Posts, comments, chat history, points, and other usage records.',
     '기타 데이터': 'Other Data',
-    '업소 등록 정보, 북마크, 알림 설정 등 기타 저장된 데이터': 'Business listings, bookmarks, notification settings, and other stored data.',
-    '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.': 'Payment-related data may be retained separately in accordance with applicable laws.',
+    '업소 등록 정보, 북마크, 알림 설정 등 기타 저장된 데이터':
+        'Business listings, bookmarks, notification settings, and other stored data.',
+    '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.':
+        'Payment-related data may be retained separately in accordance with applicable laws.',
     '삭제 방법': 'Deletion Method',
     '이메일로 탈퇴를 요청합니다.': 'Request withdrawal via email.',
     '처리 기간': 'Processing Period',
-    '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.': 'Your request will be processed within 7 business days. You will be notified via your registered email upon completion.',
-    '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.': 'Once withdrawal is processed, it cannot be undone. Please decide carefully.',
+    '탈퇴 요청 후 영업일 기준 7일 이내에 처리됩니다. 처리 완료 시 등록된 이메일로 안내드립니다.':
+        'Your request will be processed within 7 business days. You will be notified via your registered email upon completion.',
+    '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.':
+        'Once withdrawal is processed, it cannot be undone. Please decide carefully.',
     '데이터 보관 예외': 'Data Retention Exceptions',
-    '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)': 'Some data may be retained for a certain period in accordance with applicable laws (e-commerce act, communications privacy act, etc.).',
+    '관련 법률에 따라 일부 데이터는 일정 기간 보관될 수 있습니다. (전자상거래법, 통신비밀보호법 등)':
+        'Some data may be retained for a certain period in accordance with applicable laws (e-commerce act, communications privacy act, etc.).',
     '문의': 'Contact',
-    '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.': 'For withdrawal inquiries, please contact philgohelp@gmail.com.',
+    '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.':
+        'For withdrawal inquiries, please contact philgohelp@gmail.com.',
     '탈퇴 요청하기': 'Request Withdrawal',
     '이메일 앱을 열 수 없습니다.': 'Unable to open email app.',
 
     // 앱 사용 안내
     '필고에 오신 것을 환영합니다!': 'Welcome to PhilGo!',
-    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': 'Discover everything about life in the Philippines on PhilGo. Community, chat, business directory and more.',
+    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.':
+        'Discover everything about life in the Philippines on PhilGo. Community, chat, business directory and more.',
     '시작하기': 'Getting Started',
     '둘러보기': 'Explore',
-    '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': 'Browse forums, business directory, chat, and more.',
-    '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.': 'Post freely in the community forum, Q&A, and more.',
+    '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.':
+        'Browse forums, business directory, chat, and more.',
+    '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.':
+        'Post freely in the community forum, Q&A, and more.',
     '소통하기': 'Connect',
-    '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': 'Chat with other members in real-time via open chat rooms.',
+    '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.':
+        'Chat with other members in real-time via open chat rooms.',
     '주요 기능': 'Key Features',
-    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': 'Share information across various forums including free board, Q&A, and blogs.',
-    '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': 'Join open chat rooms or have 1:1 conversations.',
-    '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': 'Search local business info and register your own business.',
+    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.':
+        'Share information across various forums including free board, Q&A, and blogs.',
+    '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.':
+        'Join open chat rooms or have 1:1 conversations.',
+    '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.':
+        'Search local business info and register your own business.',
     '사고팔기, 구인구직 게시판에서 거래하세요.': 'Buy, sell, and find jobs in the marketplace.',
 
     // 업소이벤트
     '업소이벤트': 'Business Event',
-    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!': 'Request and scan QR codes at partner businesses to earn points!',
+    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!':
+        'Request and scan QR codes at partner businesses to earn points!',
     '삼단콤보 이벤트': 'Triple Combo Event',
     'QR 스캔 → 포인트 획득 → 포인트 응모': 'QR Scan → Earn Points → Enter Draw',
     'Step 1. QR 코드 스캔': 'Step 1. Scan QR Code',
     '제휴 업소에서 QR 코드를 스캔하세요.': 'Scan the QR code at a partner business.',
     'Step 2. 포인트 획득': 'Step 2. Earn Points',
-    'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.': 'Instantly earn 1,000~2,000 points per scan.',
+    'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.':
+        'Instantly earn 1,000~2,000 points per scan.',
     'Step 3. 포인트 응모': 'Step 3. Enter Draw',
-    '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!': 'Use your points on the spinning wheel to win coupons!',
+    '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!':
+        'Use your points on the spinning wheel to win coupons!',
     'QR 코드 스캔하기': 'Scan QR Code',
 
     // QR 코드 화면
     'QR 코드 보기': 'View QR Code',
     '로딩 중...': 'Loading...',
-    '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.': 'Scan this QR code to participate in PhilGo business events.',
-    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.': 'QR code for this business is not yet available.\nPlease wait for admin approval.',
-    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.': 'Warning: Businesses that misuse this QR code will be removed from the directory.',
+    '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.':
+        'Scan this QR code to participate in PhilGo business events.',
+    '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.':
+        'QR code for this business is not yet available.\nPlease wait for admin approval.',
+    '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.':
+        'Warning: Businesses that misuse this QR code will be removed from the directory.',
     '공유': 'Share',
     '다운로드': 'Download',
     '업소 보기': 'View Business',
@@ -1164,9 +1229,11 @@ class Translations {
     '스캔 오류': 'Scan Error',
     '알 수 없는 오류가 발생했습니다.': 'An unknown error occurred.',
     '24시간 이내 중복 스캔': 'Duplicate scan within 24 hours',
-    '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.': 'You can only scan once per business within 24 hours.',
+    '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.':
+        'You can only scan once per business within 24 hours.',
     '만료된 QR 코드': 'Expired QR Code',
-    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.': 'This QR code has expired. Please request a new one from the business.',
+    'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.':
+        'This QR code has expired. Please request a new one from the business.',
     '유효하지 않은 QR 코드': 'Invalid QR Code',
     '올바른 필고 업소 QR 코드를 스캔해 주세요.': 'Please scan a valid PhilGo business QR code.',
     '비활성화된 QR 코드': 'Disabled QR Code',
@@ -1181,7 +1248,8 @@ class Translations {
 
     // 방문 후기 작성 화면
     '방문 후기': 'Visit Review',
-    '후기 내용을 10자 이상 입력해 주세요.': 'Please write at least 10 characters for the review.',
+    '후기 내용을 10자 이상 입력해 주세요.':
+        'Please write at least 10 characters for the review.',
     '사진을 1장 이상 첨부해 주세요.': 'Please attach at least 1 photo.',
     '후기 작성 시 포인트를 드립니다!': 'Earn points by writing a review!',
     '방문 후기를 작성해 주세요. (10자 이상)': 'Write your visit review. (min. 10 characters)',

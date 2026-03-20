@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/app.config.dart';
@@ -34,9 +35,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
     }
 
     if (isSingleChatRoom(join.id)) {
-      return join.userDisplayName.isNotEmpty ? join.userDisplayName : 'no name';
+      return join.userDisplayName.isNotEmpty ? join.userDisplayName : '이름 없음'.tr();
     } else {
-      return join.roomName.isNotEmpty ? join.roomName : 'No room name';
+      return join.roomName.isNotEmpty ? join.roomName : '방 이름 없음'.tr();
     }
   }
 
@@ -69,7 +70,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             Row(
               children: [
                 Text(
-                  "Receive Share",
+                  '공유 받기'.tr(),
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -90,8 +91,8 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 children: [
                   Text(
                     Config.forumCategories.isNotEmpty
-                        ? "Choose Post or Chat"
-                        : "Choose Chat",
+                        ? '게시글 또는 채팅 선택'.tr()
+                        : '채팅 선택'.tr(),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -101,7 +102,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),
-                            text: "Create Post",
+                            text: '게시글 작성'.tr(),
                             color: Colors.blue,
                             icon: FaIcon(
                               FontAwesomeIcons.thinSquarePlus,
@@ -116,7 +117,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                           onTap: () {
                             setState(() => tab = 'chat');
                           },
-                          text: "Send to chat friend",
+                          text: '채팅 친구에게 보내기'.tr(),
                           color: Colors.orange,
                           icon: FaIcon(size: 64, FontAwesomeIcons.thinComments),
                           primaryColor: Colors.blue.shade50,
@@ -130,7 +131,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'chat') ...[
               Row(
                 children: [
-                  Text("2. Select a friend to send"),
+                  Text('2. 보낼 친구를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
                     icon: const Icon(Icons.close),
@@ -166,8 +167,8 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                                 child: CircularProgressIndicator.adaptive(),
                               )
                             : status[join.id] == 'sent'
-                            ? Text("Open")
-                            : Text("Send"),
+                            ? Text('열기'.tr())
+                            : Text('보내기'.tr()),
                       ),
                     ),
                   ),
@@ -177,7 +178,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'post') ...[
               Row(
                 children: [
-                  Text("2. Select a category to post"),
+                  Text('2. 게시할 카테고리를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
                     icon: const Icon(Icons.close),

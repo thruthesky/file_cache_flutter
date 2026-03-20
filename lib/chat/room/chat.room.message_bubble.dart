@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/chat/chat.defines.dart';
@@ -10,6 +11,8 @@ import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/models/chat.message.dart';
+import 'package:philgo/setting/setting.state.dart';
+import 'package:philgo/router.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
@@ -47,6 +50,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
         return const SizedBox.shrink(); // Return empty widget
       }
       return _buildProtocolMessage(context);
+    }
+
+    // Check if message is deleted (soft delete)
+    if (message.isDeleted) {
+      return _buildDeletedMessage(context);
     }
 
     // Check if message should be blinded due to moderation
@@ -150,7 +158,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                         ],
                         if (message.text?.isNotEmpty == true)
                           GestureDetector(
-                            onLongPress: () => _showMessageOptions(context),
+                            onLongPress: () => _showMessageOptionsOrEditDelete(context),
                             child: Container(
                               padding: textPadding,
                               decoration: BoxDecoration(
@@ -205,13 +213,29 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
                         SizedBox(height: timestampSpacing),
 
-                        // Timestamp
-                        Text(
-                          formatTimestamp(context, message.sentAt),
-                          style: TextStyle(
-                            fontSize: timestampFontSize,
-                            color: timestampColor,
-                          ),
+                        // Timestamp + edited indicator
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              formatTimestamp(context, message.sentAt),
+                              style: TextStyle(
+                                fontSize: timestampFontSize,
+                                color: timestampColor,
+                              ),
+                            ),
+                            if (message.isEdited) ...[
+                              SizedBox(width: 4),
+                              Text(
+                                '(수정됨)'.tr(),
+                                style: TextStyle(
+                                  fontSize: timestampFontSize,
+                                  color: timestampColor,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ],
                     ),
@@ -223,6 +247,452 @@ class ChatRoomMessageBubble extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Show appropriate options menu based on message ownership
+  void _showMessageOptionsOrEditDelete(BuildContext context) {
+    if (_canEdit() || _canDelete()) {
+      _showEditDeleteOptions(context);
+    } else {
+      _showMessageOptions(context);
+    }
+  }
+
+  /// Show edit/delete options for current user's messages
+  void _showEditDeleteOptions(BuildContext parentContext) {
+    if (roomId == null) return;
+
+    showModalBottomSheet(
+      context: parentContext,
+      builder: (context) => Container(
+        padding: bottomSheetPadding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Header
+            Container(
+              padding: bottomSheetHeaderPadding,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '메시지 옵션'.tr(),
+                    style: TextStyle(
+                      fontSize: bottomSheetHeaderFontSize,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: const Icon(Icons.close),
+                    tooltip: '닫기'.tr(),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+
+            // Edit option (only for own messages with text)
+            if (_canEdit() && message.text?.isNotEmpty == true)
+              ListTile(
+                leading: FaIcon(
+                  FontAwesomeIcons.lightPenToSquare,
+                  color: Theme.of(parentContext).colorScheme.primary,
+                  size: 20,
+                ),
+                title: Text('수정'.tr()),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showEditDialog(parentContext);
+                },
+              ),
+
+            // Delete option (own messages + admins)
+            if (_canDelete())
+              ListTile(
+                leading: FaIcon(
+                  FontAwesomeIcons.lightTrashCan,
+                  color: Colors.red,
+                  size: 20,
+                ),
+                title: Text(
+                  '삭제'.tr(),
+                  style: const TextStyle(color: Colors.red),
+                ),
+                onTap: () {
+                  Navigator.of(context).pop();
+                  _showDeleteConfirmDialog(parentContext);
+                },
+              ),
+
+            SizedBox(height: bottomSheetItemSpacing),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Show edit dialog with text field
+  void _showEditDialog(BuildContext parentContext) {
+    final controller = TextEditingController(text: message.text ?? '');
+    final theme = Theme.of(parentContext);
+    final colorScheme = theme.colorScheme;
+
+    showDialog(
+      context: parentContext,
+      builder: (context) => Dialog(
+        elevation: dialogElevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
+        ),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            border: Border.all(
+              color: colorScheme.outline,
+              width: dialogBorderWidth,
+            ),
+            borderRadius: BorderRadius.circular(dialogBorderRadius),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Padding(
+                padding: dialogTitlePadding,
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightPenToSquare,
+                      color: colorScheme.primary,
+                      size: dialogHeaderIconSize,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '메시지 수정'.tr(),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Text field
+              Padding(
+                padding: dialogBodyPadding,
+                child: TextField(
+                  controller: controller,
+                  maxLines: 5,
+                  minLines: 2,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    hintText: '메시지를 입력하세요'.tr(),
+                  ),
+                ),
+              ),
+              // Actions
+              Padding(
+                padding: dialogActionsPadding,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: actionButtonBorderWidth,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text('취소'.tr()),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        final newText = controller.text.trim();
+                        if (newText.isEmpty) return;
+                        if (newText == message.text) {
+                          Navigator.of(context).pop();
+                          return;
+                        }
+                        try {
+                          await ChatService.instance.editMessage(
+                            roomId: roomId!,
+                            messageId: message.id!,
+                            newText: newText,
+                          );
+                          if (context.mounted) Navigator.of(context).pop();
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('수정에 실패했습니다'.tr()),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.primary,
+                              width: actionButtonBorderWidth,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.primary,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onPrimary,
+                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text('저장'.tr()),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Show delete confirmation dialog
+  void _showDeleteConfirmDialog(BuildContext parentContext) {
+    final theme = Theme.of(parentContext);
+    final colorScheme = theme.colorScheme;
+
+    showDialog(
+      context: parentContext,
+      builder: (context) => Dialog(
+        elevation: dialogElevation,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(dialogBorderRadius),
+        ),
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            border: Border.all(
+              color: colorScheme.outline,
+              width: dialogBorderWidth,
+            ),
+            borderRadius: BorderRadius.circular(dialogBorderRadius),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Title
+              Padding(
+                padding: dialogTitlePadding,
+                child: Row(
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightTrashCan,
+                      color: colorScheme.error,
+                      size: dialogHeaderIconSize,
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      '메시지 삭제'.tr(),
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: colorScheme.onSurface,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Padding(
+                padding: dialogBodyPadding,
+                child: Text(
+                  '이 메시지를 삭제하시겠습니까?'.tr(),
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ),
+              // Actions
+              Padding(
+                padding: dialogActionsPadding,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.outline,
+                              width: actionButtonBorderWidth,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.surface,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onSurface,
+                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text('취소'.tr()),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await ChatService.instance.deleteMessage(
+                            roomId: roomId!,
+                            messageId: message.id!,
+                          );
+                          if (context.mounted) Navigator.of(context).pop();
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('삭제에 실패했습니다'.tr()),
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      style: ButtonStyle(
+                        elevation: WidgetStateProperty.all(0),
+                        shape: WidgetStateProperty.all(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              actionButtonBorderRadius,
+                            ),
+                            side: BorderSide(
+                              color: colorScheme.error,
+                              width: actionButtonBorderWidth,
+                            ),
+                          ),
+                        ),
+                        backgroundColor: WidgetStateProperty.all(
+                          colorScheme.error,
+                        ),
+                        foregroundColor: WidgetStateProperty.all(
+                          colorScheme.onError,
+                        ),
+                        padding: WidgetStateProperty.all(actionButtonPadding),
+                        textStyle: WidgetStateProperty.all(
+                          theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                      child: Text('삭제'.tr()),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Build deleted message placeholder
+  Widget _buildDeletedMessage(BuildContext context) {
+    return Padding(
+      padding: messagePadding,
+      child: Row(
+        mainAxisAlignment:
+            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: textPadding,
+            decoration: BoxDecoration(
+              color: blockedBgColor,
+              borderRadius: BorderRadius.circular(bubbleBorderRadius),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FaIcon(
+                  FontAwesomeIcons.lightTrashCan,
+                  size: blockedIconSize,
+                  color: blockedTextColor,
+                ),
+                SizedBox(width: blockedIconSpacing),
+                Text(
+                  '삭제된 메시지입니다'.tr(),
+                  style: TextStyle(
+                    color: blockedTextColor,
+                    fontSize: blockedTextFontSize,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Check if current user is an admin
+  bool _isAdmin() {
+    final uid = loginUid();
+    if (uid == null) return false;
+    final settings = SettingsState.of(globalContext).settings;
+    return settings?.adminUids.contains(uid) ?? false;
+  }
+
+  /// Check if current user can edit this message
+  bool _canEdit() {
+    return isCurrentUser && !message.isDeleted;
+  }
+
+  /// Check if current user can delete this message
+  bool _canDelete() {
+    return (isCurrentUser || _isAdmin()) && !message.isDeleted;
   }
 
   /// Build protocol message (system messages) centered with light gray color
