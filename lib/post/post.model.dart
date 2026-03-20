@@ -57,6 +57,9 @@ class Post {
   final String ip;
   final int noOfAttach;
 
+  // AI 답변 필드
+  final String text7; // text_7: AI 답변 내용 (마크다운)
+
   // 포인트 광고 관련 필드
   final int adEndTime; // int_5: 광고 종료 Unix timestamp (초)
   final int adStartTime; // int_6: 마지막 광고 등록 시간
@@ -123,6 +126,7 @@ class Post {
     this.region = '',
     this.ip = '',
     this.noOfAttach = 0,
+    this.text7 = '',
     this.adEndTime = 0,
     this.adStartTime = 0,
     this.adDays = 0,
@@ -246,6 +250,7 @@ class Post {
       region: json['region']?.toString() ?? '',
       ip: json['ip']?.toString() ?? '',
       noOfAttach: _toInt(json['no_of_attach']),
+      text7: json['text_7']?.toString() ?? '',
       adEndTime: _toInt(json['int_5']),
       adStartTime: _toInt(json['int_6']),
       adDays: _toInt(json['int_7']),
@@ -256,6 +261,15 @@ class Post {
       blocked: json['blocked'] == true,
     );
   }
+
+  /// AI 답변 존재 여부
+  bool get hasAiAnswer => text7.isNotEmpty;
+
+  /// AI 답변 대상 여부 (qna/freetalk, 원글, info 제외)
+  bool get isAiAnswerTarget =>
+      depth == 0 &&
+      (postId == 'qna' || postId == 'freetalk') &&
+      groupId != 'info';
 
   /// 포인트 광고 활성 여부
   bool get isAdActive =>
@@ -282,6 +296,7 @@ class Post {
     bool? reported,
     bool? blocked,
     String? youtubeUrl,
+    String? text7,
     int? adEndTime,
   }) {
     return Post(
@@ -338,6 +353,7 @@ class Post {
       region: region,
       ip: ip,
       noOfAttach: noOfAttach,
+      text7: text7 ?? this.text7,
       adEndTime: adEndTime ?? this.adEndTime,
       adStartTime: adStartTime,
       adDays: adDays,

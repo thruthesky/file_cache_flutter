@@ -12,6 +12,7 @@ import 'package:philgo/post/view/widgets/post.action.bar.dart';
 import 'package:philgo/post/view/widgets/post.view.content.dart';
 import 'package:philgo/post/view/widgets/post.view.files.dart';
 import 'package:philgo/common_widgets/youtube_player_list.dart';
+import 'package:philgo/ai/widgets/ai_answer_widget.dart';
 import 'package:philgo/post/view/widgets/post_comment_bar.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.state.dart';
@@ -649,6 +650,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             isLoading: _isLoading,
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                           ),
+
+                        // AI 답변
+                        AiAnswerWidget(
+                          post: _post,
+                          onPostUpdated: (updatedPost) {
+                            setState(() {
+                              _post = updatedPost;
+                              _postChanged = true;
+                            });
+                          },
+                        ),
 
                         // 원글 액션 바
                         Padding(
