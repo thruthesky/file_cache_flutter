@@ -102,18 +102,18 @@ DeepLinkResult? parsePhilgoUrl(String url) {
   final page = pageStr != null ? int.tryParse(pageStr) : null;
 
   // URL 유형 판별 — v7 클린 URL + v6 .php URL 모두 지원
-  final isPostView = path == '/post/view' ||
+  final isPostView =
+      path == '/post/view' ||
       path.contains('/post/view.php') ||
       (uri.query.isNotEmpty && RegExp(r'^\d+$').hasMatch(uri.query)) ||
       (queryParams['module'] == 'post' &&
           queryParams['action'] == 'view' &&
           idx != null);
 
-  final isPostList =
-      path == '/post/list' || path.contains('/post/list.php');
+  final isPostList = path == '/post/list' || path.contains('/post/list.php');
 
-  final isChatRoom = path.contains('/chat/index.php') &&
-      queryParams.containsKey('id');
+  final isChatRoom =
+      path.contains('/chat/index.php') && queryParams.containsKey('id');
 
   final isCompanyView =
       path == '/company/view' || path.contains('/company/view.php');
