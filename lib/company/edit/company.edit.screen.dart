@@ -13,8 +13,8 @@ import 'package:philgo/company/edit/widgets/form_step_tracker.dart';
 ///
 /// 총 4단계로 업소 정보를 입력받아 저장한다.
 /// Step 1: 기본 정보
-/// Step 2: 위치 및 연락처
-/// Step 3: 이미지 업로드
+/// Step 2: 위치 및 연락처 (카카오톡 QR 자동 파싱 포함)
+/// Step 3: 이미지 업로드 (사업자등록증, 사무실 내부 사진 포함)
 /// Step 4: 검토 및 저장
 class CompanyEditScreen extends StatefulWidget {
   static const String routeName = '/CompanyEdit';
@@ -49,11 +49,14 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
   late final TextEditingController _mobileCtrl;
   late final TextEditingController _kakaoCtrl;
   late final TextEditingController _telegramCtrl;
+  late final TextEditingController _kakaoChannelUrlCtrl;
+  String? _kakaoQrCodeUrl;
 
   // Step 3 image URLs (from existing company)
   String? _logoUrl;
   String? _titleImageUrl;
   String? _photoUrl;
+  String? _businessLicenseUrl;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -74,10 +77,13 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
     _mobileCtrl = TextEditingController(text: c.mobileNumber);
     _kakaoCtrl = TextEditingController(text: c.kakaotalkId);
     _telegramCtrl = TextEditingController(text: c.telegramId);
+    _kakaoChannelUrlCtrl = TextEditingController(text: c.kakaotalkQrCode);
+    _kakaoQrCodeUrl = c.kakaotalkQrCodeUrl.isNotEmpty ? c.kakaotalkQrCodeUrl : null;
 
     _logoUrl = c.logoUrl.isNotEmpty ? c.logoUrl : null;
     _titleImageUrl = c.titleImageUrl.isNotEmpty ? c.titleImageUrl : null;
     _photoUrl = c.photoUrl.isNotEmpty ? c.photoUrl : null;
+    _businessLicenseUrl = c.businessLicenseUrl.isNotEmpty ? c.businessLicenseUrl : null;
   }
 
   @override
@@ -91,6 +97,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
     _mobileCtrl.dispose();
     _kakaoCtrl.dispose();
     _telegramCtrl.dispose();
+    _kakaoChannelUrlCtrl.dispose();
     super.dispose();
   }
 
@@ -118,45 +125,37 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
   Future<void> _save() async {
     setState(() => _isSaving = true);
-    try {
-      final data = <String, dynamic>{
-        'idx': widget.company.idx,
-        'name': _nameCtrl.text.trim(),
-        'title': _titleCtrl.text.trim(),
-        'description': _descCtrl.text.trim(),
-        'category': _selectedCategory ?? '',
-        'location': _locationCtrl.text.trim(),
-        'address': _addressCtrl.text.trim(),
-        'phone_number': _phoneCtrl.text.trim(),
-        'mobile_number': _mobileCtrl.text.trim(),
-        'kakaotalk_id': _kakaoCtrl.text.trim(),
-        'telegram_id': _telegramCtrl.text.trim(),
-        'logo_url': _logoUrl ?? '',
-        'title_image_url': _titleImageUrl ?? '',
-        'photo_url': _photoUrl ?? '',
-      };
+    final data = <String, dynamic>{
+      'idx': widget.company.idx,
+      'name': _nameCtrl.text.trim(),
+      'title': _titleCtrl.text.trim(),
+      'description': _descCtrl.text.trim(),
+      'category': _selectedCategory ?? '',
+      'location': _locationCtrl.text.trim(),
+      'address': _addressCtrl.text.trim(),
+      'phone_number': _phoneCtrl.text.trim(),
+      'mobile_number': _mobileCtrl.text.trim(),
+      'kakaotalk_id': _kakaoCtrl.text.trim(),
+      'telegram_id': _telegramCtrl.text.trim(),
+      'kakaotalk_qr_code': _kakaoChannelUrlCtrl.text.trim(),
+      'kakaotalk_qr_code_url': _kakaoQrCodeUrl ?? '',
+      'logo_url': _logoUrl ?? '',
+      'title_image_url': _titleImageUrl ?? '',
+      'photo_url': _photoUrl ?? '',
+      'business_license_url': _businessLicenseUrl ?? '',
+    };
 
-      await CompanyService.update(data);
+    await CompanyService.update(data);
 
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'.tr()),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-      );
-      Navigator.of(context).pop(true); // return true = updated
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('저장 실패: {}'.tr(args: [e.toString().replaceFirst('Exception: ', '')])),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'.tr()),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+    );
+    Navigator.of(context).pop(true); // return true = updated
+    if (mounted) setState(() => _isSaving = false);
   }
 
   @override
@@ -215,15 +214,20 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
           mobileController: _mobileCtrl,
           kakaoController: _kakaoCtrl,
           telegramController: _telegramCtrl,
+          kakaoChannelUrlController: _kakaoChannelUrlCtrl,
+          kakaoQrCodeUrl: _kakaoQrCodeUrl,
+          onKakaoQrCodeUploaded: (url) => setState(() => _kakaoQrCodeUrl = url),
         );
       case 2:
         return CompanyImageUploadForm(
           logoUrl: _logoUrl,
           titleImageUrl: _titleImageUrl,
           photoUrl: _photoUrl,
+          businessLicenseUrl: _businessLicenseUrl,
           onLogoUploaded: (url) => setState(() => _logoUrl = url),
           onTitleImageUploaded: (url) => setState(() => _titleImageUrl = url),
           onPhotoUploaded: (url) => setState(() => _photoUrl = url),
+          onBusinessLicenseUploaded: (url) => setState(() => _businessLicenseUrl = url),
         );
       case 3:
         return CompanyReviewForm(
@@ -240,6 +244,9 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
           logoUrl: _logoUrl,
           titleImageUrl: _titleImageUrl,
           photoUrl: _photoUrl,
+          businessLicenseUrl: _businessLicenseUrl,
+          kakaoChannelUrl: _kakaoChannelUrlCtrl.text,
+          kakaoQrCodeUrl: _kakaoQrCodeUrl,
         );
       default:
         return const SizedBox.shrink();

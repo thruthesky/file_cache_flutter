@@ -151,6 +151,29 @@ class CompanyService {
     );
   }
 
+  /// 방문 후기 목록 조회
+  ///
+  /// API: company.getVisitReviews (인증 불필요)
+  ///
+  /// [idxCompany] 업소 고유번호
+  /// [page] 페이지 번호 (기본 1)
+  /// [limit] 최대 조회 수 (기본 10)
+  /// 반환: { reviews: [...], total, page, limit }
+  static Future<Map<String, dynamic>> getVisitReviews({
+    required int idxCompany,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await ApiService.instance.v7api(
+      'company.getVisitReviews',
+      data: {
+        'idx_company': idxCompany,
+        'page': page,
+        'limit': limit,
+      },
+    );
+  }
+
   /// 방문 후기 제출
   ///
   /// API: company.submitVisitReview (인증 필수)
