@@ -19,6 +19,8 @@ import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/point/point_advertisement.service.dart';
+import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
@@ -107,6 +109,81 @@ class _PostViewScreenState extends State<PostViewScreen> {
       if (!mounted) return;
       showErrorSnackBar(context, '$e');
     }
+  }
+
+  /// 포인트 광고 등록/연장
+  Future<void> _showPointAdOption() async {
+    PointAdvertisementConfig? config;
+    try {
+      config = await PointAdvertisementService.getConfig(
+        postId: _post.postId,
+        category: _post.category,
+      );
+    } catch (_) {
+      return;
+    }
+    if (!config.eligible || !mounted) return;
+
+    final userPoints = context.read<UserState>().point;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => PointAdSelectionBottomSheet(
+        config: config!,
+        userPoints: userPoints,
+        onDaysSelected: (days) async {
+          Navigator.pop(context);
+          if (days == null || days <= 0) return;
+
+          // 확인 다이얼로그
+          final cost = config!.dayOptions
+              .firstWhere((o) => o.days == days)
+              .points;
+          final label = _post.isAdActive ? '연장' : '등록';
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('포인트 광고 $label'.tr()),
+              content: Text(
+                '$days${'일'.tr()} $label ($cost P ${'사용'.tr()})',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text('취소'.tr()),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text('확인'.tr()),
+                ),
+              ],
+            ),
+          );
+          if (confirm != true || !mounted) return;
+
+          try {
+            final result = await PointAdvertisementService.advertise(
+              idx: _post.idx,
+              days: days,
+            );
+            if (!mounted) return;
+            setState(() {
+              _post = _post.copyWith(adEndTime: result.adEndTime);
+              _postChanged = true;
+            });
+            showSuccessSnackBar(
+              context,
+              '포인트 광고가 $label되었습니다'.tr(),
+            );
+          } catch (e) {
+            if (!mounted) return;
+            showErrorSnackBar(context, '$e');
+          }
+        },
+      ),
+    );
   }
 
   Future<void> _editPost() async {
@@ -399,6 +476,8 @@ class _PostViewScreenState extends State<PostViewScreen> {
                             switch (value) {
                               case 'edit':
                                 _editPost();
+                              case 'pointAd':
+                                _showPointAdOption();
                               case 'delete':
                                 _deletePost();
                               case 'block':
@@ -422,6 +501,27 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text('수정'.tr()),
+                                        ],
+                                      ),
+                                    ),
+                                    PopupMenuItem(
+                                      value: 'pointAd',
+                                      child: Row(
+                                        children: [
+                                          FaIcon(
+                                            FontAwesomeIcons.lightBullhorn,
+                                            size: 15,
+                                            color: popScheme.primary,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Text(
+                                            _post.isAdActive
+                                                ? '포인트 광고 연장'.tr()
+                                                : '포인트 광고'.tr(),
+                                            style: TextStyle(
+                                              color: popScheme.primary,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -505,6 +605,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              // 포인트 광고 만료일 배너 (활성 광고인 경우)
+                              if (_post.isAdActive) _buildAdBanner(scheme),
+
                               Text(
                                 _post.subject,
                                 style: theme.textTheme.headlineSmall?.copyWith(
@@ -606,6 +709,42 @@ class _PostViewScreenState extends State<PostViewScreen> {
   void _openUserProfile(int idxMember) {
     if (idxMember == 0) return;
     OtherUserScreen.pushByIdx(context, idxMember);
+  }
+
+  Widget _buildAdBanner(ColorScheme scheme) {
+    final endDate = _post.adEndDateTime;
+    final formatted = endDate != null
+        ? DateFormat('yyyy.MM.dd HH:mm').format(endDate)
+        : '';
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: scheme.primaryContainer.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        children: [
+          FaIcon(
+            FontAwesomeIcons.lightBullhorn,
+            size: 14,
+            color: scheme.primary,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              '${'광고 만료일'.tr()}: $formatted (D-${_post.adRemainingDays})',
+              style: TextStyle(
+                fontSize: 12,
+                color: scheme.primary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMeta(Post post, ThemeData theme, ColorScheme scheme) {

@@ -57,6 +57,12 @@ class Post {
   final String ip;
   final int noOfAttach;
 
+  // 포인트 광고 관련 필드
+  final int adEndTime; // int_5: 광고 종료 Unix timestamp (초)
+  final int adStartTime; // int_6: 마지막 광고 등록 시간
+  final int adDays; // int_7: 마지막 등록 기간 (일)
+  final int adPoints; // int_8: 마지막 등록에 소비한 포인트
+
   // 사용자 상호작용 상태 (런타임, API 응답에서 설정)
   final bool liked;
   final bool bookmarked;
@@ -117,6 +123,10 @@ class Post {
     this.region = '',
     this.ip = '',
     this.noOfAttach = 0,
+    this.adEndTime = 0,
+    this.adStartTime = 0,
+    this.adDays = 0,
+    this.adPoints = 0,
     this.liked = false,
     this.bookmarked = false,
     this.reported = false,
@@ -236,11 +246,32 @@ class Post {
       region: json['region']?.toString() ?? '',
       ip: json['ip']?.toString() ?? '',
       noOfAttach: _toInt(json['no_of_attach']),
+      adEndTime: _toInt(json['int_5']),
+      adStartTime: _toInt(json['int_6']),
+      adDays: _toInt(json['int_7']),
+      adPoints: _toInt(json['int_8']),
       liked: json['liked'] == true,
       bookmarked: json['bookmarked'] == true,
       reported: json['reported'] == true,
       blocked: json['blocked'] == true,
     );
+  }
+
+  /// 포인트 광고 활성 여부
+  bool get isAdActive =>
+      adEndTime > DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+  /// 포인트 광고 남은 일수
+  int get adRemainingDays {
+    if (!isAdActive) return 0;
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    return ((adEndTime - now) / 86400).ceil();
+  }
+
+  /// 포인트 광고 만료 DateTime
+  DateTime? get adEndDateTime {
+    if (adEndTime <= 0) return null;
+    return DateTime.fromMillisecondsSinceEpoch(adEndTime * 1000);
   }
 
   Post copyWith({
@@ -251,6 +282,7 @@ class Post {
     bool? reported,
     bool? blocked,
     String? youtubeUrl,
+    int? adEndTime,
   }) {
     return Post(
       idx: idx,
@@ -306,6 +338,10 @@ class Post {
       region: region,
       ip: ip,
       noOfAttach: noOfAttach,
+      adEndTime: adEndTime ?? this.adEndTime,
+      adStartTime: adStartTime,
+      adDays: adDays,
+      adPoints: adPoints,
       liked: liked ?? this.liked,
       bookmarked: bookmarked ?? this.bookmarked,
       reported: reported ?? this.reported,
