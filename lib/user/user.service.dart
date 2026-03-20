@@ -161,15 +161,20 @@ class UserService {
   }
 
   /// 차단된 사용자 목록을 가져온다. (user.blockedList)
+  ///
+  /// 서버 응답이 List이면 파싱하고, Map이면 (차단 목록 비어있음) 빈 리스트를 반환한다.
   static Future<List<BlockedUserModel>> getBlockedList() async {
-    final items = await ApiService.instance.v7api<List>(
+    final response = await ApiService.instance.v7api(
       'user.blockedList',
-      debug: true,
     );
-    return items
-        .whereType<Map<String, dynamic>>()
-        .map(BlockedUserModel.fromJson)
-        .toList();
+    if (response is List) {
+      return response
+          .whereType<Map<String, dynamic>>()
+          .map(BlockedUserModel.fromJson)
+          .toList();
+    }
+    // Map 응답 (차단 목록 비어있음)
+    return [];
   }
 
   /// 사용자 차단을 해제한다. (user.unblock)
