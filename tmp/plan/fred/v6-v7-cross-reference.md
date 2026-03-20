@@ -25,7 +25,7 @@
 - [ ] Quick post screen — Category selection + inline form
 - [ ] Wanted/hiring special form — Job posting dedicated fields (company, salary, scope, etc.)
 - [ ] Settings screen — UI screen (service/state exist but no screen)
-- [ ] Follow/unfollow user — Follow and unfollow users
+- [x] Follow/unfollow user — `lib/user/other_user/other_user.screen.dart` + `lib/user/user.functions.dart` (2026-03-20) *Note: Flutter UI ready. Backend API (`user.toggleFollow`, `user.isFollowing`, `user.followingList`) not yet implemented in UserController.php — needs PHP backend work.*
 - [ ] Notice dedicated screen — Full notice screen with MOFA announcements
 - [ ] User activity screen — View own posts/comments history
 - [ ] Advertisement view screen — Ad detail viewing with contact card
@@ -191,7 +191,7 @@
 | Category | Done | Remaining |
 |----------|------|-----------|
 | Critical | 2 | 4 |
-| High Priority | 4 | 7 |
+| High Priority | 5 | 6 |
 | QR / Event | 8 | 0 |
 | Home / UI | 0 | 8 |
 | Infrastructure | 0 | 7 |
@@ -199,4 +199,4 @@
 | Static Content | 0 | 49 |
 | Partial Implementations | 0 | 14 |
 | System-Level | 0 | 2 |
-| **Total** | **14** | **97** |
+| **Total** | **15** | **96** |

@@ -81,6 +81,20 @@ Future<bool> toggleBlockUserByIdx(int idxBlockee) async {
   return res['blocked'] == true;
 }
 
+/// Follow/unfollow a user by member idx
+///
+/// 반환: true = 팔로우됨, false = 팔로우 해제됨
+Future<bool> toggleFollowUser(int idxFollowee) async {
+  if (loginUid() == null) {
+    throw ('User must login first');
+  }
+  final res = await ApiService.instance.v7api(
+    'user.toggleFollow',
+    data: {'idx_followee': idxFollowee},
+  );
+  return res['following'] == true;
+}
+
 /// Show user profile dialog with Comic design
 void showProfileDialog(BuildContext context, UserModel otherUser) {
   final theme = Theme.of(context);

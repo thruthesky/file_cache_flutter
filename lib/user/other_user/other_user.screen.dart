@@ -10,6 +10,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.model.dart';
+import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
@@ -44,6 +45,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
   List<Post> _recentPosts = [];
   bool _isLoading = true;
   bool _bookmarked = false;
+  bool _following = false;
 
   @override
   void initState() {
@@ -65,6 +67,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
         _isLoading = false;
       });
       _loadRecentPosts();
+      _loadFollowStatus();
     } catch (e) {
       if (!mounted) return;
       await _showErrorDialog(e.toString());
@@ -112,6 +115,38 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
     setState(() {
       _recentPosts = result.posts;
     });
+  }
+
+  Future<void> _loadFollowStatus() async {
+    if (!UserService.isLoggedIn || _user == null) return;
+    final following = await UserService.isFollowing(idxFollowee: _user!.idx).catchError((_) => false);
+    if (!mounted) return;
+    setState(() => _following = following);
+  }
+
+  Future<void> _toggleFollow() async {
+    if (!UserService.isLoggedIn) {
+      LoginRequiredDialog.show(context);
+      return;
+    }
+    if (_user == null) return;
+    final following = await toggleFollowUser(_user!.idx).catchError((e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(e.toString())),
+        );
+      }
+      return _following;
+    });
+    if (!mounted) return;
+    setState(() => _following = following);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          following ? '팔로우했습니다'.tr() : '팔로우를 해제했습니다'.tr(),
+        ),
+      ),
+    );
   }
 
   Future<void> _toggleBookmark() async {
@@ -163,6 +198,8 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
               ),
               onSelected: (value) {
                 switch (value) {
+                  case 'follow':
+                    _toggleFollow();
                   case 'block':
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())),
@@ -176,6 +213,31 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
               itemBuilder: (ctx) {
                 final popScheme = Theme.of(ctx).colorScheme;
                 return [
+                  PopupMenuItem(
+                    value: 'follow',
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          _following
+                              ? FontAwesomeIcons.solidUserPlus
+                              : FontAwesomeIcons.lightUserPlus,
+                          size: 15,
+                          color: _following
+                              ? popScheme.primary
+                              : popScheme.onSurface,
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          _following ? '팔로우 해제'.tr() : '팔로우'.tr(),
+                          style: TextStyle(
+                            color: _following
+                                ? popScheme.primary
+                                : popScheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   PopupMenuItem(
                     value: 'block',
                     child: Row(
@@ -286,6 +348,15 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildActionButton(
+                _following
+                    ? FontAwesomeIcons.solidUserPlus
+                    : FontAwesomeIcons.lightUserPlus,
+                _following ? '팔로잉'.tr() : '팔로우'.tr(),
+                _toggleFollow,
+                isActive: _following,
+              ),
+              const SizedBox(width: 16),
+              _buildActionButton(
                 _bookmarked
                     ? FontAwesomeIcons.solidBookmark
                     : FontAwesomeIcons.lightBookmark,
@@ -306,12 +377,6 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                   context,
                 ).showSnackBar(SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())));
               }),
-              const SizedBox(width: 16),
-              _buildActionButton(FontAwesomeIcons.lightFlag, '신고'.tr(), () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('신고 기능은 준비 중입니다.'.tr())));
-              }, isDestructive: true),
             ],
           ),
 
@@ -410,8 +475,9 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
     String label,
     VoidCallback onTap, {
     bool isDestructive = false,
+    bool isActive = false,
   }) {
-    final c = isDestructive ? color.error : color.onSurfaceVariant;
+    final c = isActive ? color.primary : isDestructive ? color.error : color.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
