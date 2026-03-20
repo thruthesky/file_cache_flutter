@@ -50,6 +50,10 @@ This project is a Flutter app for building PhilGo v7 application.
 - v6에 있는 기능이 필요한 경우, v6 코드를 재사용하지 말고 **반드시 v7 아키텍처에 맞는 새 코드를 생성**한다.
 - v7 코드(`lib/` 폴더)만을 기준으로 설명하고 작업한다.
 
+## philgo-content 작업 규칙
+
+- 사용자가 "philgo-content"라고 요청하면, v7 PHP 홈페이지의 `/Users/thruthesky/apps/withcenter/philgo/www/.custom-skills/philgo-content/SKILL.md` 문서를 참고하여 필고 정보 생성 또는 정보 참조 작업을 수행한다.
+
 ## Never use packages/philgo_api/
 
 - **NEVER** import or directly use any code from the `packages/philgo_api/` folder in the project.

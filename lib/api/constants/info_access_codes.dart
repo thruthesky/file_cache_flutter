@@ -13,7 +13,7 @@
 /// 동기화 대상 파일 (3개):
 ///   1. PHP: lib/info/InfoAccessCodes.php
 ///   2. 문서: data/info/ACCESS_CODES.md
-///   3. Dart: lib/v7_api/constants/info_access_codes.dart (이 파일)
+///   3. Dart: lib/api/constants/info_access_codes.dart (이 파일)
 class InfoAccessCodes {
   InfoAccessCodes._(); // 인스턴스화 방지
 
