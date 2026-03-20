@@ -218,7 +218,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                   vertical: 14,
                 ),
               ),
-              maxLines: 15,
+              maxLines: 32,
               minLines: 8,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {

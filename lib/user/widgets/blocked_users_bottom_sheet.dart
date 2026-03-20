@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/user/blocked_user.model.dart';
 import 'package:philgo/user/user.service.dart';
-import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:philgo/user/widgets/blocked_user_tile.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// 차단된 사용자 목록을 바텀시트로 표시한다.
@@ -28,17 +28,21 @@ class _BlockedUsersSheet extends StatefulWidget {
 }
 
 class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
-  late Future<List<BlockedUserModel>> _future;
+  List<BlockedUserModel>? _users;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _future = UserService.getBlockedList();
+    _loadBlockedUsers();
   }
 
-  void _refresh() {
+  Future<void> _loadBlockedUsers() async {
+    final users = await UserService.getBlockedList();
+    if (!mounted) return;
     setState(() {
-      _future = UserService.getBlockedList();
+      _users = users;
+      _loading = false;
     });
   }
 
@@ -63,15 +67,12 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
     );
     if (confirm != true || !mounted) return;
 
-    try {
-      await UserService.unblock(idxBlockee: user.idxBlockee);
-      if (!mounted) return;
-      showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
-      _refresh();
-    } catch (e) {
-      if (!mounted) return;
-      showErrorSnackBar(context, '$e');
-    }
+    await UserService.unblock(idxBlockee: user.idxBlockee);
+    if (!mounted) return;
+    setState(() {
+      _users?.removeWhere((u) => u.idxBlockee == user.idxBlockee);
+    });
+    showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
   }
 
   @override
@@ -117,29 +118,10 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
 
             // 리스트
             Expanded(
-              child: FutureBuilder<List<BlockedUserModel>>(
-                future: _future,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Text(
-                          '차단 목록을 불러오는 중 오류가 발생했습니다'.tr(),
-                          style: TextStyle(color: color.error),
-                        ),
-                      ),
-                    );
-                  }
-
-                  final users = snapshot.data ?? [];
-
-                  if (users.isEmpty) {
-                    return Center(
+              child: _loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _users!.isEmpty
+                  ? Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -157,77 +139,28 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
                           ),
                         ],
                       ),
-                    );
-                  }
-
-                  return ListView.separated(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: users.length,
-                    separatorBuilder: (_, _) => Divider(
-                      height: 1,
-                      indent: 68,
-                      color: color.outlineVariant.withValues(alpha: 0.5),
+                    )
+                  : ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      itemCount: _users!.length,
+                      separatorBuilder: (_, _) => Divider(
+                        height: 1,
+                        indent: 68,
+                        color: color.outlineVariant.withValues(alpha: 0.5),
+                      ),
+                      itemBuilder: (context, index) {
+                        final user = _users![index];
+                        return BlockedUserTile(
+                          user: user,
+                          onUnblock: () => _unblock(user),
+                        );
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      final user = users[index];
-                      return _BlockedUserTile(
-                        user: user,
-                        onUnblock: () => _unblock(user),
-                      );
-                    },
-                  );
-                },
-              ),
             ),
           ],
         );
       },
-    );
-  }
-}
-
-class _BlockedUserTile extends StatelessWidget {
-  final BlockedUserModel user;
-  final VoidCallback onUnblock;
-
-  const _BlockedUserTile({required this.user, required this.onUnblock});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          UserAvatar(photoUrl: user.photoUrl, radius: 22),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              user.nickname.isNotEmpty ? user.nickname : '이름없음'.tr(),
-              style: text.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          TextButton.icon(
-            onPressed: onUnblock,
-            icon: FaIcon(
-              FontAwesomeIcons.lightBan,
-              size: 14,
-              color: color.error,
-            ),
-            label: Text(
-              '차단 해제'.tr(),
-              style: TextStyle(color: color.error, fontSize: 13),
-            ),
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
