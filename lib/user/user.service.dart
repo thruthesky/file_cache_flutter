@@ -15,7 +15,6 @@ import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 
 import 'blocked_user.model.dart';
-import 'following_user.model.dart';
 import 'user.model.dart';
 
 /// 사용자 인증 및 v7 API 서비스
@@ -186,26 +185,7 @@ class UserService {
     );
   }
 
-  /// 팔로우 중인 사용자 목록을 가져온다. (user.followingList)
-  static Future<List<FollowingUserModel>> getFollowingList() async {
-    final response = await ApiService.instance.v7api('user.followingList');
-    if (response is List) {
-      return response
-          .whereType<Map<String, dynamic>>()
-          .map(FollowingUserModel.fromJson)
-          .toList();
-    }
-    return [];
-  }
 
-  /// 특정 사용자를 팔로우 중인지 확인한다. (user.isFollowing)
-  static Future<bool> isFollowing({required int idxFollowee}) async {
-    final response = await ApiService.instance.v7api(
-      'user.isFollowing',
-      data: {'idx_followee': idxFollowee},
-    );
-    return response['following'] == true;
-  }
 
   /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)
   ///
