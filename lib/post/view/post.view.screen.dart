@@ -22,6 +22,7 @@ import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/point/point_advertisement.service.dart';
 import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
+import 'package:philgo/point/widgets/earned_point_badge.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
 
@@ -802,6 +803,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                       fontSize: 11,
                     ),
                   ),
+                  if (post.earnedPoint > 0) ...[
+                    const SizedBox(width: 8),
+                    EarnedPointBadge(point: post.earnedPoint),
+                  ],
                   if (post.category.isNotEmpty) ...[
                     const SizedBox(width: 12),
                     FaIcon(

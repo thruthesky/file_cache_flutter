@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
+import 'package:philgo/point/widgets/earned_point_badge.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
@@ -315,6 +316,10 @@ class _CommentTileState extends State<CommentTile> {
                   color: scheme.tertiary,
                 ),
               ),
+              if (comment.earnedPoint > 0) ...[
+                const SizedBox(width: 8),
+                EarnedPointBadge(point: comment.earnedPoint),
+              ],
             ],
           ),
 
