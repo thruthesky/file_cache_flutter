@@ -9,7 +9,11 @@ import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/point/point_advertisement.service.dart';
+import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/user/user.state.dart';
+import 'package:provider/provider.dart';
 
 /// 게시글 작성 화면
 ///
@@ -83,11 +87,31 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
   /// 선택된 서브 카테고리 (드롭다운으로 변경 가능)
   String? _selectedCategory;
 
+  /// 포인트 광고 설정 (null이면 로딩 중 또는 미지원)
+  PointAdvertisementConfig? _adConfig;
+
+  /// 선택된 광고 기간 (null이면 광고 안 함)
+  int? _advertisementDays;
+
   @override
   void initState() {
     super.initState();
     _selectedPostId = widget.postId;
     _selectedCategory = widget.category;
+    _loadAdConfig();
+  }
+
+  /// 포인트 광고 설정 로드
+  Future<void> _loadAdConfig() async {
+    try {
+      final config = await PointAdvertisementService.getConfig(
+        postId: _selectedPostId,
+        category: _selectedCategory,
+      );
+      if (mounted) setState(() => _adConfig = config);
+    } catch (_) {
+      // 광고 설정 로드 실패 시 무시 (광고 버튼 숨김)
+    }
   }
 
   @override
@@ -197,7 +221,10 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                           setState(() {
                             _selectedPostId = postId;
                             _selectedCategory = null;
+                            _advertisementDays = null;
+                            _adConfig = null;
                           });
+                          _loadAdConfig();
                         },
                       );
                     },
@@ -324,6 +351,30 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
     );
   }
 
+  /// 포인트 광고 선택 바텀시트 표시
+  void _showAdSelectionSheet() {
+    final config = _adConfig;
+    if (config == null || !config.eligible) return;
+
+    final userPoints =
+        context.read<UserState>().user?.point ?? 0;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (_) => PointAdSelectionBottomSheet(
+        config: config,
+        userPoints: userPoints,
+        initialSelectedDays: _advertisementDays,
+        onDaysSelected: (days) {
+          Navigator.pop(context);
+          setState(() => _advertisementDays = days);
+        },
+      ),
+    );
+  }
+
   /// 게시글 제출
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -339,6 +390,23 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         category: _selectedCategory,
         files: _uploadedFiles.map((f) => f.path).toList(),
       );
+
+      // 포인트 광고 등록 (선택한 경우)
+      if (_advertisementDays != null && _advertisementDays! > 0) {
+        try {
+          await PointAdvertisementService.advertise(
+            idx: post.idx,
+            days: _advertisementDays!,
+          );
+        } catch (e) {
+          // 광고 등록 실패해도 글 작성은 성공이므로 알림만 표시
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${'포인트 광고 등록 실패'.tr()}: $e')),
+            );
+          }
+        }
+      }
 
       if (!mounted) return;
       // 생성된 게시글을 결과로 반환
@@ -556,6 +624,70 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               },
             ),
             const SizedBox(height: 12),
+
+            // 포인트 광고 선택 버튼 (적격 게시판인 경우만 표시)
+            if (_adConfig != null && _adConfig!.eligible)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: InkWell(
+                  onTap: _isSubmitting ? null : _showAdSelectionSheet,
+                  borderRadius: BorderRadius.circular(8),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: _advertisementDays != null
+                          ? scheme.primaryContainer.withValues(alpha: 0.3)
+                          : scheme.surfaceContainerHighest.withValues(
+                              alpha: 0.5,
+                            ),
+                      borderRadius: BorderRadius.circular(8),
+                      border: _advertisementDays != null
+                          ? Border.all(color: scheme.primary, width: 1)
+                          : Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                    ),
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.lightBullhorn,
+                          size: 14,
+                          color: _advertisementDays != null
+                              ? scheme.primary
+                              : scheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _advertisementDays != null
+                              ? '${'포인트 광고'.tr()}: $_advertisementDays${'일'.tr()}'
+                              : '포인트 광고'.tr(),
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: _advertisementDays != null
+                                ? scheme.primary
+                                : scheme.onSurfaceVariant,
+                            fontWeight: _advertisementDays != null
+                                ? FontWeight.w600
+                                : FontWeight.w400,
+                          ),
+                        ),
+                        const Spacer(),
+                        FaIcon(
+                          FontAwesomeIcons.lightChevronDown,
+                          size: 12,
+                          color: _advertisementDays != null
+                              ? scheme.primary
+                              : scheme.onSurfaceVariant,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
             // 파일 업로드 버튼 + 전송 버튼 + 미리보기
             Column(
