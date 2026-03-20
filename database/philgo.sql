@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mariadb
--- Generation Time: Mar 15, 2026 at 11:30 AM
+-- Generation Time: Mar 20, 2026 at 10:43 AM
 -- Server version: 11.7.2-MariaDB-ubu2404
 -- PHP Version: 8.3.6
 
@@ -1129,7 +1129,6 @@ CREATE TABLE `sf_post_data` (
   `no_of_view` int(10) UNSIGNED NOT NULL DEFAULT 0,
   `good` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
   `bad` smallint(5) UNSIGNED NOT NULL DEFAULT 0,
-  `access_code` varchar(32) NOT NULL DEFAULT '',
   `region` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   `int_1` int(11) NOT NULL DEFAULT 0,
   `int_2` int(11) NOT NULL DEFAULT 0,
@@ -1183,7 +1182,8 @@ CREATE TABLE `sf_post_data` (
   `text_10` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `has_image` char(1) DEFAULT '',
   `has_video` char(1) DEFAULT '',
-  `has_youtube` char(1) DEFAULT ''
+  `has_youtube` char(1) DEFAULT '',
+  `access_code` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB AVG_ROW_LENGTH=1024000000 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_uca1400_ai_ci MAX_ROWS=100000000;
 
 -- --------------------------------------------------------
@@ -1881,12 +1881,10 @@ ALTER TABLE `sf_post_config`
 --
 ALTER TABLE `sf_post_data`
   ADD PRIMARY KEY (`idx`),
-  ADD KEY `user_id` (`user_id`),
+  ADD UNIQUE KEY `access_code` (`access_code`),
+  ADD UNIQUE KEY `uq_access_code` (`access_code`),
   ADD KEY `stamp` (`stamp`),
-  ADD KEY `gid` (`gid`),
   ADD KEY `idx_parent` (`idx_parent`),
-  ADD KEY `idx_root` (`idx_root`),
-  ADD KEY `webbrowser_id` (`webbrowser_id`),
   ADD KEY `ip` (`ip`),
   ADD KEY `category` (`category`),
   ADD KEY `int_1` (`int_1`),
@@ -1896,33 +1894,22 @@ ALTER TABLE `sf_post_data`
   ADD KEY `sub_category` (`sub_category`),
   ADD KEY `varchar_1` (`varchar_1`),
   ADD KEY `idx_member` (`idx_member`),
-  ADD KEY `reminder` (`reminder`),
   ADD KEY `report` (`report`),
   ADD KEY `good` (`good`),
-  ADD KEY `bad` (`bad`),
-  ADD KEY `access_code` (`access_code`),
   ADD KEY `stamp_update` (`stamp_update`),
   ADD KEY `stamp_last_comment` (`stamp_last_comment`),
   ADD KEY `group_id` (`group_id`),
   ADD KEY `list_order` (`list_order`),
-  ADD KEY `varchar_2` (`varchar_2`),
   ADD KEY `post_id` (`post_id`),
   ADD KEY `idx_parent_post_id` (`idx_parent`,`post_id`),
   ADD KEY `no_of_view` (`no_of_view`),
   ADD KEY `no_of_comment` (`no_of_comment`),
   ADD KEY `no_of_attach` (`no_of_attach`),
   ADD KEY `region` (`region`),
-  ADD KEY `char_3` (`char_3`),
-  ADD KEY `char_4` (`char_4`),
   ADD KEY `char_5` (`char_5`),
-  ADD KEY `int_3` (`int_3`),
-  ADD KEY `int_4` (`int_4`),
   ADD KEY `int_5` (`int_5`),
-  ADD KEY `no_of_first_image` (`no_of_first_image`),
-  ADD KEY `idx_root_post_id` (`idx_root`,`post_id`),
   ADD KEY `idx_root_post_id_stamp` (`idx_root`,`post_id`,`stamp`),
   ADD KEY `idx_parent_post_id_stamp` (`idx_parent`,`post_id`,`stamp`),
-  ADD KEY `post_id_idx_category` (`post_id`,`idx_parent`,`category`),
   ADD KEY `post_id_idx_parent_stamp_2` (`post_id`,`idx_parent`,`stamp`),
   ADD KEY `post_id_idx_parent_category_stamp` (`post_id`,`idx_parent`,`category`,`stamp`),
   ADD KEY `post_id_idx_parent_region_stamp` (`post_id`,`idx_parent`,`region`,`stamp`),
@@ -1938,11 +1925,11 @@ ALTER TABLE `sf_post_data`
   ADD KEY `idx_post_id_category_has_video_stamp` (`post_id`,`category`,`has_video`,`stamp`),
   ADD KEY `idx_post_id_category_has_youtube_stamp` (`post_id`,`category`,`has_youtube`,`stamp`),
   ADD KEY `stamp_int_10` (`stamp`,`int_10`),
-  ADD KEY `idx_parent_deleted_blind` (`idx_parent`,`deleted`,`blind`),
   ADD KEY `idx_int_10` (`int_10`),
-  ADD KEY `idx_parent_stamp` (`idx_parent`,`stamp`),
   ADD KEY `idx_has_image_parent_stamp` (`has_image`,`idx_parent`,`stamp`),
-  ADD KEY `idx_parent_deleted_stamp` (`idx_parent`,`deleted`,`stamp`);
+  ADD KEY `idx_parent_deleted_stamp` (`idx_parent`,`deleted`,`stamp`),
+  ADD KEY `idx_has_image_deleted_blind_stamp` (`has_image`,`deleted`,`blind`,`stamp`),
+  ADD KEY `idx_parent_deleted_blind_stamp_postid` (`idx_parent`,`deleted`,`blind`,`stamp`,`post_id`);
 
 --
 -- Indexes for table `sf_post_search`
