@@ -146,7 +146,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 2, right: 4),
                         child: FaIcon(
-                          FontAwesomeIcons.ellipsisVertical,
+                          FontAwesomeIcons.ellipsis,
                           size: 14,
                           color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 150),
                         ),
