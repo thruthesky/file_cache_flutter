@@ -160,6 +160,19 @@ $idx = $post->idx;
 > **⛔ "간단한 쿼리", "빠른 수정"이라는 이유로 뷰에 SQL을 작성하는 것은 절대 허용하지 않는다.**
 > **⛔ 뷰에서 SQL을 작성하려는 자신을 발견하면 즉시 멈추고, Repository → Service → Controller 순서로 구현한다.**
 
+#### 뷰/위젯에서 함수 정의 금지
+
+> **⛔ `v7/*.php`, `v7/widgets/*.php` 등 뷰/위젯 파일에서 `function` 키워드로 함수를 정의하는 것은 금지한다.**
+> 뷰에 정의된 함수는 해당 파일에서만 사용 가능하여 재사용이 불가능하고, 다른 뷰/위젯에서 동일한 기능이 필요할 때 코드 중복이 발생한다.
+
+| 함수 종류 | 올바른 위치 | 예시 |
+|-----------|------------|------|
+| UI 유틸리티 (날짜 포맷, 숫자 포맷, URL 판별 등) | `v7/utils/helpers.php` | `v7FormatDateView()`, `isImageUrl()` |
+| 비즈니스 로직 (데이터 조회/변환/검증) | `lib/<module>/*Service.php` | `PostService::getByAccessCode()` |
+| SQL 쿼리 | `lib/<module>/*Repository.php` | `PostRepository::findByAccessCode()` |
+
+`v7/utils/helpers.php`는 `v7/boot.php`에서 자동 로드되므로, 모든 v7 페이지에서 별도 require 없이 사용 가능하다.
+
 ---
 
 ### 기존 스킬과의 관계
