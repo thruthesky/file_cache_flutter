@@ -201,7 +201,7 @@ class EssentialInfoScreen extends StatelessWidget {
   /// 아이콘 그리드 아이템 빌드 (v6 MenuGridItem 동일)
   Widget _buildGridItem(BuildContext context, _MenuItem item) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final itemWidth = (screenWidth - 32 - 16) / 4;
+    final itemWidth = (screenWidth - 32 - 16) / 5;
 
     return Material(
       color: Colors.transparent,
