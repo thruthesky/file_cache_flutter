@@ -106,6 +106,62 @@ PHP 백엔드, 웹 홈페이지, Flutter 앱 개발을 모두 포함합니다.
 
 ---
 
+### 🔴🔴🔴 v7 아키텍처 절대 원칙: 계층 분리 (Layered Architecture) 🔴🔴🔴
+
+> **⛔⛔⛔ 뷰(v7/*.php, v7/widgets/)에서 SQL 쿼리나 비즈니스 로직을 직접 작성하는 것은 절대 금지한다. ⛔⛔⛔**
+> **⛔⛔⛔ 모든 데이터 조회/처리는 반드시 Service → Repository 계층을 통해야 한다. ⛔⛔⛔**
+>
+> **이 원칙의 핵심 이유:**
+> v7 시스템은 웹(v7 페이지), Flutter 앱(API 호출), 외부 API 등 **다수의 클라이언트가 동일한 Service 메서드를 공유**한다.
+> 뷰에 로직을 작성하면 Flutter/API 클라이언트에서는 해당 로직을 사용할 수 없어 **코드 중복, 로직 불일치, 유지보수 불가능**이 발생한다.
+> 따라서 모든 비즈니스 로직은 반드시 Service 계층에, 모든 SQL 쿼리는 반드시 Repository 계층에 위치해야 한다.
+
+#### 계층별 역할 및 허용 범위
+
+| 계층 | 파일 위치 | 역할 | SQL 직접 사용 | 비즈니스 로직 |
+|------|-----------|------|:---:|:---:|
+| **View (뷰/페이지)** | `v7/*.php`, `v7/widgets/` | 렌더링만 담당. Service 호출 후 결과를 표시 | ⛔ 절대 금지 | ⛔ 금지 |
+| **Controller (API)** | `lib/<module>/*Controller.php` | API 엔드포인트. 인증 확인 후 Service 위임 | ⛔ 금지 | ⛔ 금지 (Service 위임) |
+| **Service (비즈니스)** | `lib/<module>/*Service.php` | 비즈니스 로직 처리. Repository 호출 | ⛔ 금지 (Repository 위임) | ✅ 허용 (유일하게) |
+| **Repository (데이터)** | `lib/<module>/*Repository.php` | SQL 쿼리 실행, Entity 반환 | ✅ 허용 (유일하게) | ⛔ 금지 |
+| **Entity (모델)** | `lib/<module>/*Entity.php` | 데이터 구조 정의, fromArray/toArray | ⛔ 금지 | ⛔ 금지 |
+
+#### 데이터 흐름 (클라이언트 → DB)
+
+```
+[웹 v7 페이지]  ──→ Service ──→ Repository ──→ DB
+[Flutter 앱]    ──→ Controller ──→ Service ──→ Repository ──→ DB
+[외부 API 호출] ──→ Controller ──→ Service ──→ Repository ──→ DB
+```
+
+**모든 클라이언트가 동일한 Service 메서드를 호출하므로, 비즈니스 로직이 한 곳(Service)에 집중된다.**
+
+#### 올바른 예시 vs 잘못된 예시
+
+```php
+// ❌ 잘못된 예시: 뷰에서 직접 SQL 쿼리
+// v7/post/view.php
+$row = \Philgo\Utils\Db::fetch("SELECT idx FROM sf_post_data WHERE access_code = ?", [$code]);
+$idx = (int) $row['idx'];
+
+// ✅ 올바른 예시: 뷰에서 Service 호출 → Service가 Repository 호출
+// v7/post/view.php
+$post = PostService::getByAccessCode(['access_code' => $code]);
+$idx = $post->idx;
+```
+
+#### 새 기능 추가 시 필수 작업 흐름
+
+1. **Repository**: SQL 쿼리를 작성하고 Entity를 반환하는 메서드 추가
+2. **Service**: Repository를 호출하고 비즈니스 로직(후처리, 검증 등)을 수행하는 메서드 추가
+3. **Controller**: API 엔드포인트로 Service를 호출하는 메서드 추가 (Flutter/외부 API용)
+4. **View**: Service를 호출하여 결과를 렌더링 (웹 페이지용)
+
+> **⛔ "간단한 쿼리", "빠른 수정"이라는 이유로 뷰에 SQL을 작성하는 것은 절대 허용하지 않는다.**
+> **⛔ 뷰에서 SQL을 작성하려는 자신을 발견하면 즉시 멈추고, Repository → Service → Controller 순서로 구현한다.**
+
+---
+
 ### 기존 스킬과의 관계
 
 | 스킬 | 용도 |
