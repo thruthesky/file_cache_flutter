@@ -25,6 +25,7 @@ import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
+import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
@@ -340,6 +341,15 @@ final router = GoRouter(
       path: EssentialInfoScreen.routeName,
       name: EssentialInfoScreen.routeName,
       builder: (context, state) => const EssentialInfoScreen(),
+    ),
+    GoRoute(
+      path: InfoViewScreen.routeName,
+      name: InfoViewScreen.routeName,
+      builder: (context, state) {
+        final accessCode = state.uri.queryParameters['access_code'] ?? '';
+        final title = state.extra as String?;
+        return InfoViewScreen(accessCode: accessCode, title: title);
+      },
     ),
   ],
 );

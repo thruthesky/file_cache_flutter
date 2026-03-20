@@ -2,13 +2,16 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/api/constants/info_access_codes.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/info/info_view.screen.dart';
 
 /// 필수 정보 메뉴 아이템
 class _MenuItem {
   final IconData icon;
   final String label;
-  const _MenuItem(this.icon, this.label);
+  final String? accessCode;
+  const _MenuItem(this.icon, this.label, {this.accessCode});
 }
 
 /// 필수 정보 섹션
@@ -32,10 +35,10 @@ class EssentialInfoScreen extends StatelessWidget {
   static const _sections = <_Section>[
     // 1. 긴급 연락처
     _Section('긴급 연락처', [
-      _MenuItem(FontAwesomeIcons.landmarkFlag, '대사관'),
-      _MenuItem(FontAwesomeIcons.peopleGroup, '한인회'),
-      _MenuItem(FontAwesomeIcons.buildingShield, '경찰서'),
-      _MenuItem(FontAwesomeIcons.hospital, '병원'),
+      _MenuItem(FontAwesomeIcons.landmarkFlag, '대사관', accessCode: InfoAccessCodes.embassy),
+      _MenuItem(FontAwesomeIcons.peopleGroup, '한인회', accessCode: InfoAccessCodes.koreanAssociation),
+      _MenuItem(FontAwesomeIcons.buildingShield, '경찰서', accessCode: InfoAccessCodes.policeStations),
+      _MenuItem(FontAwesomeIcons.hospital, '병원', accessCode: InfoAccessCodes.hospitals),
     ]),
     // 2. 출입국 & 비자 여권
     _Section('출입국 & 비자 여권', [
@@ -206,9 +209,9 @@ class EssentialInfoScreen extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: () {
-          // 세부 페이지 미구현 - 추후 연결
-        },
+        onTap: item.accessCode != null
+            ? () => InfoViewScreen.push(context, accessCode: item.accessCode!, title: item.label)
+            : null,
         borderRadius: BorderRadius.circular(16),
         splashColor: color.primary.withValues(alpha: 0.1),
         highlightColor: color.primary.withValues(alpha: 0.05),

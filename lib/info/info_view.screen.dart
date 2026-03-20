@@ -1,0 +1,232 @@
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:go_router/go_router.dart';
+import 'package:philgo/api/api.service.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/info/info_post.model.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+/// Info 상세 화면
+///
+/// access_code를 받아 `info.getByAccessCode` API로 데이터를 조회하여 표시한다.
+class InfoViewScreen extends StatefulWidget {
+  static const String routeName = '/info/view';
+
+  static void push(BuildContext ctx, {required String accessCode, String? title}) {
+    ctx.push('$routeName?access_code=$accessCode', extra: title);
+  }
+
+  final String accessCode;
+  final String? title;
+
+  const InfoViewScreen({super.key, required this.accessCode, this.title});
+
+  @override
+  State<InfoViewScreen> createState() => _InfoViewScreenState();
+}
+
+class _InfoViewScreenState extends State<InfoViewScreen> {
+  InfoPost? _info;
+  bool _loading = true;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInfo();
+  }
+
+  Future<void> _loadInfo() async {
+    try {
+      final res = await ApiService.instance.v7api<Map<String, dynamic>>(
+        'info.getByAccessCode',
+        data: {'access_code': widget.accessCode},
+      );
+      if (!mounted) return;
+      setState(() {
+        _info = InfoPost.fromJson(res);
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title ?? _info?.name ?? '정보'.tr()),
+      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? _buildError()
+              : _info != null
+                  ? _buildContent()
+                  : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _buildError() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            FaIcon(FontAwesomeIcons.lightCircleExclamation, size: 48, color: color.error),
+            const SizedBox(height: 16),
+            Text(
+              '정보를 불러올 수 없습니다'.tr(),
+              style: text.titleMedium,
+            ),
+            const SizedBox(height: 8),
+            Text(_error!, style: text.bodySmall?.copyWith(color: color.onSurfaceVariant)),
+            const SizedBox(height: 16),
+            FilledButton.tonal(
+              onPressed: () {
+                setState(() {
+                  _loading = true;
+                  _error = null;
+                });
+                _loadInfo();
+              },
+              child: Text('다시 시도'.tr()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    final info = _info!;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 이름 + 영문명
+          if (info.name.isNotEmpty)
+            Text(info.name, style: text.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+          if (info.englishName.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(info.englishName, style: text.bodyMedium?.copyWith(color: color.onSurfaceVariant)),
+          ],
+
+          // 한줄 소개
+          if (info.title.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(info.title, style: text.bodyLarge),
+          ],
+
+          // 요약 설명
+          if (info.description.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Text(info.description, style: text.bodyMedium?.copyWith(height: 1.5)),
+          ],
+
+          // 메타 정보 카드
+          if (_hasMetaInfo(info)) ...[
+            const SizedBox(height: 16),
+            _buildMetaCard(info),
+          ],
+
+          // 본문 (content)
+          if (info.content.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text(info.content, style: text.bodyMedium?.copyWith(height: 1.6)),
+          ],
+
+          // texts 섹션 (마크다운 텍스트 배열)
+          if (info.texts.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            ...info.texts.map((section) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(section, style: text.bodyMedium?.copyWith(height: 1.6)),
+            )),
+          ],
+        ],
+      ),
+    );
+  }
+
+  bool _hasMetaInfo(InfoPost info) {
+    return info.address.isNotEmpty ||
+        info.phone.isNotEmpty ||
+        info.email.isNotEmpty ||
+        info.hours.isNotEmpty ||
+        info.websiteUrl.isNotEmpty;
+  }
+
+  /// 메타 정보 카드 (주소, 전화, 이메일, 운영시간, 웹사이트)
+  Widget _buildMetaCard(InfoPost info) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          if (info.address.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightLocationDot, info.address),
+          if (info.phone.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightPhone, info.phone, onTap: () {
+              launchUrl(Uri.parse('tel:${info.phone}'));
+            }),
+          if (info.phone2.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightPhone, info.phone2, onTap: () {
+              launchUrl(Uri.parse('tel:${info.phone2}'));
+            }),
+          if (info.email.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightEnvelope, info.email, onTap: () {
+              launchUrl(Uri.parse('mailto:${info.email}'));
+            }),
+          if (info.hours.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightClock, info.hours),
+          if (info.websiteUrl.isNotEmpty)
+            _metaRow(FontAwesomeIcons.lightGlobe, info.websiteUrl, onTap: () {
+              final uri = Uri.tryParse(info.websiteUrl);
+              if (uri != null) launchUrl(uri, mode: LaunchMode.externalApplication);
+            }),
+        ],
+      ),
+    );
+  }
+
+  Widget _metaRow(IconData icon, String value, {VoidCallback? onTap}) {
+    final widget = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          FaIcon(icon, size: 16, color: color.onSurfaceVariant),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              value,
+              style: text.bodyMedium?.copyWith(
+                color: onTap != null ? color.primary : color.onSurface,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (onTap != null) {
+      return GestureDetector(onTap: onTap, child: widget);
+    }
+    return widget;
+  }
+}
