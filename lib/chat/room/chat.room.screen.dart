@@ -9,7 +9,7 @@ import 'package:philgo/user/widgets/login.dart';
 import 'package:go_router/go_router.dart';
 
 class ChatRoomScreen extends StatefulWidget {
-  static const String routeName = '/chat-room/:id';
+  static const String routeName = '/chat/index';
   static Function(BuildContext ctx, String roomId) push = (ctx, roomId) =>
       ctx.push(routeName.replaceFirst(':id', roomId));
   static Function(BuildContext ctx, String roomId) go = (ctx, roomId) =>
