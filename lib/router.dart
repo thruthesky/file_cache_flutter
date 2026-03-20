@@ -24,6 +24,7 @@ import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/info/essential_info.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
@@ -334,6 +335,11 @@ final router = GoRouter(
       path: AccountWithdrawalScreen.routeName,
       name: AccountWithdrawalScreen.routeName,
       builder: (context, state) => const AccountWithdrawalScreen(),
+    ),
+    GoRoute(
+      path: EssentialInfoScreen.routeName,
+      name: EssentialInfoScreen.routeName,
+      builder: (context, state) => const EssentialInfoScreen(),
     ),
   ],
 );

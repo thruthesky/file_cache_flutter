@@ -6,6 +6,7 @@ import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/info/essential_info.screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
@@ -19,7 +20,7 @@ class HomeHelperMenuSection extends StatelessWidget {
   /// 기본 메뉴 항목 (항상 표시)
   static const _items = <(String, IconData, Color, String?)>[
     ('내 정보', FontAwesomeIcons.circleUser, Color(0xFF5C6BC0), null),
-    ('필수정보', FontAwesomeIcons.circleInfo, Color(0xFFEF5350), null),
+    ('필수정보', FontAwesomeIcons.lightCircleInfo, Color(0xFFEF5350), null),
     ('공지사항', FontAwesomeIcons.bullhorn, Color(0xFF66BB6A), null),
     ('환율', FontAwesomeIcons.moneyBillTransfer, Color(0xFFAB47BC), null),
     ('날씨', FontAwesomeIcons.cloudSun, Color(0xFF29B6F6), null),
@@ -77,8 +78,18 @@ class HomeHelperMenuSection extends StatelessWidget {
               () => EventEntryScreen.push(context),
             ),
 
-          // 나머지 메뉴 (내 정보 제외)
-          ..._items.skip(1).map((item) {
+          // 필수정보
+          _buildItem(
+            context,
+            '필수정보',
+            FontAwesomeIcons.lightCircleInfo,
+            const Color(0xFFEF5350),
+            null,
+            onTap: () => EssentialInfoScreen.push(context),
+          ),
+
+          // 나머지 메뉴 (내 정보, 필수정보 제외)
+          ..._items.skip(2).map((item) {
             final (label, icon, iconColor, url) = item;
             return _buildItem(context, label, icon, iconColor, url);
           }),
@@ -93,11 +104,14 @@ class HomeHelperMenuSection extends StatelessWidget {
     String label,
     IconData icon,
     Color iconColor,
-    String? url,
-  ) {
+    String? url, {
+    VoidCallback? onTap,
+  }) {
     return GestureDetector(
       onTap: () {
-        if (url != null) {
+        if (onTap != null) {
+          onTap();
+        } else if (url != null) {
           final uri = Uri.tryParse(url);
           if (uri != null) {
             launchUrl(uri, mode: LaunchMode.externalApplication);
