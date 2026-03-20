@@ -37,6 +37,7 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event entry (spinning wheel)
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
    - [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md) — Masonry image display & debugging
+   - [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md) — Point advertisement (post promotion)
 
 ### After Completing Each Task
 
@@ -540,6 +541,19 @@ CachedNetworkImage의 `imageBuilder` 콜백에서 발생하는 빌드 중 setSta
 (`setState() or markNeedsBuild() called during build`)의 원인과 `addPostFrameCallback()` 해결법,
 업소록(`CompanyModel.primaryImageUrl`) 이미지 처리, 상대/절대 경로 변환(`toAbsoluteUrl()`),
 CachedNetworkImage 에러 캐시로 인한 hot restart 필요성, 디버깅 순서를 포함합니다.
+
+### Flutter 앱 포인트 광고 시스템 → [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md)
+
+Flutter 앱의 포인트 광고 기능 전체 구현을 다룹니다.
+Post 모델의 광고 필드(adEndTime/adStartTime/adDays/adPoints, int_5~int_8 매핑)와
+계산 속성(isAdActive, adRemainingDays, adEndDateTime),
+PointAdvertisementService(getConfig/advertise API 호출),
+PointAdvertisement 모델(목록 상단 광고용), PostListResult 통합,
+PointAdSelectionBottomSheet(기간 선택 바텀시트),
+글 작성(PostCreateScreen)/수정(PostUpdateScreen)/보기(PostViewScreen) 화면별 통합,
+ForumScreen 목록 상단 광고 위젯, PostListTile D-day 뱃지 표시,
+전체 파일 경로 요약을 포함합니다.
+백엔드 로직(비용 계산, 적격 게시판, DB 필드)은 → [v7-point.md](references/v7-point.md) 11장 참조.
 
 ### 웹 문서 → [references/web/](references/web/)
 
