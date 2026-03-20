@@ -30,14 +30,14 @@ Generated: 2026-03-20
 
 ## 🟡 Medium Priority (QR / Event System)
 
-15. **Company QR code display screen** — Display company QR code
-16. **Company QR code share/download** — Share or download QR code image
-17. **QR scanner screen** — Scan QR codes with camera
-18. **QR code scanned result screen** — Show result after scanning QR code
-19. **Company visit review screen** — Write visit review with photos
-20. **Receipt upload (event)** — Upload receipt for event participation
-21. **Event audio feedback** — Sound effects for spinning wheel
-22. **Coupon share** — Share won coupons
+15. ~~**Company QR code display screen** — Display company QR code~~ ✅ Completed (2026-03-20)
+16. ~~**Company QR code share/download** — Share or download QR code image~~ ✅ Completed (2026-03-20)
+17. ~~**QR scanner screen** — Scan QR codes with camera~~ ✅ Completed (2026-03-20)
+18. ~~**QR code scanned result screen** — Show result after scanning QR code~~ ✅ Completed (2026-03-20)
+19. ~~**Company visit review screen** — Write visit review with photos~~ ✅ Completed (2026-03-20)
+20. ~~**Receipt upload (event)** — Upload receipt for event participation~~ ✅ Completed (2026-03-20) (part of visit review photo upload)
+21. ~~**Event audio feedback** — Sound effects for spinning wheel~~ ✅ Already existed in v7 (pangpare.mp3 on coupon win)
+22. ~~**Coupon share** — Share won coupons~~ ✅ Completed (2026-03-20)
 
 ---
 
@@ -135,13 +135,13 @@ Generated: 2026-03-20
 
 ---
 
-## Total: 76 Missing Features (1 completed)
+## Total: 68 Missing Features (9 completed)
 
 | Priority | Count |
 |----------|-------|
 | 🔴 Critical | 4 (1 completed) |
-| 🟠 High Priority | 9 |
-| 🟡 Medium (QR/Event) | 8 |
+| 🟠 High Priority | 8 (1 completed) |
+| 🟡 Medium (QR/Event) | 0 (8 completed) |
 | 🟢 Medium (Home/UI) | 8 |
 | 🔵 Low (Profile) | 6 |
 | ⚪ Low (Static Content) | 37 |

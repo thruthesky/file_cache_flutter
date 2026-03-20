@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
+import 'package:philgo/company/qr/company.qr_code.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -172,6 +173,18 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 ? Text(_company.name, style: theme.textTheme.titleLarge)
                 : null,
             actions: [
+              if (_company.qrCodeEnabled || _isMyCompany)
+                IconButton(
+                  icon: FaIcon(
+                    FontAwesomeIcons.lightQrcode,
+                    size: 20,
+                    color: _isCollapsed ? null : Colors.white,
+                  ),
+                  onPressed: () => CompanyQrCodeScreen.push(
+                    context,
+                    _company.idx,
+                  ),
+                ),
               if (_isMyCompany)
                 IconButton(
                   icon: Icon(
