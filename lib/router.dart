@@ -1,11 +1,14 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/deeplink/deeplink.service.dart';
 import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
@@ -20,6 +23,7 @@ import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/guide/app_guide.screen.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
+import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -27,6 +31,69 @@ BuildContext get globalContext => globalNavigatorKey.currentContext!;
 /// GoRouter
 final router = GoRouter(
   navigatorKey: globalNavigatorKey,
+  redirect: (context, state) {
+    // 리다이렉트가 필요 없는 일반 앱 내부 경로는 건너뜀 (무한 루프 방지)
+    if (!isDeepLinkUrl(state.uri)) return null;
+
+    final result = parsePhilgoUrl(state.uri.toString());
+    if (result == null) return null;
+
+    // 게시글 보기: /post/view?idx=123 또는 /post/view.php?idx=123
+    if (result.isPostView && result.idx != null) {
+      return '${PostViewScreen.routeName}?idx=${result.idx}&post_id=${result.postId ?? ''}';
+    }
+
+    // 게시판 목록 → 포럼 탭으로 이동
+    if (result.isPostList && result.postId != null) {
+      final navState = context.read<AppNavigationState>();
+      navState.openForumScreen(
+        postId: result.postId,
+        category: result.category,
+      );
+      return AppScreen.routeName;
+    }
+
+    // 채팅방: /chat/index.php?id=xxx
+    if (result.isChatRoom && result.chatRoomId != null) {
+      return ChatRoomScreen.routeName.replaceFirst(
+        ':id',
+        result.chatRoomId!,
+      );
+    }
+
+    // 업소록 보기: /company/view?idx=5422 또는 /company/view.php?idx=1025
+    if (result.isCompanyView && result.idx != null) {
+      return '${CompanyViewScreen.routeName}?idx=${result.idx}';
+    }
+
+    // 업소록 목록: /company → 업소록 탭으로 이동
+    if (result.isCompanyList) {
+      final navState = context.read<AppNavigationState>();
+      navState.openCompanyScreen();
+      return AppScreen.routeName;
+    }
+
+    // 홈
+    if (result.isHome) return AppScreen.routeName;
+
+    return null;
+  },
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(title: Text('페이지를 찾을 수 없습니다'.tr())),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('요청한 페이지를 찾을 수 없습니다'.tr()),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => context.go(AppScreen.routeName),
+            child: Text('홈으로'.tr()),
+          ),
+        ],
+      ),
+    ),
+  ),
   routes: [
     GoRoute(
       path: AppScreen.routeName,
@@ -136,8 +203,14 @@ final router = GoRouter(
       path: CompanyViewScreen.routeName,
       name: CompanyViewScreen.routeName,
       builder: (context, state) {
-        final company = state.extra as CompanyModel;
-        return CompanyViewScreen(company: company);
+        // 1. extra에서 CompanyModel 가져오기 (일반 네비게이션)
+        if (state.extra is CompanyModel) {
+          return CompanyViewScreen(company: state.extra as CompanyModel);
+        }
+        // 2. query parameters fallback (딥링크)
+        final idx =
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        return CompanyViewScreen(company: CompanyModel.minimal(idx: idx));
       },
     ),
     GoRoute(
