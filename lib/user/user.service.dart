@@ -185,6 +185,8 @@ class UserService {
     );
   }
 
+
+
   /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)
   ///
   /// [firebaseUid] 조회할 사용자의 Firebase UID

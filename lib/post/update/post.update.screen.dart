@@ -9,6 +9,7 @@ import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
 import 'package:philgo/point/point_advertisement.service.dart';
 import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
+import 'package:philgo/post/create/widgets/wanted_hiring_form.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/user/user.state.dart';
@@ -38,9 +39,14 @@ class PostUpdateScreen extends StatefulWidget {
 
 class _PostUpdateScreenState extends State<PostUpdateScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _hiringFormKey = GlobalKey<WantedHiringFormState>();
   late final TextEditingController _titleController;
   late final TextEditingController _contentController;
   bool _isSubmitting = false;
+
+  /// 구인(hiring) 폼 모드 여부
+  bool get _isHiringMode =>
+      widget.post.postId == 'wanted' && widget.post.category == 'hiring';
 
   /// 기존 첨부파일 URL 목록 (서버에서 받아온 것)
   late List<String> _existingUrls;
@@ -222,7 +228,9 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                     ),
                   )
                 : IconButton(
-                    onPressed: _submit,
+                    onPressed: _isHiringMode
+                        ? () => _hiringFormKey.currentState?.submit()
+                        : _submit,
                     icon: FaIcon(
                       FontAwesomeIcons.lightPaperPlaneTop,
                       size: 20,
@@ -232,7 +240,9 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
           ),
         ],
       ),
-      body: Form(
+      body: _isHiringMode
+          ? WantedHiringForm(key: _hiringFormKey, post: widget.post)
+          : Form(
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),

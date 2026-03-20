@@ -306,12 +306,6 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                   context,
                 ).showSnackBar(SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())));
               }),
-              const SizedBox(width: 16),
-              _buildActionButton(FontAwesomeIcons.lightFlag, '신고'.tr(), () {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text('신고 기능은 준비 중입니다.'.tr())));
-              }, isDestructive: true),
             ],
           ),
 
@@ -410,8 +404,9 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
     String label,
     VoidCallback onTap, {
     bool isDestructive = false,
+    bool isActive = false,
   }) {
-    final c = isDestructive ? color.error : color.onSurfaceVariant;
+    final c = isActive ? color.primary : isDestructive ? color.error : color.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),

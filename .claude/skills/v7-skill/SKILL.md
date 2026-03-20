@@ -38,6 +38,8 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
    - [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md) — Masonry image display & debugging
    - [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md) — Point advertisement (post promotion)
+   - [app/v7-app-weather.md](references/app/v7-app-weather.md) — Weather forecast (5 cities, Open-Meteo API)
+   - [app/v7-app-search.md](references/app/v7-app-search.md) — Search (Google CSE WebView + SearchDialog)
 
 ### After Completing Each Task
 

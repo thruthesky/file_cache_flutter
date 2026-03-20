@@ -123,4 +123,77 @@ class CompanyService {
     instance._companyListenable.value = company;
     return company;
   }
+
+  /// QR 코드 스캔 검증
+  ///
+  /// API: company.scanQrCode (인증 필수)
+  ///
+  /// [code] QR 코드에 포함된 64자 hex 검증 ID
+  /// 반환: { success, usage_idx, idx_company, company_name, reward_points,
+  ///         point_before, point_after, is_revisit }
+  static Future<Map<String, dynamic>> scanQrCode(String code) async {
+    return await ApiService.instance.v7api(
+      'company.scanQrCode',
+      data: {'code': code},
+    );
+  }
+
+  /// 재방문 포인트 추첨
+  ///
+  /// API: company.reVisitPoint (인증 필수)
+  ///
+  /// [usageIdx] QR 코드 사용 기록 ID
+  /// 반환: { reward_points, point_before, point_after }
+  static Future<Map<String, dynamic>> reVisitPoint(int usageIdx) async {
+    return await ApiService.instance.v7api(
+      'company.reVisitPoint',
+      data: {'usage_idx': usageIdx},
+    );
+  }
+
+  /// 방문 후기 목록 조회
+  ///
+  /// API: company.getVisitReviews (인증 불필요)
+  ///
+  /// [idxCompany] 업소 고유번호
+  /// [page] 페이지 번호 (기본 1)
+  /// [limit] 최대 조회 수 (기본 10)
+  /// 반환: { reviews: [...], total, page, limit }
+  static Future<Map<String, dynamic>> getVisitReviews({
+    required int idxCompany,
+    int page = 1,
+    int limit = 10,
+  }) async {
+    return await ApiService.instance.v7api(
+      'company.getVisitReviews',
+      data: {
+        'idx_company': idxCompany,
+        'page': page,
+        'limit': limit,
+      },
+    );
+  }
+
+  /// 방문 후기 제출
+  ///
+  /// API: company.submitVisitReview (인증 필수)
+  ///
+  /// [usageIdx] QR 코드 사용 기록 ID
+  /// [content] 후기 내용 (10자 이상)
+  /// [photoIdxs] 업로드된 사진 idx 목록 (1개 이상)
+  /// 반환: { reward_points, point_before, point_after }
+  static Future<Map<String, dynamic>> submitVisitReview({
+    required int usageIdx,
+    required String content,
+    required List<int> photoIdxs,
+  }) async {
+    return await ApiService.instance.v7api(
+      'company.submitVisitReview',
+      data: {
+        'usage_idx': usageIdx,
+        'content': content,
+        'photo_idxs': photoIdxs,
+      },
+    );
+  }
 }

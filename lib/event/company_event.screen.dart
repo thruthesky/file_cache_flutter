@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/event/qr_scanner.screen.dart';
 import 'package:philgo/globals.dart';
 
 /// 업소이벤트 안내 화면
@@ -193,11 +194,7 @@ class CompanyEventScreen extends StatelessWidget {
       width: double.infinity,
       height: 56,
       child: FilledButton.icon(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('QR 스캐너 준비 중입니다.'.tr())),
-          );
-        },
+        onPressed: () => QrScannerScreen.push(context),
         icon: const FaIcon(FontAwesomeIcons.lightQrcode, size: 28),
         label: Text(
           'QR 코드 스캔하기'.tr(),

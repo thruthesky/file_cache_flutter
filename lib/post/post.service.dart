@@ -81,6 +81,7 @@ class PostService {
     required String content,
     String? category,
     List<String>? files,
+    Map<String, dynamic>? extra,
   }) async {
     final result = await ApiService.instance.v7api(
       'post.create',
@@ -90,6 +91,7 @@ class PostService {
         'content': content,
         if (category != null) 'category': category,
         if (files != null && files.isNotEmpty) 'files': files.join(','),
+        if (extra != null) ...extra,
       },
     );
     return Post.fromJson(result);
@@ -108,6 +110,7 @@ class PostService {
     String? subject,
     String? content,
     List<String>? files,
+    Map<String, dynamic>? extra,
   }) async {
     final result = await ApiService.instance.v7api(
       'post.update',
@@ -116,6 +119,7 @@ class PostService {
         if (subject != null) 'subject': subject,
         if (content != null) 'content': content,
         if (files != null) 'files': files.join(','),
+        if (extra != null) ...extra,
       },
     );
     return Post.fromJson(result);

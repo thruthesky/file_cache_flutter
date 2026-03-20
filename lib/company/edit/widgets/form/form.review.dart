@@ -17,6 +17,9 @@ class CompanyReviewForm extends StatelessWidget {
   final String? logoUrl;
   final String? titleImageUrl;
   final String? photoUrl;
+  final String? businessLicenseUrl;
+  final String kakaoChannelUrl;
+  final String? kakaoQrCodeUrl;
 
   const CompanyReviewForm({
     super.key,
@@ -33,6 +36,9 @@ class CompanyReviewForm extends StatelessWidget {
     this.logoUrl,
     this.titleImageUrl,
     this.photoUrl,
+    this.businessLicenseUrl,
+    this.kakaoChannelUrl = '',
+    this.kakaoQrCodeUrl,
   });
 
   @override
@@ -90,11 +96,24 @@ class CompanyReviewForm extends StatelessWidget {
                   ]
                 : [_Row('', '연락처 정보가 없습니다'.tr(), missing: true)],
           ),
+          if (kakaoChannelUrl.isNotEmpty || (kakaoQrCodeUrl != null && kakaoQrCodeUrl!.isNotEmpty)) ...[
+            const SizedBox(height: 12),
+            _ReviewCard(
+              icon: FontAwesomeIcons.comment,
+              title: '카카오톡'.tr(),
+              rows: [
+                if (kakaoChannelUrl.isNotEmpty) _Row('채널 URL'.tr(), kakaoChannelUrl),
+                if (kakaoQrCodeUrl != null && kakaoQrCodeUrl!.isNotEmpty)
+                  _Row('QR 코드'.tr(), '등록됨'.tr()),
+              ],
+            ),
+          ],
           const SizedBox(height: 12),
           _ImageReviewCard(
             logoUrl: logoUrl,
             titleImageUrl: titleImageUrl,
             photoUrl: photoUrl,
+            businessLicenseUrl: businessLicenseUrl,
           ),
           const SizedBox(height: 20),
           _InfoBanner(
@@ -113,8 +132,14 @@ class _ImageReviewCard extends StatelessWidget {
   final String? logoUrl;
   final String? titleImageUrl;
   final String? photoUrl;
+  final String? businessLicenseUrl;
 
-  const _ImageReviewCard({this.logoUrl, this.titleImageUrl, this.photoUrl});
+  const _ImageReviewCard({
+    this.logoUrl,
+    this.titleImageUrl,
+    this.photoUrl,
+    this.businessLicenseUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +147,8 @@ class _ImageReviewCard extends StatelessWidget {
     final items = [
       ('로고'.tr(), logoUrl, 1.0),
       ('대표 이미지'.tr(), titleImageUrl, 16 / 9),
-      ('추가 사진'.tr(), photoUrl, 4 / 3),
+      ('사업자등록증'.tr(), businessLicenseUrl, 4 / 3),
+      ('사무실/매장'.tr(), photoUrl, 4 / 3),
     ];
 
     return Card(

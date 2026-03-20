@@ -3,9 +3,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
+import 'package:philgo/company/qr/company.qr_code.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,6 +17,7 @@ import 'package:url_launcher/url_launcher.dart';
 /// SliverAppBar로 업소 대표 이미지를 펼쳐 보여주고,
 /// 스크롤에 따라 AppBar가 축소되며 업소명이 타이틀로 표시된다.
 /// 내 업소인 경우 수정 버튼이 표시된다.
+/// 하단에 방문 후기 섹션이 표시된다 (사진 썸네일 + 후기 CTA).
 class CompanyViewScreen extends StatefulWidget {
   static const String routeName = '/CompanyView';
   static Function(BuildContext ctx, {required CompanyModel company}) push =
@@ -36,12 +39,17 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   bool _isCollapsed = false;
   String? _errorMessage;
 
+  /// 방문 후기 관련 상태
+  List<dynamic> _reviews = [];
+  bool _isReviewsLoading = true;
+
   @override
   void initState() {
     super.initState();
     _company = widget.company;
     _scrollController.addListener(_onScroll);
     _loadCompany();
+    _loadReviews();
   }
 
   @override
@@ -65,16 +73,22 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
       _isLoading = true;
       _errorMessage = null;
     });
-    try {
-      final updated = await CompanyService.get(_company.idx);
-      if (mounted && updated != null) {
-        setState(() => _company = updated);
-      }
-    } catch (e) {
-      if (mounted) setState(() => _errorMessage = e.toString());
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+    final updated = await CompanyService.get(_company.idx);
+    if (mounted && updated != null) {
+      setState(() => _company = updated);
     }
+    if (mounted) setState(() => _isLoading = false);
+  }
+
+  Future<void> _loadReviews() async {
+    final result = await CompanyService.getVisitReviews(
+      idxCompany: _company.idx,
+    );
+    if (!mounted) return;
+    setState(() {
+      _reviews = (result['reviews'] as List<dynamic>?) ?? [];
+      _isReviewsLoading = false;
+    });
   }
 
   bool get _isMyCompany {
@@ -172,6 +186,18 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 ? Text(_company.name, style: theme.textTheme.titleLarge)
                 : null,
             actions: [
+              if (_company.qrCodeEnabled || _isMyCompany)
+                IconButton(
+                  icon: FaIcon(
+                    FontAwesomeIcons.lightQrcode,
+                    size: 20,
+                    color: _isCollapsed ? null : Colors.white,
+                  ),
+                  onPressed: () => CompanyQrCodeScreen.push(
+                    context,
+                    _company.idx,
+                  ),
+                ),
               if (_isMyCompany)
                 IconButton(
                   icon: Icon(
@@ -263,6 +289,13 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       ),
                       const SizedBox(height: 28),
                     ],
+
+                    // 4. 방문 후기
+                    _buildSection(
+                      title: '방문 후기'.tr(),
+                      icon: FontAwesomeIcons.lightCommentDots,
+                      child: _buildReviewsContent(),
+                    ),
 
                     const SizedBox(height: 32),
                   ],
@@ -581,6 +614,196 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         color: scheme.onSurfaceVariant,
         height: 1.6,
       ),
+    );
+  }
+
+  /// 방문 후기 콘텐츠 빌드
+  Widget _buildReviewsContent() {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
+    final dateFormatter = DateFormat('yyyy.MM.dd');
+
+    // 로딩 중
+    if (_isReviewsLoading) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // 후기 없음
+    if (_reviews.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Column(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightCommentSlash,
+                size: 28,
+                color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                '아직 후기가 없습니다'.tr(),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // 후기 목록 표시
+    return Column(
+      children: [
+        for (int i = 0; i < _reviews.length; i++) ...[
+          _buildReviewItem(_reviews[i], theme, scheme, dateFormatter),
+          if (i < _reviews.length - 1)
+            Container(
+              height: 1,
+              margin: const EdgeInsets.symmetric(vertical: 12),
+              color: scheme.outlineVariant.withValues(alpha: 0.3),
+            ),
+        ],
+      ],
+    );
+  }
+
+  /// 개별 후기 아이템 빌드
+  Widget _buildReviewItem(
+    dynamic review,
+    ThemeData theme,
+    ColorScheme scheme,
+    DateFormat dateFormatter,
+  ) {
+    final content = (review['content'] as String?) ?? '';
+    final authorName = (review['author_name'] as String?) ?? '';
+    final createdAtRaw = review['created_at'];
+    final photos = (review['photos'] as List<dynamic>?) ?? [];
+
+    // 날짜 포맷
+    String formattedDate = '';
+    if (createdAtRaw is int && createdAtRaw > 0) {
+      final date = DateTime.fromMillisecondsSinceEpoch(createdAtRaw * 1000);
+      formattedDate = dateFormatter.format(date);
+    } else if (createdAtRaw is String && createdAtRaw.isNotEmpty) {
+      final parsed = DateTime.tryParse(createdAtRaw);
+      if (parsed != null) formattedDate = dateFormatter.format(parsed);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // 작성자 + 날짜
+        Row(
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightUser,
+              size: 12,
+              color: scheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              authorName,
+              style: theme.textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.w500,
+                color: scheme.onSurface,
+              ),
+            ),
+            const Spacer(),
+            Text(
+              formattedDate,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: scheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        // 후기 내용
+        Text(
+          content,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: scheme.onSurfaceVariant,
+            height: 1.5,
+          ),
+        ),
+
+        // 사진 썸네일 (가로 스크롤)
+        if (photos.isNotEmpty) ...[
+          const SizedBox(height: 10),
+          SizedBox(
+            height: 72,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: photos.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              itemBuilder: (context, index) {
+                final photoData = photos[index];
+                String imageUrl = '';
+                if (photoData is Map) {
+                  final map = Map<String, dynamic>.from(photoData);
+                  imageUrl = (map['thumbnail_400x400_url'] as String?) ??
+                      (map['url'] as String?) ??
+                      '';
+                } else if (photoData is String) {
+                  imageUrl = photoData;
+                }
+
+                return ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
+                    width: 72,
+                    height: 72,
+                    child: imageUrl.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (ctx, url) => Container(
+                              color: scheme.surfaceContainerHighest,
+                            ),
+                            errorWidget: (ctx, url, err) => Container(
+                              color: scheme.surfaceContainerHighest,
+                              child: Center(
+                                child: FaIcon(
+                                  FontAwesomeIcons.image,
+                                  size: 16,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: scheme.surfaceContainerHighest,
+                            child: Center(
+                              child: FaIcon(
+                                FontAwesomeIcons.image,
+                                size: 16,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ],
     );
   }
 }

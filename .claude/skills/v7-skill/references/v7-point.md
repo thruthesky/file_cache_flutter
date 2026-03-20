@@ -1103,7 +1103,28 @@ public static function findPointAdvertisements(string $postId, string $category 
 | `v7/widgets/post/view/post-view-point-adv.css` | 글 보기 광고 위젯 CSS |
 | `v7/js/post-form.js` | 글 작성/수정 시 포인트 광고 UI + API 호출 |
 
-#### 게시판 목록에서 포인트 광고 조회 (list.php)
+#### post.list API 응답에 포인트 광고 포함
+
+`PostService::list()`의 리턴값에 `point_advertisements` 필드가 포함된다.
+1페이지(`page === 1`)이고 `post_id`가 있을 때만 활성 광고를 조회하며, 2페이지 이상이면 빈 배열이다.
+
+```php
+// lib/post/PostService.php — list() 메서드 리턴값
+return [
+    'posts' => $posts,
+    'total' => $total,
+    'page' => $page,
+    'limit' => $limit,
+    'point_advertisements' => $pointAdvertisements, // PostEntity[] — 1페이지만
+];
+```
+
+> **조회 조건**: `page === 1 && !empty($postId)` → `PostService::listPointAdvertisements($postId, $category)` 호출
+> **정렬**: `int_5 DESC` (광고 종료 시간 기준 내림차순), 최대 100건
+
+#### 게시판 목록 웹 페이지에서 포인트 광고 조회 (list.php)
+
+웹 페이지(`v7/post/list.php`)에서는 SSR 렌더링을 위해 `PostService::listPointAdvertisements()`를 직접 호출한다.
 
 ```php
 // v7/post/list.php (라인 137-141)
@@ -1113,6 +1134,8 @@ if ($page <= 1) {
 }
 // → v7/widgets/advertisement/point-advertisements.php에서 렌더링
 ```
+
+> **참고**: API 클라이언트(Flutter 앱 등)는 `post.list` API 응답의 `point_advertisements` 필드를 사용하면 별도 API 호출 없이 포인트 광고 목록을 얻을 수 있다.
 
 #### 글 작성 폼에서 포인트 광고 선택 (post-form.js)
 
@@ -1221,8 +1244,9 @@ if (!this.isUpdate && this.advSelectedDays > 0 && resultIdx) {
     ├─ 종료 시간 계산 (기존 유효 → 연장, 만료 → 신규)
     └─ PostRepository::update() DB 업데이트 (int_5/6/7/8)
     ↓
-[게시판 목록 로드] list.php
-    ├─ PostService::listPointAdvertisements() 호출 (첫 페이지만)
+[게시판 목록 로드]
+    ├─ [API] PostService::list() → 리턴값에 point_advertisements 포함 (1페이지만)
+    ├─ [웹] list.php → PostService::listPointAdvertisements() 직접 호출 (SSR)
     ├─ PostRepository::findPointAdvertisements() SQL 쿼리
     │   └─ WHERE int_5 > time() AND post_id = ? ORDER BY int_5 DESC
     └─ point-advertisements.php 위젯에서 상단에 렌더링

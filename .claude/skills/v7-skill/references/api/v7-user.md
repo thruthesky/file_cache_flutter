@@ -27,7 +27,7 @@
   - [7.7 v7 API에서의 레벨 반환 규칙](#77-v7-api에서의-레벨-반환-규칙)
 - [8. UserEntity](#8-userentity)
 - [9. 사용자 설정 페이지 (SSR)](#9-사용자-설정-페이지-ssr)
-- [10. 사용자 차단 기능](#10-사용자-차단-기능)
+- [10. 사용자 차단 기능 → v7-user-block.md](#10-사용자-차단-기능--v7-user-blockmd)
 - [11. 사용자 신고 기능](#11-사용자-신고-기능)
 - [12. UserRepository](#12-userrepository)
   - [12.1 개요](#121-개요)
@@ -1851,156 +1851,19 @@ if ($loginUser !== null) {
 
 ---
 
-## 10. 사용자 차단 기능
+## 10. 사용자 차단 기능 → [v7-user-block.md](v7-user-block.md)
 
-### 10.1 개요
-
-v7 사용자 차단 기능은 로그인 사용자가 특정 사용자를 차단하여 해당 사용자의 글과 댓글을 가릴 수 있는 기능이다.
-차단 백엔드는 `lib/user/UserController.php`의 v7 Controller 메서드로 구현되어 있으며,
-v7 프론트엔드에서 `v7api()` → `/api.php`를 통해 호출한다.
-
-> **중요**: v6의 `/func.php` 호출 방식은 v7 세션(`session_id_v7`)과 호환되지 않으므로,
-> 반드시 `v7api()` → `/api.php` → `UserController` 경로를 사용해야 한다.
-
-> **🔴 절대 규칙: 차단/해제는 오직 v7 API를 통해서만 수행한다**
->
-> 사용자 차단/해제는 반드시 필고 v7 API(`user.toggleBlock`, `user.unblock`)를 통해서만 수행해야 한다.
-> Firebase RTDB에 직접 쓰기(`set(true)`, `remove()`)로 차단/해제하는 것은 **엄격히 금지**한다.
-> v7 API가 MariaDB에 차단 정보를 저장한 후 Firebase RTDB에 자동 동기화(`UserService::syncBlockToFirebase()`)하므로,
-> 채팅방에서는 Firebase RTDB 리스너(`listenBlockedUsers()`)로 차단 여부를 실시간 감지하여 UI에 반영하면 된다.
-
-| 항목 | 값 |
-|------|---|
-| **v7 Controller** | `lib/user/UserController.php` (`toggleBlock`, `unblock`, `blockedList`) |
-| **v7 Service** | `lib/user/UserService.php` (`syncBlockToFirebase`) |
-| **차단 목록 페이지** | `v7/user/blocked.php` |
-| **차단 목록 CSS** | `v7/user/blocked.css` |
-| **JS 유틸리티** | `v7/js/block.js` |
-| **URL** | `/user/blocked` |
-| **URL 헬퍼** | `url()->user->blocked` |
-| **설정 페이지 링크** | `v7/user/settings.php`에서 "차단한 사용자" 링크 표시 |
-| **PEST 테스트** | `tests/Unit/MemberBlockTest.php` (16개 테스트) |
-| **DB 테이블** | `sf_member_blocks` (`idx`, `idx_blocker`, `idx_blockee`, `created_at`) |
-| **Firebase RTDB 경로** | `user-private/{blockerUid}/blocks/{blockeeUid}` (v7 API가 자동 동기화) |
-
-### 10.2 v7 API 엔드포인트 (UserController)
-
-`lib/user/UserController.php`에 차단 관련 3개 메서드가 정의되어 있다.
-`AuthService::getLoginUser()`로 v7 세션 인증을 수행한다.
-`user.toggleBlock`과 `user.unblock`은 차단/해제 후 `UserService::syncBlockToFirebase()`를 호출하여
-Firebase RTDB에 자동 동기화한다 (채팅 앱에서 실시간 반영).
-
-| API 메서드 | 설명 | 입력 | 반환 |
-|------|------|------|------|
-| `user.toggleBlock` | 차단/해제 토글 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: bool, message }` |
-| `user.unblock` | 차단 해제 + Firebase RTDB 동기화 | `{ idx_blockee: int }` 또는 `{ blockee_firebase_uid: string }` | `{ idx_blockee, blocked: false, message }` |
-| `user.blockedList` | 차단 목록 조회 | 없음 | `[{ idx, idx_blockee, nickname, photo_url, created_at }]` |
-
-> **`blockee_firebase_uid` 파라미터**: 채팅방에서는 상대방의 Firebase UID만 알고 있으므로,
-> `idx_blockee` 대신 `blockee_firebase_uid`를 전달할 수 있다.
-> 서버에서 `UserService::getByFirebaseUid()`로 idx를 자동 변환하여 처리한다.
-
-### 10.2.1 Firebase RTDB 동기화 (UserService)
-
-`UserService::syncBlockToFirebase(int $idxBlocker, int $idxBlockee, bool $blocked)` 메서드가
-차단/해제 시 Firebase RTDB에 동기화한다.
-
-```php
-// 차단 시: user-private/{blockerUid}/blocks/{blockeeUid} = true
-// 해제 시: user-private/{blockerUid}/blocks/{blockeeUid} 삭제
-UserService::syncBlockToFirebase($me->idx, $idxBlockee, true);  // 차단
-UserService::syncBlockToFirebase($me->idx, $idxBlockee, false); // 해제
-```
-
-- Kreait Firebase Admin SDK를 사용하여 `PROD_DATABASE_URL`에 접근
-- Firebase UID가 없는 사용자는 동기화 스킵
-- 동기화 실패 시 로그만 남기고 차단/해제 기능은 정상 작동
-
-### 10.3 JS API (block.js)
-
-`v7/js/block.js`는 차단 관련 유틸리티 함수를 제공한다. 차단 기능이 필요한 페이지에서 `<script defer>` 태그로 로드한다.
-
-- `v7/user/blocked.php` — 차단 목록 페이지
-- `v7/post/view.php` — 글 읽기 페이지 (액션바 + 코멘트 차단 버튼에서 사용)
-
-| 함수 | 설명 | 파라미터 |
-|------|------|----------|
-| `toggleBlockMember(idxBlockee)` | 차단 토글 (차단 ↔ 해제) → `v7api('user.toggleBlock', ...)` | 대상 사용자 idx |
-| `unblockMember(idxBlockee)` | 차단 해제 → `v7api('user.unblock', ...)` | 대상 사용자 idx |
-| `getBlockedMembers()` | 차단 목록 조회 → `v7api('user.blockedList', ...)` | 없음 |
-| `confirmUnblockAndView(idxBlockee, type, targetUrl)` | 차단 해제 확인 다이얼로그 | 대상 idx, 'post'/'comment', 이동 URL |
-
-### 10.4 차단된 콘텐츠 표시
-
-#### 글 목록 (`post-list-tile.php`)
-
-차단된 사용자의 글은 "차단된 사용자의 글입니다" 텍스트로 대체 표시된다.
-클릭 시 `confirmUnblockAndView()`로 차단 해제 확인 다이얼로그가 표시된다.
-
-```php
-$_isBlockedPost = !empty($_blockedMemberIds) && in_array($post['idx_member'] ?? 0, $_blockedMemberIds);
-```
-
-#### 글 상세 (`view.php`)
-
-- 관리자 차단(blind): `$post->isBlockedOrBlinded()` → "이 글은 관리자에 의해 차단되었습니다"
-- 사용자 차단: `$isBlockedAuthor` → "차단된 사용자의 글입니다" + "차단 해제하고 내용 보기" 버튼
-- 첨부파일도 차단 시 숨김 처리
-- 액션바에 차단/해제 토글 버튼 (`post-actions.js` Vue 앱)
-- `data-author-name` 속성으로 작성자 이름을 전달하여 confirm 메시지에 `"사용자명" 사용자를 차단하시겠습니까?` 형식으로 표시
-- 차단 성공 시 `"사용자명" 사용자가 차단되었습니다.` alert 후 페이지 새로고침
-
-#### 코멘트 (`view.php`)
-
-- 관리자 차단: "차단된 댓글입니다"
-- 사용자 차단: "차단된 사용자의 댓글입니다" + "해제하고 보기" 버튼
-- 코멘트 첨부파일도 차단 시 숨김
-- 각 코멘트 액션에 차단/해제 버튼 (`comment.js` Vue 앱)
-- `data-author-name` 속성으로 댓글 작성자 이름을 전달하여 confirm 메시지에 표시
-
-#### 공개 프로필 (`public-profile.php`)
-
-- 타인 프로필에서 차단/해제 버튼 표시 (`toggleBlockMember()` 호출)
-- 차단 상태에 따라 버튼 색상 변경 (danger/neutral)
-- 차단 여부 확인은 `Db::fetch()`를 사용하여 `sf_member_blocks` 테이블을 조회
-
-```php
-// ✅ v7 방식: Db::fetch() 사용 (pdo() 사용 금지)
-use Philgo\Utils\Db;
-
-$isProfileBlocked = false;
-if ($loginUser) {
-    $blockRow = Db::fetch(
-        "SELECT idx FROM sf_member_blocks WHERE idx_blocker = ? AND idx_blockee = ?",
-        [$loginUser->idx, $user->idx]
-    );
-    $isProfileBlocked = $blockRow !== false;
-}
-```
-
-> **주의**: 이전에 v6 `pdo()` 함수를 직접 호출하던 코드(`pdo()->prepare()` + `->execute()` + `->fetch()`)는
-> v7 `Db::fetch()`로 교체되었다. v7 홈페이지(`v7/` 폴더)에서 `pdo()` 직접 호출은 금지이며,
-> 반드시 `Philgo\Utils\Db` 클래스를 통해 DB에 접근해야 한다.
-
-### 10.5 차단 목록 페이지 (`blocked.php`)
-
-Vue.js CDN MPA 방식으로 구현된 차단 사용자 관리 페이지이다.
-
-- **비로그인**: "로그인 후 이용해 주세요" + 로그인 버튼
-- **로그인**: `getBlockedMembers()` API로 차단 목록 조회 → `wa-avatar` + 닉네임 + 차단일 + 해제 버튼
-- **해제**: `unblockMember()` 호출 → 목록에서 실시간 제거
-- **빈 목록**: "차단한 사용자가 없습니다" 표시
-
-> **주의**: `wa-button`의 `:disabled` 바인딩은 Web Component 특성상 `null`을 반환해야 속성이 제거된다.
-> `!!expr` 대신 `expr || null` 패턴을 사용해야 한다.
-
-### 10.6 접근 경로
-
-1. 설정 페이지 → "차단한 사용자" 링크 (`url()->user->settings` → `url()->user->blocked`)
-2. 사이드바 설정 메뉴 → 설정 페이지 → 차단한 사용자 링크
-3. 글 보기 → 액션바 차단/해제 버튼 (타인 글에만 표시)
-4. 글 보기 → 코멘트 액션 차단/해제 버튼 (타인 댓글에만 표시)
-5. 공개 프로필 → 차단 버튼
+v7 사용자 차단은 **회원 간 차단**(`sf_member_blocks` 테이블)과 **관리자 차단**(`sf_member.int_8/int_9/text_5`)
+두 가지 독립 시스템으로 구성된다. 회원 간 차단은 `UserController::toggleBlock/unblock/blockedList` API로 처리되며,
+차단/해제 시 `UserService::syncBlockToFirebase()`가 Firebase RTDB(`user-private/{uid}/blocks/{uid}`)에 자동
+동기화하여 채팅 앱에서 실시간 반영된다. 프론트엔드에서는 `v7/js/block.js`의 `toggleBlockMember()`,
+`unblockMember()`, `confirmUnblockAndView()` 함수가 v7api를 통해 API를 호출한다.
+차단된 글/코멘트는 목록에서 "차단된 사용자의 글입니다" 형태로 대체 표시되거나(post-list-tile, masonry-item),
+지역 페이지에서는 아예 건너뛰기 처리된다. 관리자 차단은 `block_user()` 함수로 차단횟수×30분 기간 동안
+사용자 활동을 제한하며, `blocked_user()` 함수로 차단 상태를 확인한다.
+DB 스키마, v7 Controller/Service 전체 소스코드, JS 유틸리티 전문, Vue.js 차단 목록 페이지 구현,
+글 목록/상세/코멘트/프로필 차단 UI 코드, 관리자 차단 로직, 테스트 코드 등 상세 내용은
+[v7-user-block.md](v7-user-block.md)를 참조한다.
 
 ---
 
