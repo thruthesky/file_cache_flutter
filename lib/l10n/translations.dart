@@ -453,6 +453,38 @@ class Translations {
     '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.': '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.',
     '탈퇴 요청하기': '탈퇴 요청하기',
     '이메일 앱을 열 수 없습니다.': '이메일 앱을 열 수 없습니다.',
+
+    // 앱 사용 안내
+    '앱 사용 안내': '앱 사용 안내',
+    '필고에 오신 것을 환영합니다!': '필고에 오신 것을 환영합니다!',
+    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.',
+    '시작하기': '시작하기',
+    '둘러보기': '둘러보기',
+    '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.',
+    '글쓰기': '글쓰기',
+    '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.': '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.',
+    '소통하기': '소통하기',
+    '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.',
+    '주요 기능': '주요 기능',
+    '커뮤니티': '커뮤니티',
+    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.',
+    '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.',
+    '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.',
+    '회원장터': '회원장터',
+    '사고팔기, 구인구직 게시판에서 거래하세요.': '사고팔기, 구인구직 게시판에서 거래하세요.',
+
+    // 업소이벤트
+    '업소이벤트': '업소이벤트',
+    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!': '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!',
+    '삼단콤보 이벤트': '삼단콤보 이벤트',
+    'QR 스캔 → 포인트 획득 → 포인트 응모': 'QR 스캔 → 포인트 획득 → 포인트 응모',
+    'Step 1. QR 코드 스캔': 'Step 1. QR 코드 스캔',
+    '제휴 업소에서 QR 코드를 스캔하세요.': '제휴 업소에서 QR 코드를 스캔하세요.',
+    'Step 2. 포인트 획득': 'Step 2. 포인트 획득',
+    'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.': 'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.',
+    'Step 3. 포인트 응모': 'Step 3. 포인트 응모',
+    '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!': '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!',
+    'QR 코드 스캔하기': 'QR 코드 스캔하기',
   };
 
   static const Map<String, dynamic> en = {
@@ -902,5 +934,37 @@ class Translations {
     '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.': 'For withdrawal inquiries, please contact philgohelp@gmail.com.',
     '탈퇴 요청하기': 'Request Withdrawal',
     '이메일 앱을 열 수 없습니다.': 'Unable to open email app.',
+
+    // 앱 사용 안내
+    '앱 사용 안내': 'App Guide',
+    '필고에 오신 것을 환영합니다!': 'Welcome to PhilGo!',
+    '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.': 'Discover everything about life in the Philippines on PhilGo. Community, chat, business directory and more.',
+    '시작하기': 'Getting Started',
+    '둘러보기': 'Explore',
+    '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.': 'Browse forums, business directory, chat, and more.',
+    '글쓰기': 'Write',
+    '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.': 'Post freely in the community forum, Q&A, and more.',
+    '소통하기': 'Connect',
+    '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.': 'Chat with other members in real-time via open chat rooms.',
+    '주요 기능': 'Key Features',
+    '커뮤니티': 'Community',
+    '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.': 'Share information across various forums including free board, Q&A, and blogs.',
+    '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.': 'Join open chat rooms or have 1:1 conversations.',
+    '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.': 'Search local business info and register your own business.',
+    '회원장터': 'Marketplace',
+    '사고팔기, 구인구직 게시판에서 거래하세요.': 'Buy, sell, and find jobs in the marketplace.',
+
+    // 업소이벤트
+    '업소이벤트': 'Business Event',
+    '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!': 'Request and scan QR codes at partner businesses to earn points!',
+    '삼단콤보 이벤트': 'Triple Combo Event',
+    'QR 스캔 → 포인트 획득 → 포인트 응모': 'QR Scan → Earn Points → Enter Draw',
+    'Step 1. QR 코드 스캔': 'Step 1. Scan QR Code',
+    '제휴 업소에서 QR 코드를 스캔하세요.': 'Scan the QR code at a partner business.',
+    'Step 2. 포인트 획득': 'Step 2. Earn Points',
+    'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.': 'Instantly earn 1,000~2,000 points per scan.',
+    'Step 3. 포인트 응모': 'Step 3. Enter Draw',
+    '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!': 'Use your points on the spinning wheel to win coupons!',
+    'QR 코드 스캔하기': 'Scan QR Code',
   };
 }
