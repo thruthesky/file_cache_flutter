@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostActionBar extends StatelessWidget {
   final Post post;
@@ -76,13 +76,22 @@ class PostActionBar extends StatelessWidget {
           ),
         ],
 
+        // 공유
+        const SizedBox(width: 8),
+        PostActionButton(
+          icon: FontAwesomeIcons.lightShareNodes,
+          label: '',
+          color: scheme.onSurfaceVariant,
+          onTap: () => _sharePost(context),
+        ),
+
         const Spacer(),
 
         if (isMine) ...[
           // 수정
           PostActionButton(
             icon: FontAwesomeIcons.lightPenToSquare,
-            label: '수정'.tr(),
+            label: '',
             color: scheme.onSurfaceVariant,
             onTap: onEdit,
           ),
@@ -90,32 +99,48 @@ class PostActionBar extends StatelessWidget {
           // 삭제
           PostActionButton(
             icon: FontAwesomeIcons.lightTrashCan,
-            label: '삭제'.tr(),
+            label: '',
             color: scheme.error,
             onTap: onDelete,
           ),
         ] else ...[
-          // 신고
+          // 신고 (아이콘만 표시)
           PostActionButton(
             icon: reported
                 ? FontAwesomeIcons.solidFlag
                 : FontAwesomeIcons.lightFlag,
-            label: reported ? '신고됨'.tr() : '신고'.tr(),
+            label: '',
             color: reported ? scheme.error : scheme.onSurfaceVariant,
             onTap: onReport ?? () {},
           ),
           const SizedBox(width: 8),
-          // 차단
+          // 차단 (아이콘만 표시)
           PostActionButton(
             icon: blocked
                 ? FontAwesomeIcons.solidBan
                 : FontAwesomeIcons.lightBan,
-            label: blocked ? '차단 해제'.tr() : '차단'.tr(),
+            label: '',
             color: blocked ? scheme.error : scheme.onSurfaceVariant,
             onTap: onBlock ?? () {},
           ),
         ],
       ],
+    );
+  }
+
+  Future<void> _sharePost(BuildContext context) async {
+    final postUrl =
+        'https://philgo.com/post/view.php?idx=${post.idx}&post_id=${post.postId}';
+    final box = context.findRenderObject() as RenderBox?;
+    final origin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: '${post.subject}\n$postUrl',
+        subject: post.subject,
+        sharePositionOrigin: origin,
+      ),
     );
   }
 }

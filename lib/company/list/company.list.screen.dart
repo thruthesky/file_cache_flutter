@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
@@ -134,7 +135,18 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                       placeholder: _buildCompanyPlaceholder(company),
                       defaultHeight:
                           company.primaryImageUrl.isNotEmpty ? 200 : 140,
-                    );
+                    )
+                        .animate()
+                        .fadeIn(
+                          duration: 400.ms,
+                          delay: (index.clamp(0, 8) * 80).ms,
+                        )
+                        .slideY(
+                          begin: 0.1,
+                          end: 0,
+                          duration: 400.ms,
+                          delay: (index.clamp(0, 8) * 80).ms,
+                        );
                   },
                   emptyBuilder: (_) => Center(
                     child: Column(

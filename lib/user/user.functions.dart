@@ -81,6 +81,7 @@ Future<bool> toggleBlockUserByIdx(int idxBlockee) async {
   return res['blocked'] == true;
 }
 
+
 /// Show user profile dialog with Comic design
 void showProfileDialog(BuildContext context, UserModel otherUser) {
   final theme = Theme.of(context);

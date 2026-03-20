@@ -342,10 +342,10 @@ class _CommentTileState extends State<CommentTile> {
                   onTap: _toggleLike,
                 ),
                 const SizedBox(width: 8),
-                // 답글
+                // 답글 (아이콘만 표시)
                 PostActionButton(
                   icon: FontAwesomeIcons.lightReply,
-                  label: '답글'.tr(),
+                  label: '',
                   color: scheme.tertiary,
                   onTap: () {
                     widget.onReplyTap?.call(widget.comment);
@@ -372,7 +372,7 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightPenToSquare,
-                      label: '수정'.tr(),
+                      label: '',
                       color: scheme.tertiary,
                       onTap: () => _showEditDialog(context),
                     ),
@@ -380,7 +380,7 @@ class _CommentTileState extends State<CommentTile> {
                   if (!hasChildren)
                     PostActionButton(
                       icon: FontAwesomeIcons.lightTrashCan,
-                      label: '삭제'.tr(),
+                      label: '',
                       color: scheme.error,
                       onTap: () => _confirmDelete(context),
                     ),

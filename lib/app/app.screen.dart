@@ -5,8 +5,10 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/chat/chat.screen.dart';
 import 'package:philgo/common_widgets/app_fab.dart';
+import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
+import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/company/list/company.list.screen.dart';
 import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
@@ -145,10 +147,9 @@ class _AppScreenState extends State<AppScreen> {
 
   /// 현재 탭에 맞는 FAB 구성
   Widget _buildFab(BuildContext context, int currentIndex) {
-    final eventEnabled =
-        context.select<SettingsState, bool>(
-          (state) => state.settings?.eventEntryEnabled ?? false,
-        );
+    final eventEnabled = context.select<SettingsState, bool>(
+      (state) => state.settings?.eventEntryEnabled ?? false,
+    );
 
     return AppFab(
       menuItems: _getMenuItems(context, currentIndex),
@@ -238,10 +239,8 @@ class _AppScreenState extends State<AppScreen> {
       onSelected: (postId, category) async {
         final result = await Navigator.of(context).push<dynamic>(
           MaterialPageRoute(
-            builder: (_) => PostCreateScreen(
-              postId: postId,
-              category: category,
-            ),
+            builder: (_) =>
+                PostCreateScreen(postId: postId, category: category),
           ),
         );
         if (result is Post && context.mounted) {

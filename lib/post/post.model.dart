@@ -57,6 +57,16 @@ class Post {
   final String ip;
   final int noOfAttach;
 
+  // 구인(hiring) 전용 필드
+  final String varchar4; // varchar_4: 회사 이름
+  final String varchar5; // varchar_5: 주소
+  final String varchar6; // varchar_6: 전화번호
+  final String varchar7; // varchar_7: 근무제
+  final String varchar8; // varchar_8: 이메일
+  final String varchar9; // varchar_9: 업무 범위
+  final int int1; // int_1: 급여
+  final String text1; // text_1: 회사 소개
+
   // AI 답변 필드
   final String text7; // text_7: AI 답변 내용 (마크다운)
 
@@ -126,6 +136,14 @@ class Post {
     this.region = '',
     this.ip = '',
     this.noOfAttach = 0,
+    this.varchar4 = '',
+    this.varchar5 = '',
+    this.varchar6 = '',
+    this.varchar7 = '',
+    this.varchar8 = '',
+    this.varchar9 = '',
+    this.int1 = 0,
+    this.text1 = '',
     this.text7 = '',
     this.adEndTime = 0,
     this.adStartTime = 0,
@@ -250,6 +268,14 @@ class Post {
       region: json['region']?.toString() ?? '',
       ip: json['ip']?.toString() ?? '',
       noOfAttach: _toInt(json['no_of_attach']),
+      varchar4: json['varchar_4']?.toString() ?? '',
+      varchar5: json['varchar_5']?.toString() ?? '',
+      varchar6: json['varchar_6']?.toString() ?? '',
+      varchar7: json['varchar_7']?.toString() ?? '',
+      varchar8: json['varchar_8']?.toString() ?? '',
+      varchar9: json['varchar_9']?.toString() ?? '',
+      int1: _toInt(json['int_1']),
+      text1: json['text_1']?.toString() ?? '',
       text7: json['text_7']?.toString() ?? '',
       adEndTime: _toInt(json['int_5']),
       adStartTime: _toInt(json['int_6']),
@@ -353,6 +379,14 @@ class Post {
       region: region,
       ip: ip,
       noOfAttach: noOfAttach,
+      varchar4: varchar4,
+      varchar5: varchar5,
+      varchar6: varchar6,
+      varchar7: varchar7,
+      varchar8: varchar8,
+      varchar9: varchar9,
+      int1: int1,
+      text1: text1,
       text7: text7 ?? this.text7,
       adEndTime: adEndTime ?? this.adEndTime,
       adStartTime: adStartTime,

@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// 섹션 간 여백
   static const _sectionGap = SliverToBoxAdapter(child: SizedBox(height: 16));
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -24,6 +24,9 @@ class CompanyModel {
   final String logoUrl;
   final String photoUrl;
   final String titleImageUrl;
+  final String businessLicenseUrl;
+  final String kakaotalkQrCodeUrl;
+  final String kakaotalkQrCode;
   final String status;
   final int showQrCode;
 
@@ -43,9 +46,16 @@ class CompanyModel {
     required this.logoUrl,
     required this.photoUrl,
     required this.titleImageUrl,
+    required this.businessLicenseUrl,
+    required this.kakaotalkQrCodeUrl,
+    required this.kakaotalkQrCode,
     required this.status,
     required this.showQrCode,
   });
+
+  /// 딥링크용 최소 모델. idx만 필요하며 나머지는 화면에서 API로 로드한다.
+  factory CompanyModel.minimal({required int idx}) =>
+      CompanyModel.fromJson({'idx': idx});
 
   factory CompanyModel.fromJson(Map<String, dynamic> json) {
     return CompanyModel(
@@ -64,6 +74,9 @@ class CompanyModel {
       logoUrl: (json['logo_url'] as String?) ?? '',
       photoUrl: (json['photo_url'] as String?) ?? '',
       titleImageUrl: (json['title_image_url'] as String?) ?? '',
+      businessLicenseUrl: (json['business_license_url'] as String?) ?? '',
+      kakaotalkQrCodeUrl: (json['kakaotalk_qr_code_url'] as String?) ?? '',
+      kakaotalkQrCode: (json['kakaotalk_qr_code'] as String?) ?? '',
       status: (json['status'] as String?) ?? '',
       showQrCode: ApiService.toInt(json['show_qr_code']),
     );

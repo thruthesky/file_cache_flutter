@@ -48,6 +48,8 @@ class Config {
     ('qna', null, '질문답변'),
     ('buyandsell', null, '사고팔기'),
     ('wanted', null, '구인구직'),
+    ('wanted', 'hiring', '구인'),
+    ('wanted', 'seeking', '구직'),
     ('travel', null, '여행'),
     ('massage', null, '마사지'),
     ('buyandsell', 'real_estate', '부동산'),

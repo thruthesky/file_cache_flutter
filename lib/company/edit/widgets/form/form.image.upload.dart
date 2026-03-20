@@ -7,7 +7,7 @@ import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'form_shared.dart';
 
-/// Step 3: 이미지 업로드 (로고, 대표 이미지, 추가 사진)
+/// Step 3: 이미지 업로드 (로고, 대표 이미지, 추가 사진, 사업자등록증, 사무실 내부 사진)
 ///
 /// FileUpload 위젯으로 카메라/갤러리에서 선택 후 서버에 업로드한다.
 /// 업로드 완료 시 onXxxUploaded 콜백으로 URL을 상위에 전달한다.
@@ -15,18 +15,22 @@ class CompanyImageUploadForm extends StatelessWidget {
   final String? logoUrl;
   final String? titleImageUrl;
   final String? photoUrl;
+  final String? businessLicenseUrl;
   final ValueChanged<String> onLogoUploaded;
   final ValueChanged<String> onTitleImageUploaded;
   final ValueChanged<String> onPhotoUploaded;
+  final ValueChanged<String> onBusinessLicenseUploaded;
 
   const CompanyImageUploadForm({
     super.key,
     this.logoUrl,
     this.titleImageUrl,
     this.photoUrl,
+    this.businessLicenseUrl,
     required this.onLogoUploaded,
     required this.onTitleImageUploaded,
     required this.onPhotoUploaded,
+    required this.onBusinessLicenseUploaded,
   });
 
   @override
@@ -65,7 +69,21 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
-            label: '추가 사진'.tr(),
+            label: '사업자등록증'.tr(),
+            hint: '사업자등록증 사진을 업로드하세요'.tr(),
+            child: _UploadTile(
+              imageUrl: businessLicenseUrl,
+              icon: FontAwesomeIcons.fileContract,
+              hint: '사업자등록증 선택'.tr(),
+              aspectRatio: 4 / 3,
+              module: 'company',
+              code: 'business_license',
+              onUploaded: onBusinessLicenseUploaded,
+            ),
+          ),
+          const SizedBox(height: 24),
+          FormFieldLabel(
+            label: '사무실/매장 내부 사진'.tr(),
             hint: '업소 내부, 메뉴, 분위기 사진 등'.tr(),
             child: _UploadTile(
               imageUrl: photoUrl,

@@ -8,6 +8,7 @@ import 'package:philgo/app.config.dart';
 import 'package:philgo/event/event.service.dart';
 import 'package:philgo/event/event_coupon.model.dart';
 import 'package:philgo/globals.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// 이벤트 쿠폰 화면
 ///
@@ -97,7 +98,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
   Future<void> _onCouponTap(EventCoupon coupon, String imageUrl) async {
     // 이미 확인한 쿠폰은 바로 QR 표시
     if (coupon.isViewed) {
-      _showCouponImage(imageUrl);
+      _showCouponImage(imageUrl, coupon: coupon);
       return;
     }
 
@@ -133,10 +134,26 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
       });
     }
 
-    if (mounted) _showCouponImage(imageUrl);
+    if (mounted) _showCouponImage(imageUrl, coupon: coupon);
   }
 
-  void _showCouponImage(String imageUrl) {
+  /// 쿠폰 공유
+  Future<void> _shareCoupon(EventCoupon coupon, String imageUrl) async {
+    final couponName =
+        coupon.title.isNotEmpty ? coupon.title : coupon.couponType;
+    final box = context.findRenderObject() as RenderBox?;
+    final origin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    await SharePlus.instance.share(
+      ShareParams(
+        text: '필고 이벤트 쿠폰: $couponName\n$imageUrl',
+        subject: '필고 이벤트 쿠폰',
+        sharePositionOrigin: origin,
+      ),
+    );
+  }
+
+  void _showCouponImage(String imageUrl, {EventCoupon? coupon}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -179,13 +196,34 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.all(8),
-                child: IconButton.filled(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const FaIcon(FontAwesomeIcons.xmark, size: 18),
-                  style: IconButton.styleFrom(
-                    backgroundColor: Colors.black.withValues(alpha: 0.5),
-                    foregroundColor: Colors.white,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (coupon != null)
+                      IconButton.filled(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _shareCoupon(coupon, imageUrl);
+                        },
+                        icon: const FaIcon(
+                          FontAwesomeIcons.lightShareNodes,
+                          size: 18,
+                        ),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.black.withValues(alpha: 0.5),
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    const SizedBox(width: 4),
+                    IconButton.filled(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const FaIcon(FontAwesomeIcons.xmark, size: 18),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.black.withValues(alpha: 0.5),
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

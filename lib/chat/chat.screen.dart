@@ -8,6 +8,8 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
 import 'package:philgo/chat/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/chat/widgets/pinned_chat_rooms_list.dart';
+import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/user/widgets/login.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -19,6 +21,40 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
+    return Login(
+      builder: (uid) => buildChatRoomList(),
+      notLoggedIn: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.lightComments,
+              size: 64,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            SizedBox(height: 16),
+            Text('로그인이 필요합니다'.tr()),
+            Text(
+              '로그인하여 모든 기능을 이용하세요'.tr(),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                UserLoginScreen.push(context);
+              },
+              child: Text('로그인'.tr()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildChatRoomList() {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     return Theme(
