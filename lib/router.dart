@@ -153,24 +153,6 @@ final router = GoRouter(
         );
       },
     ),
-    // GoRoute(
-    //   path: AppScreen.routeName,
-    //   name: AppScreen.routeName,
-    //   builder: (context, state) => const AppScreen(),
-    // ),
-    // GoRoute(
-    //   path: MenuScreen.routeName,
-    //   name: MenuScreen.routeName,
-    //   builder: (context, state) => const MenuScreen(),
-    // ),
-    // GoRoute(
-    //   path: EntryScreen.routeName,
-    //   name: EntryScreen.routeName,
-    //   pageBuilder: (context, state) => NoTransitionPage<void>(
-    //     key: state.pageKey,
-    //     child: const EntryScreen(),
-    //   ),
-    // ),
     GoRoute(
       path: PostUpdateScreen.routeName,
       name: PostUpdateScreen.routeName,
