@@ -146,9 +146,22 @@ GET https://local.philgo.com/api.php?method=post.list&post_id=wanted&category=jo
 ```json
 {
   "posts": [ { PostEntity... }, ... ],
-  "total": 42
+  "total": 42,
+  "page": 1,
+  "limit": 20,
+  "point_advertisements": [ { PostEntity... }, ... ]
 }
 ```
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| posts | PostEntity[] | 게시글 목록 |
+| total | int | 전체 게시글 수 |
+| page | int | 현재 페이지 번호 |
+| limit | int | 페이지당 게시글 수 |
+| point_advertisements | PostEntity[] | 포인트 광고 목록 (1페이지일 때만 포함, 2페이지 이상이면 빈 배열) |
+
+> **포인트 광고 목록**: `point_advertisements`는 `page === 1`이고 `post_id`가 있을 때만 `PostService::listPointAdvertisements()`를 호출하여 활성 포인트 광고(`int_5 > time()`)를 `int_5 DESC` 순으로 최대 100건 반환한다. 적격 게시판/카테고리에서만 의미가 있다. → [포인트 광고 시스템](../v7-point.md) 참조
 
 > **사용자 상호작용 상태 포함**: 각 PostEntity에 `liked`, `bookmarked`, `reported`, `blocked` 필드가 포함된다. -> [사용자 상호작용 상태 필드 (런타임)](#사용자-상호작용-상태-필드-런타임) 참조
 
