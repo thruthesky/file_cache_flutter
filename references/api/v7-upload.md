@@ -2299,11 +2299,12 @@ $absoluteFiles = UploadService::resolveFilesFieldToAbsolute($post->files);
 > **v4/v6 업로드 파일**: 이미 `https://file.philgo.com/...` 절대경로로 저장되어 있으므로 `toAbsoluteUrl()`이 그대로 반환한다.
 > **v7 업로드 파일**: `/uploads/...` 상대경로 → 현재 도메인 기준 절대경로로 변환된다.
 
-### 17-B.5 `resolveImageThumbnail()` 내부 적용
+### 17-B.5 PostEntity 썸네일 필드 절대경로 변환
 
-`UploadService::resolveImageThumbnail()`은 v7 업로드 경로(`/uploads/`)의 썸네일 URL을 생성한 후
-`toAbsoluteUrl()`을 통해 절대경로로 반환한다. 따라서 `thumbnail_400x400`, `thumbnail_800x800`,
-`thumbnail_1000`, `resolved_thumbnail` 등 모든 썸네일 편의 필드가 자동으로 절대경로가 된다.
+`PostEntity::fromArray()`에서 `resolveImageThumbnail()`로 썸네일 URL을 생성한 후,
+모든 썸네일 필드(`thumbnail_400x400`, `thumbnail_600`, `thumbnail_800x800`, `thumbnail_1000`, `resolved_thumbnail`)에
+`toAbsoluteUrl()`을 적용하여 절대경로로 변환한다.
+따라서 클라이언트(Flutter, 웹)에서는 Entity의 URL 필드를 경로 변환 없이 즉시 사용할 수 있다.
 
 ---
 
