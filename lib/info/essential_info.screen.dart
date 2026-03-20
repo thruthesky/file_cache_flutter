@@ -43,7 +43,7 @@ class EssentialInfoScreen extends StatelessWidget {
     ]),
     // 2. 출입국 & 비자 여권
     _Section('출입국 & 비자 여권', [
-      _MenuItem(FontAwesomeIcons.mobileScreenButton, 'e트래블'),
+      _MenuItem(FontAwesomeIcons.mobileScreenButton, 'e트래블', accessCode: InfoAccessCodes.eTravel),
       _MenuItem(FontAwesomeIcons.planeDeparture, '여행비자'),
       _MenuItem(FontAwesomeIcons.briefcase, '워킹비자'),
       _MenuItem(FontAwesomeIcons.personCane, '은퇴비자'),

@@ -40,6 +40,13 @@ class InfoAccessCodes {
   static const policeStations = 'info:contact:police-stations';
 
   // ===========================================================================
+  // immigration — 출입국/비자
+  // ===========================================================================
+
+  /// 필리핀 eTravel 전자 입국 신고서
+  static const eTravel = 'info:immigration:e-travel';
+
+  // ===========================================================================
   // 전체 access_code 목록
   // ===========================================================================
 
@@ -51,6 +58,7 @@ class InfoAccessCodes {
     koreanAssociation,
     otherAgencies,
     policeStations,
+    eTravel,
   ];
 
   /// access_code → 한글 이름 매핑
@@ -61,5 +69,6 @@ class InfoAccessCodes {
     koreanAssociation: '필리핀 한인회 연락처 종합 안내',
     otherAgencies: '필리핀 기타 기관 연락처 (이민국, 기상청, 교통부)',
     policeStations: '필리핀 주요 경찰서 연락처',
+    eTravel: '필리핀 eTravel 전자 입국 신고서',
   };
 }
