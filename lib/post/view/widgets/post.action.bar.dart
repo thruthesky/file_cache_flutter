@@ -1,9 +1,9 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/view/widgets/post.action.button.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PostActionBar extends StatelessWidget {
   final Post post;
@@ -76,13 +76,22 @@ class PostActionBar extends StatelessWidget {
           ),
         ],
 
+        // 공유
+        const SizedBox(width: 8),
+        PostActionButton(
+          icon: FontAwesomeIcons.lightShareNodes,
+          label: '',
+          color: scheme.onSurfaceVariant,
+          onTap: () => _sharePost(context),
+        ),
+
         const Spacer(),
 
         if (isMine) ...[
           // 수정
           PostActionButton(
             icon: FontAwesomeIcons.lightPenToSquare,
-            label: '수정'.tr(),
+            label: '',
             color: scheme.onSurfaceVariant,
             onTap: onEdit,
           ),
@@ -90,7 +99,7 @@ class PostActionBar extends StatelessWidget {
           // 삭제
           PostActionButton(
             icon: FontAwesomeIcons.lightTrashCan,
-            label: '삭제'.tr(),
+            label: '',
             color: scheme.error,
             onTap: onDelete,
           ),
@@ -116,6 +125,22 @@ class PostActionBar extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+
+  Future<void> _sharePost(BuildContext context) async {
+    final postUrl =
+        'https://philgo.com/post/view.php?idx=${post.idx}&post_id=${post.postId}';
+    final box = context.findRenderObject() as RenderBox?;
+    final origin =
+        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+
+    await SharePlus.instance.share(
+      ShareParams(
+        text: '${post.subject}\n$postUrl',
+        subject: post.subject,
+        sharePositionOrigin: origin,
+      ),
     );
   }
 }
