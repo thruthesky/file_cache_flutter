@@ -10,6 +10,9 @@ import 'package:url_launcher/url_launcher.dart';
 /// Info 상세 화면
 ///
 /// access_code를 받아 `info.getByAccessCode` API로 데이터를 조회하여 표시한다.
+/// - 메타 정보(주소, 전화, 이메일 등)를 카드로 표시
+/// - texts(text_1 JSON)의 각 항목을 기관/장소 정보 카드로 표시
+/// - content(게시판/SEO용 마크다운)는 표시하지 않음
 class InfoViewScreen extends StatefulWidget {
   static const String routeName = '/info/view';
 
@@ -82,19 +85,13 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
           children: [
             FaIcon(FontAwesomeIcons.lightCircleExclamation, size: 48, color: color.error),
             const SizedBox(height: 16),
-            Text(
-              '정보를 불러올 수 없습니다'.tr(),
-              style: text.titleMedium,
-            ),
+            Text('정보를 불러올 수 없습니다'.tr(), style: text.titleMedium),
             const SizedBox(height: 8),
             Text(_error!, style: text.bodySmall?.copyWith(color: color.onSurfaceVariant)),
             const SizedBox(height: 16),
             FilledButton.tonal(
               onPressed: () {
-                setState(() {
-                  _loading = true;
-                  _error = null;
-                });
+                setState(() { _loading = true; _error = null; });
                 _loadInfo();
               },
               child: Text('다시 시도'.tr()),
@@ -130,29 +127,221 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
           // 요약 설명
           if (info.description.isNotEmpty) ...[
             const SizedBox(height: 12),
-            Text(info.description, style: text.bodyMedium?.copyWith(height: 1.5)),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: color.primaryContainer.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                info.description,
+                style: text.bodyMedium?.copyWith(height: 1.5, color: color.onSurface),
+              ),
+            ),
           ],
 
-          // 메타 정보 카드
+          // 상위 메타 정보 카드 (info 자체의 메타)
           if (_hasMetaInfo(info)) ...[
             const SizedBox(height: 16),
             _buildMetaCard(info),
           ],
 
-          // 본문 (content)
-          if (info.content.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Text(info.content, style: text.bodyMedium?.copyWith(height: 1.6)),
-          ],
-
-          // texts 섹션 (마크다운 텍스트 배열)
+          // texts 섹션 (text_1 JSON) — 각 항목을 카드로 표시
           if (info.texts.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            ...info.texts.map((section) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Text(section, style: text.bodyMedium?.copyWith(height: 1.6)),
-            )),
+            const SizedBox(height: 20),
+            ...info.texts.map((item) => _buildTextItemCard(item)),
           ],
+        ],
+      ),
+    );
+  }
+
+  /// texts 배열의 각 항목을 카드로 표시
+  /// - Map이면 기관/장소 정보 카드
+  /// - String이면 마크다운 섹션 카드
+  Widget _buildTextItemCard(dynamic item) {
+    if (item is Map<String, dynamic>) {
+      return _buildInfoCard(InfoTextItem.fromMap(item));
+    }
+    if (item is String && item.trim().isNotEmpty) {
+      return _buildMarkdownSectionCard(item);
+    }
+    return const SizedBox.shrink();
+  }
+
+  /// 기관/장소 정보 카드 (texts 항목이 Map인 경우)
+  Widget _buildInfoCard(InfoTextItem item) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: color.surfaceContainerLowest,
+        border: Border.all(color: color.outlineVariant.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 헤더: 이름 + 아이콘/뱃지
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: color.surfaceContainerLow,
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            ),
+            child: Row(
+              children: [
+                if (item.icon.isNotEmpty) ...[
+                  Text(item.icon, style: const TextStyle(fontSize: 18)),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item.name,
+                        style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                      ),
+                      if (item.englishName.isNotEmpty)
+                        Text(
+                          item.englishName,
+                          style: text.bodySmall?.copyWith(color: color.onSurfaceVariant),
+                        ),
+                    ],
+                  ),
+                ),
+                if (item.badge.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: color.primaryContainer,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      item.badge,
+                      style: text.labelSmall?.copyWith(color: color.onPrimaryContainer),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          // 본문: 메타 정보 행들
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (item.description.isNotEmpty) ...[
+                  Text(item.description, style: text.bodyMedium?.copyWith(height: 1.5)),
+                  const SizedBox(height: 10),
+                ],
+                if (item.address.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightLocationDot, item.address),
+                if (item.phone.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightPhone, item.phone, onTap: () {
+                    launchUrl(Uri.parse('tel:${item.phone}'));
+                  }),
+                if (item.phone2.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightPhone, item.phone2, onTap: () {
+                    launchUrl(Uri.parse('tel:${item.phone2}'));
+                  }),
+                if (item.fax.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightFax, item.fax),
+                if (item.email.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightEnvelope, item.email, onTap: () {
+                    launchUrl(Uri.parse('mailto:${item.email}'));
+                  }),
+                if (item.hours.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightClock, item.hours),
+                if (item.detail.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightCircleInfo, item.detail),
+                if (item.websiteUrl.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightGlobe, item.websiteUrl, onTap: () {
+                    final uri = Uri.tryParse(item.websiteUrl);
+                    if (uri != null) launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }),
+                if (item.services.isNotEmpty)
+                  _metaRow(FontAwesomeIcons.lightListCheck, item.services),
+                if (item.tags.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: item.tags.split(',').map((tag) {
+                        final t = tag.trim();
+                        if (t.isEmpty) return const SizedBox.shrink();
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: color.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(t, style: text.labelSmall),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 마크다운 섹션 카드 (texts 항목이 String인 경우)
+  Widget _buildMarkdownSectionCard(String section) {
+    final lines = section.split('\n');
+    String? heading;
+    final bodyLines = <String>[];
+
+    for (final line in lines) {
+      final trimmed = line.trim();
+      if (heading == null && trimmed.startsWith('#')) {
+        heading = trimmed.replaceFirst(RegExp(r'^#+\s*'), '');
+      } else {
+        bodyLines.add(line);
+      }
+    }
+    while (bodyLines.isNotEmpty && bodyLines.first.trim().isEmpty) {
+      bodyLines.removeAt(0);
+    }
+    while (bodyLines.isNotEmpty && bodyLines.last.trim().isEmpty) {
+      bodyLines.removeLast();
+    }
+    final body = bodyLines.join('\n').trim();
+
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: color.surfaceContainerLowest,
+        border: Border.all(color: color.outlineVariant.withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (heading != null && heading.isNotEmpty)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: color.surfaceContainerLow,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+              ),
+              child: Text(heading, style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+            ),
+          if (body.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(body, style: text.bodyMedium?.copyWith(height: 1.6)),
+            ),
         ],
       ),
     );
@@ -166,7 +355,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
         info.websiteUrl.isNotEmpty;
   }
 
-  /// 메타 정보 카드 (주소, 전화, 이메일, 운영시간, 웹사이트)
+  /// 상위 메타 정보 카드
   Widget _buildMetaCard(InfoPost info) {
     return Container(
       width: double.infinity,
@@ -204,17 +393,20 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
   }
 
   Widget _metaRow(IconData icon, String value, {VoidCallback? onTap}) {
-    final widget = Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+    final row = Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FaIcon(icon, size: 16, color: color.onSurfaceVariant),
-          const SizedBox(width: 12),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: FaIcon(icon, size: 14, color: color.onSurfaceVariant),
+          ),
+          const SizedBox(width: 10),
           Expanded(
             child: Text(
               value,
-              style: text.bodyMedium?.copyWith(
+              style: text.bodySmall?.copyWith(
                 color: onTap != null ? color.primary : color.onSurface,
                 height: 1.4,
               ),
@@ -225,8 +417,8 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
     );
 
     if (onTap != null) {
-      return GestureDetector(onTap: onTap, child: widget);
+      return GestureDetector(onTap: onTap, child: row);
     }
-    return widget;
+    return row;
   }
 }
