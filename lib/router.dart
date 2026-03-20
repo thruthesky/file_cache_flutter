@@ -16,6 +16,7 @@ import 'package:philgo/guide/app_guide.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/user/account_withdrawal.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
@@ -26,6 +27,12 @@ import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
+import 'package:philgo/company/qr/company.qr_code.screen.dart';
+import 'package:philgo/company/qr/company.qr_code_scanned.screen.dart';
+import 'package:philgo/company/review/company.visit_review.screen.dart';
+import 'package:philgo/company/review/company.revisit_point_result.screen.dart';
+import 'package:philgo/company/review/company.review_point_result.screen.dart';
+import 'package:philgo/event/qr_scanner.screen.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
@@ -279,6 +286,72 @@ final router = GoRouter(
       path: ExchangeRateScreen.routeName,
       name: ExchangeRateScreen.routeName,
       builder: (context, state) => const ExchangeRateScreen(),
+    ),
+    GoRoute(
+      path: CompanyQrCodeScreen.routeName,
+      name: CompanyQrCodeScreen.routeName,
+      builder: (context, state) {
+        final idx =
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        return CompanyQrCodeScreen(companyIdx: idx);
+      },
+    ),
+    GoRoute(
+      path: QrScannerScreen.routeName,
+      name: QrScannerScreen.routeName,
+      builder: (context, state) => const QrScannerScreen(),
+    ),
+    GoRoute(
+      path: CompanyQrCodeScannedScreen.routeName,
+      name: CompanyQrCodeScannedScreen.routeName,
+      builder: (context, state) {
+        final idx =
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final code = state.uri.queryParameters['code'] ?? '';
+        return CompanyQrCodeScannedScreen(idx: idx, code: code);
+      },
+    ),
+    GoRoute(
+      path: CompanyVisitReviewScreen.routeName,
+      name: CompanyVisitReviewScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return CompanyVisitReviewScreen(
+          usageIdx: extra['usageIdx'] as int,
+          idxCompany: extra['idxCompany'] as int,
+          companyName: extra['companyName'] as String,
+        );
+      },
+    ),
+    GoRoute(
+      path: CompanyRevisitPointResultScreen.routeName,
+      name: CompanyRevisitPointResultScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return CompanyRevisitPointResultScreen(
+          usageIdx: extra['usageIdx'] as int,
+          idxCompany: extra['idxCompany'] as int,
+          companyName: extra['companyName'] as String,
+        );
+      },
+    ),
+    GoRoute(
+      path: CompanyReviewPointResultScreen.routeName,
+      name: CompanyReviewPointResultScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return CompanyReviewPointResultScreen(
+          rewardPoints: extra['rewardPoints'] as int,
+          pointBefore: extra['pointBefore'] as int,
+          pointAfter: extra['pointAfter'] as int,
+          idxCompany: extra['idxCompany'] as int,
+        );
+      },
+    ),
+    GoRoute(
+      path: AccountWithdrawalScreen.routeName,
+      name: AccountWithdrawalScreen.routeName,
+      builder: (context, state) => const AccountWithdrawalScreen(),
     ),
   ],
 );

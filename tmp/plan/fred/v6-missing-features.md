@@ -6,7 +6,7 @@ Generated: 2026-03-20
 
 ## 🔴 Critical (Legal / Safety / Core)
 
-1. **Account withdrawal screen** — Account deletion flow (legal requirement)
+1. ~~**Account withdrawal screen** — Account deletion flow (legal requirement)~~ ✅ Completed (2026-03-20)
 2. **Emergency contact screen** — Emergency contacts (PNP, embassy, ambulance, etc.)
 3. **Policy acceptance dialogs** — Terms of service / privacy policy consent
 4. **Post report button** — Report posts (community moderation)
@@ -135,11 +135,11 @@ Generated: 2026-03-20
 
 ---
 
-## Total: 77 Missing Features
+## Total: 76 Missing Features (1 completed)
 
 | Priority | Count |
 |----------|-------|
-| 🔴 Critical | 5 |
+| 🔴 Critical | 4 (1 completed) |
 | 🟠 High Priority | 9 |
 | 🟡 Medium (QR/Event) | 8 |
 | 🟢 Medium (Home/UI) | 8 |

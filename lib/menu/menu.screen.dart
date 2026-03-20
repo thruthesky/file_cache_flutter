@@ -19,6 +19,7 @@ import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
+import 'package:philgo/user/account_withdrawal.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.model.dart';
@@ -200,7 +201,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             Center(
                               child: TextButton.icon(
                                 onPressed: () {
-                                  // TODO: 계정 삭제 로직
+                                  AccountWithdrawalScreen.push(context);
                                 },
                                 icon: FaIcon(
                                   FontAwesomeIcons.lightTrashCan,
