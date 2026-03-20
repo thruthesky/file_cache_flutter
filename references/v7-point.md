@@ -1134,14 +1134,73 @@ var data = await v7api('post.advertise', {
 });
 ```
 
+#### 목록 위젯 핵심 코드 (point-advertisements.php)
+
+```php
+// v7/widgets/advertisement/point-advertisements.php
+/** @var PostEntity[] $v7_point_ads */
+$v7_point_ads = $v7_point_ads ?? [];
+if (empty($v7_point_ads)) return;
+
+foreach ($v7_point_ads as $_paAd):
+    // URL: link 필드가 있으면 사용, 없으면 글 보기 페이지
+    $_paUrl = !empty($_paAd->link)
+        ? htmlspecialchars($_paAd->link)
+        : Route::postView($_paAd->idx, $_paAd->post_id);
+    $_paThumb = $_paAd->resolved_thumbnail;
+    // 렌더링: 썸네일 + 제목 + "포인트 광고" 배지 + 종료일 + 조회수 + 댓글수
+endforeach;
+```
+
 #### 글 보기 페이지 광고 위젯 (post-view-point-adv.php)
 
 ```php
 // v7/widgets/post/view/post-view-point-adv.php
-// 조건: 로그인 + 본인 글 + 적격 게시판일 때만 표시
-// 광고 활성 시: "진행 중 (N일 남음)" 배지 + "연장하기" 버튼
-// 비활성 시: "광고 등록" 버튼
-// JS: v7api('post.advertise', { idx, days }) 호출 후 페이지 새로고침
+// post-view-default.php에서 include됨
+use V7\Utils\Config;
+
+// 조건 1: 미로그인 또는 타인 글이면 표시 안 함
+if ($loginIdxMember <= 0 || $post->idx_member !== $loginIdxMember) return;
+
+// 조건 2: 적격 게시판 확인 (Config::pointAdvertisementPostCategories())
+$advCategories = Config::pointAdvertisementPostCategories();
+$cat = $post->category !== '' ? $post->category : $post->post_id;
+if (!in_array($post->post_id, $advCategories, true)
+    && !in_array($cat, $advCategories, true)) return;
+
+// 설정 로드
+$advDays = Config::pointAdvertisementDays();    // [3, 5, 7, ...]
+$costPerHour = Config::pointAdvCostPerHour();   // 240
+$isActive = $post->int_5 > time();
+$remainingDays = $isActive ? (int)ceil(($post->int_5 - time()) / 86400) : 0;
+
+// HTML: 기간 선택 드롭다운 + 등록/연장 버튼
+// JS: v7api('post.advertise', { idx, days }) 호출 후 location.reload()
+```
+
+#### 글 작성/수정 폼 광고 UI (post-form.js 핵심 코드)
+
+```javascript
+// v7/js/post-form.js — Vue.js Options API data
+advEligible: false,       // 적격 게시판 여부
+advDayOptions: [],        // [{days:3, points:17280}, ...]
+advCostPerHour: 0,        // 240
+advSelectedDays: 0,       // 사용자 선택한 일수
+advCurrentExpiry: 0,      // 현재 광고 종료 timestamp
+advSubmitting: false,     // 제출 중 플래그
+
+// computed
+advRequiredPoints: function() { return this.advCostPerHour * 24 * this.advSelectedDays; },
+advIsActive: function() { return this.advCurrentExpiry > Math.floor(Date.now() / 1000); },
+
+// 글 작성 완료 후 자동 광고 등록 (post-form.js 라인 896-907)
+if (!this.isUpdate && this.advSelectedDays > 0 && resultIdx) {
+    await v7api('post.advertise', { idx: resultIdx, days: this.advSelectedDays });
+}
+
+// 템플릿: v-if="advEligible"로 적격 게시판에서만 표시
+// 작성 모드: "글 작성 완료 시 포인트 광고가 자동으로 등록됩니다." 안내 표시
+// 수정 모드: advIsActive이면 "광고 진행 중 — N일 N시간 남음" 배지 표시
 ```
 
 ### 전체 흐름도
