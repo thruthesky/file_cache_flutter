@@ -6,8 +6,8 @@ class MessagingConfig {
   static const String tokenPath = "fcm-tokens";
   static const String subscribePath = "fcm-subscriptions";
 
-  // PHP API to save FCM token to database
-  static const String messagingSaveTokenApi = "save_fcm_token";
+  // v7 API to save FCM token to database
+  static const String messagingSaveTokenApi = "fcm_token.save";
 }
 
 const String DEVICE = "device";

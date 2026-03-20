@@ -424,6 +424,19 @@ class Translations {
     '정말 이 댓글을 삭제하시겠습니까?': '정말 이 댓글을 삭제하시겠습니까?',
     '댓글을 작성하려면 로그인이 필요합니다.': '댓글을 작성하려면 로그인이 필요합니다.',
     '파일 업로드 실패': '파일 업로드 실패',
+
+    // 공유 받기
+    '공유 받기': '공유 받기',
+    '게시글 또는 채팅 선택': '게시글 또는 채팅 선택',
+    '채팅 선택': '채팅 선택',
+    '게시글 작성': '게시글 작성',
+    '채팅 친구에게 보내기': '채팅 친구에게 보내기',
+    '2. 보낼 친구를 선택하세요': '2. 보낼 친구를 선택하세요',
+    '2. 게시할 카테고리를 선택하세요': '2. 게시할 카테고리를 선택하세요',
+    '보내기': '보내기',
+    '열기': '열기',
+    '이름 없음': '이름 없음',
+    '방 이름 없음': '방 이름 없음',
   };
 
   static const Map<String, dynamic> en = {
@@ -844,5 +857,18 @@ class Translations {
     '정말 이 댓글을 삭제하시겠습니까?': 'Are you sure you want to delete this comment?',
     '댓글을 작성하려면 로그인이 필요합니다.': 'Please login to write a comment.',
     '파일 업로드 실패': 'File upload failed',
+
+    // 공유 받기
+    '공유 받기': 'Receive Share',
+    '게시글 또는 채팅 선택': 'Choose Post or Chat',
+    '채팅 선택': 'Choose Chat',
+    '게시글 작성': 'Create Post',
+    '채팅 친구에게 보내기': 'Send to chat friend',
+    '2. 보낼 친구를 선택하세요': '2. Select a friend to send',
+    '2. 게시할 카테고리를 선택하세요': '2. Select a category to post',
+    '보내기': 'Send',
+    '열기': 'Open',
+    '이름 없음': 'no name',
+    '방 이름 없음': 'No room name',
   };
 }
