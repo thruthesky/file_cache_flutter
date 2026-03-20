@@ -142,6 +142,39 @@ class ChatService {
     return messageRef.key!;
   }
 
+  /// Edits a message text in a chat room (soft edit - overwrites text)
+  ///
+  /// Only the sender can edit their own message.
+  /// Sets isEdited flag and editedAt timestamp.
+  Future<void> editMessage({
+    required String roomId,
+    required String messageId,
+    required String newText,
+  }) async {
+    final ref = FirebaseDatabase.instance.ref('chat/messages/$roomId/$messageId');
+    await ref.update({
+      'text': cut(newText, 2048, defaultValue: ""),
+      'isEdited': true,
+      'editedAt': ServerValue.timestamp,
+    });
+  }
+
+  /// Soft-deletes a message in a chat room
+  ///
+  /// Does NOT remove the message from Firebase.
+  /// Sets isDeleted flag, deletedAt timestamp, and deletedBy UID.
+  Future<void> deleteMessage({
+    required String roomId,
+    required String messageId,
+  }) async {
+    final ref = FirebaseDatabase.instance.ref('chat/messages/$roomId/$messageId');
+    await ref.update({
+      'isDeleted': true,
+      'deletedAt': ServerValue.timestamp,
+      'deletedBy': myUid(),
+    });
+  }
+
   Future<String> sendChatProtocolMessage({
     required String roomId,
     required String protocol,
