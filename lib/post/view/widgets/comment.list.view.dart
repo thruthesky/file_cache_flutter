@@ -123,12 +123,7 @@ class _CommentListViewState extends State<CommentListView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           for (var i = 0; i < treeRoots.length; i++) ...[
-            // 최상위 코멘트 간 구분선
-            if (i > 0)
-              Divider(
-                color: Theme.of(context).colorScheme.outlineVariant,
-                height: 8,
-              ),
+            if (i > 0) const SizedBox(height: 12),
             _buildCommentNode(treeRoots[i]),
           ],
         ],

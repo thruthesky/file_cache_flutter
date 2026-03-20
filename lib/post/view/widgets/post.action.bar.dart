@@ -95,22 +95,22 @@ class PostActionBar extends StatelessWidget {
             onTap: onDelete,
           ),
         ] else ...[
-          // 신고
+          // 신고 (아이콘만 표시)
           PostActionButton(
             icon: reported
                 ? FontAwesomeIcons.solidFlag
                 : FontAwesomeIcons.lightFlag,
-            label: reported ? '신고됨'.tr() : '신고'.tr(),
+            label: '',
             color: reported ? scheme.error : scheme.onSurfaceVariant,
             onTap: onReport ?? () {},
           ),
           const SizedBox(width: 8),
-          // 차단
+          // 차단 (아이콘만 표시)
           PostActionButton(
             icon: blocked
                 ? FontAwesomeIcons.solidBan
                 : FontAwesomeIcons.lightBan,
-            label: blocked ? '차단 해제'.tr() : '차단'.tr(),
+            label: '',
             color: blocked ? scheme.error : scheme.onSurfaceVariant,
             onTap: onBlock ?? () {},
           ),

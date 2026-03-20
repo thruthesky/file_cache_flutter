@@ -15,6 +15,7 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
+import 'package:philgo/guide/app_guide.screen.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 
@@ -171,6 +172,11 @@ final router = GoRouter(
       path: VersionScreen.routeName,
       name: VersionScreen.routeName,
       builder: (context, state) => const VersionScreen(),
+    ),
+    GoRoute(
+      path: AppGuideScreen.routeName,
+      name: AppGuideScreen.routeName,
+      builder: (context, state) => const AppGuideScreen(),
     ),
   ],
 );

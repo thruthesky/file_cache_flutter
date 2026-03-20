@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
+import 'package:philgo/guide/app_guide.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
@@ -914,7 +915,11 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 지원 메뉴 그리드
   Widget _buildSupportGrid(BuildContext context) {
     final items = [
-      _MenuItemData(FontAwesomeIcons.lightCircleQuestion, '앱 사용 안내'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightCircleQuestion,
+        '앱 사용 안내'.tr(),
+        onTap: () => AppGuideScreen.push(context),
+      ),
       _MenuItemData(
         FontAwesomeIcons.lightFileContract,
         '이용 약관'.tr(),
