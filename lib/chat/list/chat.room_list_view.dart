@@ -6,7 +6,6 @@ import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/list/chat.room_list_tile.dart';
 import 'package:philgo/chat/models/chat.join.dart';
-import 'package:philgo/user/widgets/login.dart';
 
 class ChatRoomListView extends StatelessWidget {
   final void Function(String roomId) onTap;
@@ -15,13 +14,6 @@ class ChatRoomListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Login(
-      builder: (uid) => buildChatRoomList(),
-      notLoggedIn: const Center(child: CircularProgressIndicator.adaptive()),
-    );
-  }
-
-  Widget buildChatRoomList() {
     return FirebaseDatabaseQueryBuilder(
       reverseQuery: true,
       query: singleChatRoomListQuery(),
@@ -32,7 +24,9 @@ class ChatRoomListView extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text('오류: {}'.tr(args: [snapshot.error.toString()])));
+          return Center(
+            child: Text('오류: {}'.tr(args: [snapshot.error.toString()])),
+          );
         }
 
         if (snapshot.docs.isEmpty) {
@@ -53,7 +47,9 @@ class ChatRoomListView extends StatelessWidget {
                         alpha: 0.1,
                       ),
                       // Comic design - rounded corners 12 for large elements
-                      borderRadius: BorderRadius.circular(emptyStateBorderRadius),
+                      borderRadius: BorderRadius.circular(
+                        emptyStateBorderRadius,
+                      ),
                       // Comic design - 2.0px outline border
                       border: Border.all(
                         color: colorScheme.outline,
