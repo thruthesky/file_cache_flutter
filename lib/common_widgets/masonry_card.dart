@@ -189,8 +189,7 @@ class _MasonryCardState extends State<MasonryCard> {
     final videoId = _extractYoutubeVideoId(widget.youtubeUrl!);
     if (videoId == null) return _buildDefaultPlaceholder(scheme);
 
-    final thumbnailUrl =
-        'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
+    final thumbnailUrl = 'https://img.youtube.com/vi/$videoId/hqdefault.jpg';
 
     return Stack(
       fit: StackFit.expand,
@@ -238,13 +237,27 @@ class _MasonryCardState extends State<MasonryCard> {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: FaIcon(
-            FontAwesomeIcons.play,
-            color: Colors.white,
-            size: 18,
-          ),
+          child: FaIcon(FontAwesomeIcons.play, color: Colors.white, size: 18),
         ),
       ),
+    );
+  }
+
+  /// 이미지 비율에 따라 높이를 조절하는 공통 메서드 (빌드 중 setState 방지)
+  void _updateResolvedHeight(ImageProvider imageProvider, double cardWidth) {
+    if (_resolvedHeight != null) return;
+    imageProvider.resolve(ImageConfiguration.empty).addListener(
+      ImageStreamListener((info, _) {
+        final imgW = info.image.width.toDouble();
+        final imgH = info.image.height.toDouble();
+        final resolved = (imgH / imgW) * cardWidth;
+        final clamped = resolved.clamp(widget.minHeight, widget.maxHeight);
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _resolvedHeight = clamped);
+          });
+        }
+      }),
     );
   }
 
@@ -256,21 +269,7 @@ class _MasonryCardState extends State<MasonryCard> {
           imageUrl: widget.imageUrl!,
           fit: BoxFit.cover,
           imageBuilder: (context, imageProvider) {
-            if (_resolvedHeight == null) {
-              imageProvider.resolve(ImageConfiguration.empty).addListener(
-                    ImageStreamListener((info, _) {
-                      final imgW = info.image.width.toDouble();
-                      final imgH = info.image.height.toDouble();
-                      final cardW = constraints.maxWidth;
-                      final resolved = (imgH / imgW) * cardW;
-                      final clamped =
-                          resolved.clamp(widget.minHeight, widget.maxHeight);
-                      if (mounted) {
-                        setState(() => _resolvedHeight = clamped);
-                      }
-                    }),
-                  );
-            }
+            _updateResolvedHeight(imageProvider, constraints.maxWidth);
             return Image(image: imageProvider, fit: BoxFit.cover);
           },
           placeholder: (_, _) => Container(
@@ -296,21 +295,7 @@ class _MasonryCardState extends State<MasonryCard> {
           imageUrl: url,
           fit: BoxFit.cover,
           imageBuilder: (context, imageProvider) {
-            if (_resolvedHeight == null) {
-              imageProvider.resolve(ImageConfiguration.empty).addListener(
-                    ImageStreamListener((info, _) {
-                      final imgW = info.image.width.toDouble();
-                      final imgH = info.image.height.toDouble();
-                      final cardW = constraints.maxWidth;
-                      final resolved = (imgH / imgW) * cardW;
-                      final clamped =
-                          resolved.clamp(widget.minHeight, widget.maxHeight);
-                      if (mounted) {
-                        setState(() => _resolvedHeight = clamped);
-                      }
-                    }),
-                  );
-            }
+            _updateResolvedHeight(imageProvider, constraints.maxWidth);
             return Image(image: imageProvider, fit: BoxFit.cover);
           },
           placeholder: (_, _) => Container(
@@ -386,18 +371,15 @@ class _MasonryCardState extends State<MasonryCard> {
     if (shortMatch != null) return shortMatch.group(1);
 
     // youtube.com/watch?v=VIDEO_ID
-    final longMatch =
-        RegExp(r'[?&]v=([a-zA-Z0-9_-]{11})').firstMatch(url);
+    final longMatch = RegExp(r'[?&]v=([a-zA-Z0-9_-]{11})').firstMatch(url);
     if (longMatch != null) return longMatch.group(1);
 
     // youtube.com/shorts/VIDEO_ID
-    final shortsMatch =
-        RegExp(r'/shorts/([a-zA-Z0-9_-]{11})').firstMatch(url);
+    final shortsMatch = RegExp(r'/shorts/([a-zA-Z0-9_-]{11})').firstMatch(url);
     if (shortsMatch != null) return shortsMatch.group(1);
 
     // youtube.com/embed/VIDEO_ID
-    final embedMatch =
-        RegExp(r'/embed/([a-zA-Z0-9_-]{11})').firstMatch(url);
+    final embedMatch = RegExp(r'/embed/([a-zA-Z0-9_-]{11})').firstMatch(url);
     if (embedMatch != null) return embedMatch.group(1);
 
     return null;

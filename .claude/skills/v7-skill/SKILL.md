@@ -36,6 +36,8 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-app-kakoatalk-social-login.md](references/app/v7-app-kakoatalk-social-login.md) — Kakao social login
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event entry (spinning wheel)
    - [app/v7-event-entry.md](references/app/v7-event-entry.md) — Event/spinning wheel
+   - [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md) — Masonry image display & debugging
+   - [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md) — Point advertisement (post promotion)
 
 ### After Completing Each Task
 
@@ -530,6 +532,29 @@ PHP 서버의 Firebase Custom Token 생성 연동, 로그인 UI 구현, 에러 �
 로그아웃/연결끊기(탈퇴), 카카오 SDK 주요 API 레퍼런스, 실전 트러블슈팅,
 관련 파일 목록을 포함합니다.
 
+### Flutter 앱 Masonry 이미지 표시 → [app/v7-app-masonry-image.md](references/app/v7-app-masonry-image.md)
+
+Flutter 앱의 Masonry 그리드 목록에서 게시글/업소록 이미지를 표시하는 전체 흐름을 다룹니다.
+MasonryCard 위젯(`lib/common_widgets/masonry_card.dart`)의 이미지 렌더링 구조,
+서버 API 썸네일 필드 매핑(`thumbnail_600`, `resolved_thumbnail`, `varchar_17` 우선순위),
+CachedNetworkImage의 `imageBuilder` 콜백에서 발생하는 빌드 중 setState 에러
+(`setState() or markNeedsBuild() called during build`)의 원인과 `addPostFrameCallback()` 해결법,
+업소록(`CompanyModel.primaryImageUrl`) 이미지 처리, 상대/절대 경로 변환(`toAbsoluteUrl()`),
+CachedNetworkImage 에러 캐시로 인한 hot restart 필요성, 디버깅 순서를 포함합니다.
+
+### Flutter 앱 포인트 광고 시스템 → [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md)
+
+Flutter 앱의 포인트 광고 기능 전체 구현을 다룹니다.
+Post 모델의 광고 필드(adEndTime/adStartTime/adDays/adPoints, int_5~int_8 매핑)와
+계산 속성(isAdActive, adRemainingDays, adEndDateTime),
+PointAdvertisementService(getConfig/advertise API 호출),
+PointAdvertisement 모델(목록 상단 광고용), PostListResult 통합,
+PointAdSelectionBottomSheet(기간 선택 바텀시트),
+글 작성(PostCreateScreen)/수정(PostUpdateScreen)/보기(PostViewScreen) 화면별 통합,
+ForumScreen 목록 상단 광고 위젯, PostListTile D-day 뱃지 표시,
+전체 파일 경로 요약을 포함합니다.
+백엔드 로직(비용 계산, 적격 게시판, DB 필드)은 → [v7-point.md](references/v7-point.md) 11장 참조.
+
 ### 웹 문서 → [references/web/](references/web/)
 
 > **🔴 모든 웹 관련 작업 내용은 `references/web/` 폴더에 문서를 보관한다. 🔴**
@@ -792,6 +817,7 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 |------|------|------|
 | User | [api/v7-user.md](references/api/v7-user.md) | ✅ 완료 |
 | Upload | [api/v7-upload.md](references/api/v7-upload.md) | ✅ 완료 |
+| Upload URL 변환 | [api/v7-upload-url-resolve.md](references/api/v7-upload-url-resolve.md) — v4/v6/v7 세 버전의 파일 경로 통합 변환 로직. `UploadService::resolveImageThumbnail()`(단일 이미지 URL → 버전 자동 감지 → 썸네일 URL 변환), `resolvePostThumbnail()`(게시글 최종 대표 썸네일 결정, varchar_17→files→no_of_first_image 우선순위), `buildV4FileUrl()`(v4 인덱스→URL), `extractFirstImageFromFiles()`(files 필드 다형식 파싱), PostEntity 런타임 썸네일 설정, `enrichThumbnails()`(gid 배치 v4 조회 + 유튜브 폴백), sf_post_data 미디어 필드 매핑, 웹(PHP)/앱(Flutter) 플랫폼별 처리 차이. 핵심 소스 코드 + 테스트 커버리지 포함 | ✅ 완료 |
 | AI | [api/v7-ai.md](references/api/v7-ai.md) — 텍스트 검열, 텍스트 생성, 영수증 분석, **AI 챗봇 SSE 스트리밍** (`ai.chatbot` — Enhanced Prompt + Firebase RTDB), **AI 답변 SSE 스트리밍 + 자동 저장** (`ai.answerPost` — 서버에서 프롬프트 구성+저장, 1번 통신), **AI 답변 저장** (`ai.saveAnswer`), `ai-api.php` 전용 엔트리포인트 | ✅ 완료 |
 | Company | [api/v7-company.md](references/api/v7-company.md) | ✅ 완료 |
 | Company QR Code | [api/v7-company-qr-code.md](references/api/v7-company-qr-code.md) | ✅ 완료 |

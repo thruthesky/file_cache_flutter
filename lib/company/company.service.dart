@@ -56,6 +56,7 @@ class CompanyService {
         'page': page,
         'limit': limit,
       },
+      debug: true,
     );
 
     return CompanyListResult.fromJson(result);

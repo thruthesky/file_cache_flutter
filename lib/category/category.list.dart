@@ -17,7 +17,7 @@ class CategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: forumCategories.map((postId) {
+      children: Config.forumCategories.map((postId) {
         /// philgoTr을 사용하여 다국어 번역된 카테고리 이름 표시
         /// Display localized category name using philgoTr
         final (categoryId, subCategory, name) = postId;

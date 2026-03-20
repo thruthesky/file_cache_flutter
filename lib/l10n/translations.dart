@@ -8,6 +8,8 @@ class Translations {
 
   static const Map<String, dynamic> ko = {
     // 공통
+    '검색': '검색',
+    '돌아가기': '돌아가기',
     '이름없음': '이름없음',
     '로그인': '로그인',
     '로그아웃': '로그아웃',
@@ -426,6 +428,8 @@ class Translations {
 
   static const Map<String, dynamic> en = {
     // 공통
+    '검색': 'Search',
+    '돌아가기': 'Back',
     '이름없음': 'No name',
     '로그인': 'Login',
     '로그아웃': 'Logout',

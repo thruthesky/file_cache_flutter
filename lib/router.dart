@@ -6,7 +6,9 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
+import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -15,7 +17,10 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
+import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
+import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
@@ -140,9 +145,27 @@ final router = GoRouter(
       },
     ),
     GoRoute(
+      path: CompanyEventScreen.routeName,
+      name: CompanyEventScreen.routeName,
+      builder: (context, state) => const CompanyEventScreen(),
+    ),
+    GoRoute(
+      path: EventEntryScreen.routeName,
+      name: EventEntryScreen.routeName,
+      builder: (context, state) => const EventEntryScreen(),
+    ),
+    GoRoute(
       path: EventCouponScreen.routeName,
       name: EventCouponScreen.routeName,
       builder: (context, state) => const EventCouponScreen(),
+    ),
+    GoRoute(
+      path: SearchScreen.routeName,
+      name: SearchScreen.routeName,
+      builder: (context, state) {
+        final searchTerm = state.extra as String? ?? '';
+        return SearchScreen(searchTerm: searchTerm);
+      },
     ),
     GoRoute(
       path: AppInfoScreen.routeName,
@@ -153,6 +176,16 @@ final router = GoRouter(
       path: VersionScreen.routeName,
       name: VersionScreen.routeName,
       builder: (context, state) => const VersionScreen(),
+    ),
+    GoRoute(
+      path: WeatherScreen.routeName,
+      name: WeatherScreen.routeName,
+      builder: (context, state) => const WeatherScreen(),
+    ),
+    GoRoute(
+      path: ExchangeRateScreen.routeName,
+      name: ExchangeRateScreen.routeName,
+      builder: (context, state) => const ExchangeRateScreen(),
     ),
   ],
 );

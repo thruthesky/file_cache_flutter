@@ -3,18 +3,22 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
-import 'package:philgo/post/create/post.create.screen.dart';
+import 'package:philgo/globals.dart';
+import 'package:philgo/point/point_advertisement.model.dart';
+import 'package:philgo/point/widgets/point_advertisements.dart';
 import 'package:philgo/post/list/widgets/post_list_masonry_view.dart';
 import 'package:philgo/post/list/widgets/post_list_view.dart';
 import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/search/search.screen.dart';
+import 'package:philgo/search/search_dialog.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.service.dart';
-import 'package:philgo/user/user.state.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({super.key});
@@ -28,6 +32,9 @@ class _ForumScreenState extends State<ForumScreen> {
   bool _showHeader = true;
   static const _headerHideThreshold = 48.0;
   static const _pageSize = 20;
+
+  /// 포인트 광고 목록 (1페이지에서만 로드)
+  List<PointAdvertisement> _pointAdvertisements = [];
 
   late final PagingController<int, Post> _pagingController;
 
@@ -59,18 +66,24 @@ class _ForumScreenState extends State<ForumScreen> {
       limit: _pageSize,
       page: page,
     );
+    // 1페이지일 때 포인트 광고 목록 업데이트
+    if (page == 1 && mounted) {
+      setState(() {
+        _pointAdvertisements = result.pointAdvertisements;
+      });
+    }
     if (page > 1 && result.posts.isEmpty) return [];
     return result.posts;
   }
 
   void _onCategoryTap(int index) {
     if (index == _selectedIndex) return;
-    final (postId, category, _) = forumCategories[index];
+    final (postId, category, _) = Config.forumCategories[index];
     AppNavigationState.of(context).setSelectedForum(postId, category);
   }
 
   void _applySelectedForum(String postId, String? category) {
-    final index = forumCategories.indexWhere(
+    final index = Config.forumCategories.indexWhere(
       (item) => item.$1 == postId && item.$2 == category,
     );
     if (index < 0 || index == _selectedIndex) return;
@@ -81,6 +94,14 @@ class _ForumScreenState extends State<ForumScreen> {
         _pagingController.refresh();
       }
     });
+  }
+
+  /// 검색 다이얼로그 표시 → 검색어 입력 → SearchScreen으로 이동
+  void _openSearch(BuildContext context) async {
+    final searchTerm = await SearchDialog.show(context);
+    if (searchTerm != null && searchTerm.isNotEmpty && mounted) {
+      SearchScreen.push(context, searchTerm);
+    }
   }
 
   bool _handleScrollNotification(ScrollNotification notification) {
@@ -108,7 +129,9 @@ class _ForumScreenState extends State<ForumScreen> {
 
     // PHP Config::masonryCategories()와 동일한 로직: category ?? postId 로 판별
     final masonryCategoryOrPostId = category ?? postId;
-    final isMasonryLayout = masonryCategories.contains(masonryCategoryOrPostId);
+    final isMasonryLayout = Config.masonryCategories.contains(
+      masonryCategoryOrPostId,
+    );
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -121,14 +144,48 @@ class _ForumScreenState extends State<ForumScreen> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
-                child: PostListHeaderCategories(
-                  categories: forumCategories,
-                  selectedIndex: _selectedIndex,
-                  onCategoryTap: _onCategoryTap,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: PostListHeaderCategories(
+                        categories: Config.forumCategories,
+                        selectedIndex: _selectedIndex,
+                        onCategoryTap: _onCategoryTap,
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8, top: 8),
+                      child: GestureDetector(
+                        onTap: () => _openSearch(context),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: color.surfaceContainerHighest,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: FaIcon(
+                              FontAwesomeIcons.lightMagnifyingGlass,
+                              size: 16,
+                              color: color.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
             Container(height: 1, color: scheme.outlineVariant),
+            // 포인트 광고 (일반 레이아웃에서만 표시)
+            if (_pointAdvertisements.isNotEmpty && !isMasonryLayout)
+              PointAdvertisements(
+                advertisements: _pointAdvertisements,
+                onTap: _onAdTap,
+              ),
             Expanded(
               child: NotificationListener<ScrollNotification>(
                 onNotification: _handleScrollNotification,
@@ -149,45 +206,34 @@ class _ForumScreenState extends State<ForumScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _openPostCreate,
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        child: const FaIcon(FontAwesomeIcons.lightPen, size: 20),
-      ),
+      // FAB는 AppScreen에서 통합 관리
     );
   }
 
-  Future<void> _openPostCreate() async {
-    final userState = Provider.of<UserState>(context, listen: false);
-    if (!userState.isLoggedIn) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('로그인이 필요합니다')));
+  /// 포인트 광고 클릭 시 글 보기 화면으로 이동
+  void _onAdTap(PointAdvertisement ad) {
+    // 외부 링크가 있으면 브라우저로 열기
+    if (ad.link.isNotEmpty) {
+      final uri = Uri.tryParse(ad.link);
+      if (uri != null) launchUrl(uri, mode: LaunchMode.externalApplication);
       return;
     }
-
-    final nav = AppNavigationState.of(context);
-    final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(
-        builder: (_) => PostCreateScreen(
-          postId: nav.selectedPostId,
-          category: nav.selectedCategory,
-        ),
-      ),
-    );
-
-    if (result is Post && mounted) {
-      _pagingController.refresh();
-      _openPostView(result);
-    }
+    // 내부 글이면 PostViewScreen으로 이동
+    PostService.get(ad.idx).then((post) {
+      if (mounted) {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
+        );
+      }
+    });
   }
 
   Future<void> _openPostView(Post post) async {
     // 실시간 Firebase 차단 상태 확인 (서버 플래그 대신)
     final isBlocked = post.userFirebaseUid.isNotEmpty
-        ? UserService.instance.blockedUsersStream.value
-              .contains(post.userFirebaseUid)
+        ? UserService.instance.blockedUsersStream.value.contains(
+            post.userFirebaseUid,
+          )
         : post.blocked;
     if (isBlocked) {
       final confirm = await showDialog<bool>(

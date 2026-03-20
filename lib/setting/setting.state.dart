@@ -12,11 +12,18 @@ class SettingsState extends ChangeNotifier {
   Settings? _settings;
   Settings? get settings => _settings;
 
-  String get adminChatUid => _settings?.chatAdmin ?? chatAdminUid;
+  String get adminChatUid => _settings?.chatAdmin ?? Config.chatAdminUid;
 
   /// 설정 데이터 업데이트
   void setSettings(Settings settings) {
     _settings = settings;
+    notifyListeners();
+  }
+
+  /// 스타벅스 쿠폰 수량 업데이트 (스핀 결과 반영)
+  void updateAvailableStarbucksCoupons(int count) {
+    if (_settings == null) return;
+    _settings = _settings!.copyWith(availableStarbucksCoupons: count);
     notifyListeners();
   }
 

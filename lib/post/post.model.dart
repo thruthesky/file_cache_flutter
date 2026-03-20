@@ -27,7 +27,9 @@ class Post {
   final String? videoUrl;
   final String? thumbnail400x400;
   final String? thumbnail800x800;
+  final String? thumbnail600;
   final String? thumbnail1000;
+  final String? resolvedThumbnail;
   final String userName;
   final String userNickname;
   final String userFirebaseUid;
@@ -54,6 +56,15 @@ class Post {
   final String region;
   final String ip;
   final int noOfAttach;
+
+  // AI 답변 필드
+  final String text7; // text_7: AI 답변 내용 (마크다운)
+
+  // 포인트 광고 관련 필드
+  final int adEndTime; // int_5: 광고 종료 Unix timestamp (초)
+  final int adStartTime; // int_6: 마지막 광고 등록 시간
+  final int adDays; // int_7: 마지막 등록 기간 (일)
+  final int adPoints; // int_8: 마지막 등록에 소비한 포인트
 
   // 사용자 상호작용 상태 (런타임, API 응답에서 설정)
   final bool liked;
@@ -86,7 +97,9 @@ class Post {
     this.videoUrl,
     this.thumbnail400x400,
     this.thumbnail800x800,
+    this.thumbnail600,
     this.thumbnail1000,
+    this.resolvedThumbnail,
     this.userName = '',
     this.userNickname = '',
     this.userFirebaseUid = '',
@@ -113,6 +126,11 @@ class Post {
     this.region = '',
     this.ip = '',
     this.noOfAttach = 0,
+    this.text7 = '',
+    this.adEndTime = 0,
+    this.adStartTime = 0,
+    this.adDays = 0,
+    this.adPoints = 0,
     this.liked = false,
     this.bookmarked = false,
     this.reported = false,
@@ -199,7 +217,9 @@ class Post {
       videoUrl: json['varchar_18']?.toString(),
       thumbnail400x400: json['varchar_10']?.toString(),
       thumbnail800x800: json['varchar_11']?.toString(),
+      thumbnail600: json['thumbnail_600']?.toString(),
       thumbnail1000: json['varchar_12']?.toString(),
+      resolvedThumbnail: json['resolved_thumbnail']?.toString(),
       userName: json['user_name']?.toString() ?? '',
       userNickname: json['user_nickname']?.toString() ?? '',
       userFirebaseUid: json['user_firebase_uid']?.toString() ?? '',
@@ -230,11 +250,42 @@ class Post {
       region: json['region']?.toString() ?? '',
       ip: json['ip']?.toString() ?? '',
       noOfAttach: _toInt(json['no_of_attach']),
+      text7: json['text_7']?.toString() ?? '',
+      adEndTime: _toInt(json['int_5']),
+      adStartTime: _toInt(json['int_6']),
+      adDays: _toInt(json['int_7']),
+      adPoints: _toInt(json['int_8']),
       liked: json['liked'] == true,
       bookmarked: json['bookmarked'] == true,
       reported: json['reported'] == true,
       blocked: json['blocked'] == true,
     );
+  }
+
+  /// AI 답변 존재 여부
+  bool get hasAiAnswer => text7.isNotEmpty;
+
+  /// AI 답변 대상 여부 (qna/freetalk, 원글, info 제외)
+  bool get isAiAnswerTarget =>
+      depth == 0 &&
+      (postId == 'qna' || postId == 'freetalk') &&
+      groupId != 'info';
+
+  /// 포인트 광고 활성 여부
+  bool get isAdActive =>
+      adEndTime > DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+  /// 포인트 광고 남은 일수
+  int get adRemainingDays {
+    if (!isAdActive) return 0;
+    final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    return ((adEndTime - now) / 86400).ceil();
+  }
+
+  /// 포인트 광고 만료 DateTime
+  DateTime? get adEndDateTime {
+    if (adEndTime <= 0) return null;
+    return DateTime.fromMillisecondsSinceEpoch(adEndTime * 1000);
   }
 
   Post copyWith({
@@ -245,6 +296,8 @@ class Post {
     bool? reported,
     bool? blocked,
     String? youtubeUrl,
+    String? text7,
+    int? adEndTime,
   }) {
     return Post(
       idx: idx,
@@ -271,7 +324,9 @@ class Post {
       videoUrl: videoUrl,
       thumbnail400x400: thumbnail400x400,
       thumbnail800x800: thumbnail800x800,
+      thumbnail600: thumbnail600,
       thumbnail1000: thumbnail1000,
+      resolvedThumbnail: resolvedThumbnail,
       userName: userName,
       userNickname: userNickname,
       userFirebaseUid: userFirebaseUid,
@@ -298,6 +353,11 @@ class Post {
       region: region,
       ip: ip,
       noOfAttach: noOfAttach,
+      text7: text7 ?? this.text7,
+      adEndTime: adEndTime ?? this.adEndTime,
+      adStartTime: adStartTime,
+      adDays: adDays,
+      adPoints: adPoints,
       liked: liked ?? this.liked,
       bookmarked: bookmarked ?? this.bookmarked,
       reported: reported ?? this.reported,

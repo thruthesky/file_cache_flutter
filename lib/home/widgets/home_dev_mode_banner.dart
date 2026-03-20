@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/setting/setting.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -8,13 +9,20 @@ import 'package:provider/provider.dart';
 ///
 /// 디버그 모드에서만 표시되며, 현재 연결된 API 엔드포인트와 로그인 유저를 보여준다.
 /// 프로덕션 API에 연결되어 있으면 빨간색 경고를 강하게 표시한다.
-class HomeDevModeBanner extends StatelessWidget {
+class HomeDevModeBanner extends StatefulWidget {
   const HomeDevModeBanner({super.key});
 
+  @override
+  State<HomeDevModeBanner> createState() => _HomeDevModeBannerState();
+}
+
+class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
   static const _env = String.fromEnvironment('ENV');
 
+  bool _dismissed = false;
+
   bool get _isProduction {
-    final uri = Uri.tryParse(v7ApiEndpoint);
+    final uri = Uri.tryParse(Config.v7ApiEndpoint);
     final host = uri?.host ?? '';
     // Only exact 'philgo.com' is production, not subdomains like v7-local.philgo.com
     final isProductionHost = host == 'philgo.com' || host == 'www.philgo.com';
@@ -23,7 +31,7 @@ class HomeDevModeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!kDebugMode) return const SizedBox.shrink();
+    if (!kDebugMode || _dismissed) return const SizedBox.shrink();
 
     final isProd = _isProduction;
     final userState = context.watch<UserState>();
@@ -45,26 +53,51 @@ class HomeDevModeBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isProd) ...[
-            Row(
-              children: [
+          // 설정 리로드 카운트다운 타이머
+          ValueListenableBuilder<int>(
+            valueListenable: SettingService.instance.remainingSeconds,
+            builder: (_, seconds, __) {
+              return Text(
+                '설정 리로드: ${seconds}s',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              );
+            },
+          ),
+          Row(
+            children: [
+              if (isProd) ...[
                 Icon(Icons.warning_amber_rounded,
                     size: 16, color: Colors.red.shade700),
                 const SizedBox(width: 4),
-                Text(
-                  'PRODUCTION MODE',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.red.shade700,
+                Expanded(
+                  child: Text(
+                    'PRODUCTION MODE',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: Colors.red.shade700,
+                    ),
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 2),
-          ],
+              ] else
+                const Spacer(),
+              GestureDetector(
+                onTap: () => setState(() => _dismissed = true),
+                child: Icon(
+                  Icons.close,
+                  size: 18,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+          if (isProd) const SizedBox(height: 2),
           Text(
-            'API: $v7ApiEndpoint',
+            'API: ${Config.v7ApiEndpoint}',
             style: TextStyle(
               fontSize: 10,
               fontWeight: isProd ? FontWeight.bold : FontWeight.normal,

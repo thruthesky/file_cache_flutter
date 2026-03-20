@@ -47,7 +47,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     final imageUrl = coupon.displayImageUrl;
     if (imageUrl.isEmpty) return '';
     if (imageUrl.startsWith('http')) return imageUrl;
-    return '$v7BaseUrl$imageUrl';
+    return '${Config.v7BaseUrl}$imageUrl';
   }
 
   /// 쿠폰 당첨 날짜 포맷

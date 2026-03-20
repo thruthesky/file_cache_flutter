@@ -144,7 +144,7 @@ class FileUploadModel {
   static String _toFullUrl(String path) {
     if (path.isEmpty) return '';
     if (path.startsWith('http')) return path;
-    return '$v7BaseUrl$path';
+    return '${Config.v7BaseUrl}$path';
   }
 
   /// 서버 응답 값을 안전하게 int로 변환

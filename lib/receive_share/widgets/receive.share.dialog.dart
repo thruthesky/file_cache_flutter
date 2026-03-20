@@ -89,7 +89,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 spacing: 16,
                 children: [
                   Text(
-                    forumCategories.isNotEmpty
+                    Config.forumCategories.isNotEmpty
                         ? "Choose Post or Chat"
                         : "Choose Chat",
                   ),
@@ -97,7 +97,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     spacing: 16,
                     children: [
-                      if (forumCategories.isNotEmpty)
+                      if (Config.forumCategories.isNotEmpty)
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),

@@ -34,7 +34,7 @@ class ApiService {
   static ApiService instance = ApiService._();
   ApiService._();
 
-  final String _endpoint = v7ApiEndpoint;
+  final String _endpoint = Config.v7ApiEndpoint;
 
   /// Firebase ID Token을 data 맵에 추가한다.
   ///

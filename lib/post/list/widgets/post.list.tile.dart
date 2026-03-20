@@ -197,6 +197,28 @@ class PostListTile extends StatelessWidget {
                                 ),
                               ),
                             ],
+                            // 포인트 광고 D-day 표시
+                            if (post.isAdActive) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: color.primary.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'D-${post.adRemainingDays}',
+                                  style: text.bodySmall?.copyWith(
+                                    color: color.primary,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ],

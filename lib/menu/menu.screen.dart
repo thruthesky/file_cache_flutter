@@ -26,6 +26,7 @@ import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/blocked_users_bottom_sheet.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 import 'package:provider/provider.dart';
 
@@ -571,7 +572,11 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr()),
       _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCloudSun, '날씨'.tr()),
+      _MenuItemData(
+        FontAwesomeIcons.lightCloudSun,
+        '날씨'.tr(),
+        onTap: () => WeatherScreen.push(context),
+      ),
       _MenuItemData(FontAwesomeIcons.lightPhoneVolume, '긴급연락처'.tr()),
       _MenuItemData(FontAwesomeIcons.lightCircleInfo, '초보 필독'.tr()),
       _MenuItemData(FontAwesomeIcons.lightCalendarDays, '한달살기'.tr()),
@@ -902,7 +907,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '배너 광고'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/adv/banner',
+          url: '${Config.v7BaseUrl}/adv/banner',
           title: '배너 광고'.tr(),
         ),
       ),
@@ -920,7 +925,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '이용 약관'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/help/terms',
+          url: '${Config.v7BaseUrl}/help/terms',
           title: '이용 약관'.tr(),
         ),
       ),
@@ -929,7 +934,7 @@ class _MenuScreenState extends State<MenuScreen> {
         '개인정보 처리방침'.tr(),
         onTap: () => WebViewScreen.push(
           context,
-          url: '$v7BaseUrl/help/privacy',
+          url: '${Config.v7BaseUrl}/help/privacy',
           title: '개인정보 처리방침'.tr(),
         ),
       ),
