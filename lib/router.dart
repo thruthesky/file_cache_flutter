@@ -17,7 +17,9 @@ import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
+import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
@@ -175,6 +177,14 @@ final router = GoRouter(
       builder: (context, state) => const EventCouponScreen(),
     ),
     GoRoute(
+      path: SearchScreen.routeName,
+      name: SearchScreen.routeName,
+      builder: (context, state) {
+        final searchTerm = state.extra as String? ?? '';
+        return SearchScreen(searchTerm: searchTerm);
+      },
+    ),
+    GoRoute(
       path: AppInfoScreen.routeName,
       name: AppInfoScreen.routeName,
       builder: (context, state) => const AppInfoScreen(),
@@ -183,6 +193,11 @@ final router = GoRouter(
       path: VersionScreen.routeName,
       name: VersionScreen.routeName,
       builder: (context, state) => const VersionScreen(),
+    ),
+    GoRoute(
+      path: WeatherScreen.routeName,
+      name: WeatherScreen.routeName,
+      builder: (context, state) => const WeatherScreen(),
     ),
   ],
 );
