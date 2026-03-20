@@ -139,6 +139,19 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     : MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 3-dot menu icon for current user's messages
+                  if (isCurrentUser && (_canEdit() || _canDelete()))
+                    GestureDetector(
+                      onTap: () => _showMessageOptionsOrEditDelete(context),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 2, right: 4),
+                        child: FaIcon(
+                          FontAwesomeIcons.ellipsisVertical,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 150),
+                        ),
+                      ),
+                    ),
                   // Message bubble content - max 80% width
                   ConstrainedBox(
                     constraints: BoxConstraints(
@@ -157,9 +170,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             SizedBox(height: imageSpacing),
                         ],
                         if (message.text?.isNotEmpty == true)
-                          GestureDetector(
-                            onLongPress: () => _showMessageOptionsOrEditDelete(context),
-                            child: Container(
+                          Container(
                               padding: textPadding,
                               decoration: BoxDecoration(
                                 color: isCurrentUser
@@ -209,7 +220,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                 },
                               ),
                             ),
-                          ),
 
                         SizedBox(height: timestampSpacing),
 
