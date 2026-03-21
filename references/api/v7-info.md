@@ -1392,6 +1392,40 @@ const result = await v7api('post.create', {
 `info.getByAccessCode`, `info.upsertByAccessCode`, `info.registry`, `info.listByPrefix`
 4개 API 엔드포인트를 추가했다. 동기화는 `scripts/info-sync-export.php`(로컬→JSON)와
 `scripts/info-sync-import.php`(JSON→프로덕션 UPSERT, dry-run 지원)로 수행한다.
-text_1에 JSON 배열로 디자인 속성(icon, badge, badge_color, highlight, tags)을 포함한
-구조화 데이터를 저장하고, content에는 게시판 표시+SEO용 마크다운을 저장한다.
+동기화는 `scripts/info-sync-export.php`(로컬→JSON)와
+`scripts/info-sync-import.php`(JSON→프로덕션 UPSERT, dry-run 지원)로 수행한다.
 PEST 유닛 테스트 8개(27 assertions)로 전체 CRUD 흐름을 검증했다.
+
+## 18. 마크다운 중심 아키텍처 (현재)
+
+### content 마크다운이 유일한 메인 콘텐츠
+
+| 항목 | 설명 |
+|------|------|
+| **content** | 마크다운 — 웹/앱 모두에서 렌더링되는 **유일한 메인 콘텐츠** |
+| **text_1** | 더 이상 콘텐츠 저장에 사용하지 않음 (info-view.php에서 렌더링 코드 삭제됨) |
+| **text_2** | 메타데이터 JSON (출처, 최종 확인일 등) |
+| **text_3** | 요약 설명 (2~3문장) |
+
+### v7Markdown() 렌더링 함수
+
+`v7/utils/helpers.php`에 정의된 v7 전용 마크다운 변환 함수.
+v6 `convertMarkdownToHtml()`의 문제(### 깨짐, 줄바꿈 누락, blockquote 폰트)를 모두 해결.
+
+- 11단계 순차 처리: 코드블록→테이블→**헤딩→인용→리스트**→인라인→문단
+- **헤딩을 리스트보다 먼저 처리**하여 `###` 깨짐 방지
+- `font-family: Noto Sans KR` 적용 (blockquote 포함)
+- H2에 자동 `border-top` + `padding-top`으로 섹션 분리 (`---` 수평선 불필요)
+
+### 카테고리 그룹별 마크다운 구조
+
+info 콘텐츠는 카테고리에 따라 **5개 그룹별 다른 마크다운 구조**를 사용한다.
+상세 구조는 `.custom-skills/philgo-content/SKILL.md`의 "카테고리 그룹별 content 마크다운 섹션 구조" 참조.
+
+| 그룹 | 카테고리 | H2 섹션 수 |
+|------|---------|-----------|
+| A. 여행/관광 | travel, festival, food | 최소 4개 (한눈에 보기/상세/액티비티/방문정보/팁/숙소) |
+| B. 의료/안전 | hospital, police | 최소 4개 (기본정보/진료안내/이용절차/참고) |
+| C. 긴급/연락처 | emergency | 최소 3개 (총정리/기관연락처/상황별대응/참고) |
+| D. 비자/행정 | visa | 최소 4개 (개요/종류/절차/주의/링크) |
+| E. 생활정보 | living | 최소 4개 (개요/비교/이용방법/팁/링크) |
