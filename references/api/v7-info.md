@@ -169,7 +169,9 @@ InfoController ------- info.* API 엔드포인트 (관리자 CRUD + 공개 조�
 
 | sf_post_data 컬럼 | info 의미 | 설명 |
 |-------------------|----------|------|
-| `subject` | name | 이름 (한글) |
+| `subject` | subject | 긴 제목 (게시판 목록에 표시) |
+| `user_name` | name | 짧은 이름 (여유 필드) |
+| `user_email` | (여유 필드) | 자유롭게 매핑 가능 |
 | `content` | content | 본문 (마크다운) |
 | `content_type` | (고정 'markdown') | 콘텐츠 타입 |
 | `group_id` | `'info'` (고정) | info 게시글 식별자 |
