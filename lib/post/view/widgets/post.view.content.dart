@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:markdown_widget/markdown_widget.dart';
+import 'package:philgo/common_widgets/app_markdown.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -63,31 +63,7 @@ class PostViewContent extends StatelessWidget {
         },
       );
     } else if (post.isMarkdown) {
-      child = MarkdownBlock(
-        data: content,
-        config: MarkdownConfig(
-          configs: [
-            LinkConfig(
-              onTap: (url) async {
-                final uri = Uri.parse(url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                }
-              },
-              style: TextStyle(
-                color: scheme.primary,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            PConfig(
-              textStyle: TextStyle(
-                fontSize: 16,
-                color: scheme.onSurface,
-              ),
-            ),
-          ],
-        ),
-      );
+      child = AppMarkdown(data: content);
     } else {
       child = Linkify(
         text: content,
