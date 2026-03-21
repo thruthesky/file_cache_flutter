@@ -174,6 +174,9 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
                           const TextStyle()),
                   const HrConfig(height: 1),
                   TableConfig(
+                    columnWidths: const {
+                      0: IntrinsicColumnWidth(),
+                    },
                     defaultColumnWidth: const FlexColumnWidth(),
                     headerStyle: text.bodySmall?.copyWith(
                             fontWeight: FontWeight.w600,
