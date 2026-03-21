@@ -30,6 +30,9 @@ Info 시스템은 여행지, 병원, 경찰, 긴급연락처, 비자, 축제 등
 
 **info 게시글의 생성/수정/삭제는 반드시 `info.*` 전용 API를 사용해야 함.** `post.create` API에서는 `group_id=info` 설정이 차단됨.
 
+> **정보 콘텐츠 생성/가공 시 반드시 `philgo-content` 스킬(`.custom-skills/philgo-content/SKILL.md`)을 참조한다.**
+> 마크다운 구조, 그룹별 템플릿, 완성도 규칙, 인터넷 정보 수집 워크플로우 등이 정의되어 있음.
+
 | 항목 | 설명 |
 |------|------|
 | **네임스페이스** | `Philgo\Info` |

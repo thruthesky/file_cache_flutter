@@ -1,6 +1,8 @@
 # v7 Info access_code 기반 콘텐츠 관리 시스템
 
 > **구현 완료** — access_code(UNIQUE KEY)를 활용한 info 콘텐츠 식별, 동기화, 웹/앱 공유 시스템
+>
+> **정보 콘텐츠의 마크다운 작성/품질/그룹별 구조는 `philgo-content` 스킬(`.custom-skills/philgo-content/SKILL.md`)을 참조한다.**
 
 ## 목차
 
