@@ -882,6 +882,17 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 주요 테이블: `sf_member`(회원), `sf_post_data`(게시글), `sf_post_config`(게시판 설정), `uploads`(v7 파일 업로드),
 `company`(업체), `company_meta`(업체 메타), `sf_point_log`(포인트 로그) 등.
 
+### 게시판 카테고리 — `v7/utils/Config.php` 하드코딩
+
+게시판별 서브카테고리는 DB가 아닌 `v7/utils/Config.php`의 `subcategories()` 메서드에 하드코딩되어 있습니다.
+카테고리를 추가/수정/삭제하려면 이 PHP 소스를 직접 수정해야 합니다.
+`boardNames()` 메서드는 한글 게시판명 → 영문 post_id 매핑을 제공합니다.
+
+### info 콘텐츠 저장 방식
+
+info 콘텐츠(`group_id='info'`)는 `content` 필드에 마크다운으로만 저장합니다.
+`text_1`(JSON)은 더 이상 사용하지 않으며, 하위 호환만 유지합니다.
+
 ### 모듈별 API 문서 → [references/api/](references/api/)
 
 | 모듈 | 문서 | 상태 |
