@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/info/info_post.model.dart';
+import 'package:markdown_widget/markdown_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Info 상세 화면
@@ -177,6 +178,22 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
           if (_hasMetaInfo(info)) ...[
             const SizedBox(height: 16),
             _buildTopMetaCard(info),
+          ],
+          // content 마크다운 본문
+          if (info.content.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            MarkdownBlock(
+              data: info.content,
+              config: MarkdownConfig(
+                configs: [
+                  PConfig(textStyle: text.bodyMedium?.copyWith(height: 1.6) ?? const TextStyle()),
+                  H1Config(style: text.titleLarge?.copyWith(fontWeight: FontWeight.bold) ?? const TextStyle()),
+                  H2Config(style: text.titleMedium?.copyWith(fontWeight: FontWeight.bold) ?? const TextStyle()),
+                  H3Config(style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600) ?? const TextStyle()),
+                  const BlockquoteConfig(padding: EdgeInsets.all(12)),
+                ],
+              ),
+            ),
           ],
           // texts 섹션 — type별 렌더링
           if (info.texts.isNotEmpty) ...[
