@@ -159,8 +159,6 @@ WHERE access_code LIKE 'info:travel:cebu:beach:%'
 | **text_2** | 메타데이터 JSON | 카테고리별 추가 속성 |
 | **text_3** | 요약 설명 | 2~3문장 description |
 
-> **text_1은 더 이상 사용하지 않는다.** 모든 콘텐츠는 content 마크다운에 작성한다.
-
 ---
 
 ## 5. PostEntity / InfoPostEntity access_code 매핑
@@ -210,7 +208,6 @@ $defaults = [
 
 ### fillFromInput() — 입력 필드 매핑
 
-> **text_1/texts 관련 코드는 하위 호환용으로 소스에 남아있으나, 새 데이터 생성 시에는 사용하지 않는다.**
 > **모든 콘텐츠는 `content` 필드에 마크다운으로 전달한다.**
 
 // access_code
