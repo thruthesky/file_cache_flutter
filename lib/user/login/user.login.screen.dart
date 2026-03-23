@@ -1,8 +1,10 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/user/login/widgets/google_signin.button.dart';
 import 'package:philgo/user/login/widgets/kakao_signin.button.dart';
@@ -20,6 +22,14 @@ class UserLoginScreen extends StatefulWidget {
 
 class _UserLoginScreenState extends State<UserLoginScreen> {
   bool isLoading = false;
+
+  Future<void> _openUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,6 +99,42 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 250.ms)
                   .slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 24),
+
+              // 이용약관 & 개인정보처리방침
+              Text.rich(
+                TextSpan(
+                  style: text.bodySmall?.copyWith(
+                    color: color.onSurfaceVariant,
+                    height: 1.5,
+                  ),
+                  children: [
+                    TextSpan(text: '로그인 시 필고의 '.tr()),
+                    TextSpan(
+                      text: '이용약관'.tr(),
+                      style: TextStyle(
+                        color: color.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => _openUrl('https://philgo.com/help/terms'),
+                    ),
+                    TextSpan(text: ' ${'및'.tr()} '),
+                    TextSpan(
+                      text: '개인정보처리방침'.tr(),
+                      style: TextStyle(
+                        color: color.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => _openUrl('https://philgo.com/help/privacy'),
+                    ),
+                    TextSpan(text: '에 동의하게 됩니다.'.tr()),
+                  ],
+                ),
+                textAlign: TextAlign.center,
+              ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
 
               const SizedBox(height: 32),
             ],
