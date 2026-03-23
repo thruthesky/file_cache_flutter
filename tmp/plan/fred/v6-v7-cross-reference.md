@@ -28,8 +28,7 @@
   - v7: `lib/post/create/widgets/wanted_hiring_form.dart`
 - [ ] Settings screen — UI screen (service/state exist but no screen)
   - v6: `v6/v7_api/models/v7_settings.dart`, `v6/v7_api/state/v7_settings_state.dart`
-- [ ] Notice dedicated screen — Full notice screen with MOFA announcements
-  - v6: `v6/screens/info/notice/notice.screen.dart`, `v6/services/data/mofa_notice.model.dart`, `v6/widgets/home/home_notice_section.dart`
+- [x] Notice dedicated screen — `lib/notice/notice.screen.dart`, `lib/notice/notice.service.dart`, `lib/notice/notice.model.dart` (MOFA + PhilGo notices, wired to home helper menu + menu screen) (2026-03-23)
 - [ ] User activity screen — View own posts/comments history
   - v6: `v6/screens/user/user.activity.screen.dart`
 - [ ] Advertisement view screen — Ad detail viewing with contact card
@@ -218,7 +217,7 @@
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
 | Critical                | 3      | 1       | 2         |
-| High Priority           | 6      | 0       | 4         |
+| High Priority           | 7      | 0       | 3         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 6      | 0       | 2         |
 | Infrastructure          | 2      | 0       | 5         |
@@ -226,4 +225,4 @@
 | Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 8      | 0       | 6         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **44** | **1**   | **65**    |
+| **Total**               | **45** | **1**   | **64**    |

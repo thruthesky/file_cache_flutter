@@ -8,6 +8,7 @@ import 'package:philgo/setting/setting.state.dart';
 import 'package:provider/provider.dart';
 import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
+import 'package:philgo/notice/notice.screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
@@ -93,6 +94,7 @@ class HomeHelperMenuSection extends StatelessWidget {
           ..._items.skip(2).map((item) {
             final (label, icon, iconColor, url) = item;
             final VoidCallback? itemOnTap = switch (label) {
+              '공지사항' => () => NoticeScreen.push(context),
               '환율' => () => ExchangeRateScreen.push(context),
               _ => null,
             };
