@@ -1,5 +1,6 @@
 import 'dart:io';
 
+/// Usage: cd c:/www/flutter/philgo_app && dart run tool/add_translation_comments.dart
 /// Adds English translation comments above .tr() calls in all Dart files.
 ///
 /// Reads the English translation map from lib/l10n/translations.dart,
@@ -8,8 +9,7 @@ import 'dart:io';
 ///   Text('한글키'.tr()),
 void main() {
   final projectRoot = _findProjectRoot();
-  final translationsFile =
-      File('$projectRoot/lib/l10n/translations.dart');
+  final translationsFile = File('$projectRoot/lib/l10n/translations.dart');
 
   if (!translationsFile.existsSync()) {
     print('Error: translations.dart not found');
@@ -73,8 +73,7 @@ Map<String, String> _parseEnglishTranslations(String content) {
   final enSection = content.substring(enStart);
 
   // Match entries with single-quoted values: 'key': 'value',
-  final singleQuotePattern =
-      RegExp(r"'([^']+)'\s*:\s*'((?:[^'\\]|\\.)*)'");
+  final singleQuotePattern = RegExp(r"'([^']+)'\s*:\s*'((?:[^'\\]|\\.)*)'");
   for (final match in singleQuotePattern.allMatches(enSection)) {
     final key = match.group(1)!;
     final value = match.group(2)!;
@@ -82,9 +81,10 @@ Map<String, String> _parseEnglishTranslations(String content) {
   }
 
   // Match entries with double-quoted values: 'key': "value",
-  final doubleQuotePattern =
-      RegExp(r"""'([^']+)'\s*:\s*"((?:[^"\\]|\\.)*)"""
-          '"');
+  final doubleQuotePattern = RegExp(
+    r"""'([^']+)'\s*:\s*"((?:[^"\\]|\\.)*)"""
+    '"',
+  );
   for (final match in doubleQuotePattern.allMatches(enSection)) {
     final key = match.group(1)!;
     final value = match.group(2)!;
@@ -92,8 +92,7 @@ Map<String, String> _parseEnglishTranslations(String content) {
   }
 
   // Match multi-line entries: 'key':\n        'value',
-  final multiLinePattern =
-      RegExp(r"'([^']+)'\s*:\s*\n\s*'((?:[^'\\]|\\.)*)'");
+  final multiLinePattern = RegExp(r"'([^']+)'\s*:\s*\n\s*'((?:[^'\\]|\\.)*)'");
   for (final match in multiLinePattern.allMatches(enSection)) {
     final key = match.group(1)!;
     final value = match.group(2)!;
@@ -134,7 +133,8 @@ int _processFile(File file, Map<String, String> enMap) {
     final comment = '$indent// ${translations.join(", ")}';
 
     // Check if previous line already has this exact comment
-    if (newLines.isNotEmpty && newLines.last.trimRight() == comment.trimRight()) {
+    if (newLines.isNotEmpty &&
+        newLines.last.trimRight() == comment.trimRight()) {
       newLines.add(line);
       continue;
     }
@@ -177,5 +177,7 @@ String _getIndent(String line) {
 /// Checks if a line looks like a translation comment we previously added
 bool _isTranslationComment(String line) {
   final trimmed = line.trimLeft();
-  return trimmed.startsWith('// "') && !trimmed.contains('TODO') && !trimmed.contains('FIXME');
+  return trimmed.startsWith('// "') &&
+      !trimmed.contains('TODO') &&
+      !trimmed.contains('FIXME');
 }
