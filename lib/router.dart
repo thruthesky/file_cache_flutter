@@ -36,6 +36,7 @@ import 'package:philgo/company/review/company.revisit_point_result.screen.dart';
 import 'package:philgo/company/review/company.review_point_result.screen.dart';
 import 'package:philgo/event/qr_scanner.screen.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/globals.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -67,6 +68,14 @@ final router = GoRouter(
 
     // 채팅방: /chat/index.php?id=xxx
     if (result.isChatRoom && result.chatRoomId != null) {
+      // Set Globals.screenName  to ChatRoomScreen
+      // Set Globals.screenId to the roomId from the URL
+      // During onMessageOpen,
+      // Not in ChatRoomScreen - simply navigate to the chat room.
+      // In ChatRoomScreen with the same roomId - do nothing.
+      // In ChatRoomScreen with different roomId - pop current chat room and navigate to the
+      Globals.screenName = 'ChatRoomScreen';
+      Globals.screenId = state.pathParameters['id'] ?? '';
       return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
     }
 
@@ -275,8 +284,7 @@ final router = GoRouter(
       path: CompanyQrCodeScreen.routeName,
       name: CompanyQrCodeScreen.routeName,
       builder: (context, state) {
-        final idx =
-            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         return CompanyQrCodeScreen(companyIdx: idx);
       },
     ),
@@ -289,8 +297,7 @@ final router = GoRouter(
       path: CompanyQrCodeScannedScreen.routeName,
       name: CompanyQrCodeScannedScreen.routeName,
       builder: (context, state) {
-        final idx =
-            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         final code = state.uri.queryParameters['code'] ?? '';
         return CompanyQrCodeScannedScreen(idx: idx, code: code);
       },
