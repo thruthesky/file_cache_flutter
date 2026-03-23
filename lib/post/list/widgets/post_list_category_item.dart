@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 
 class PostListCategoryItem extends StatelessWidget {
   const PostListCategoryItem({
@@ -14,17 +15,19 @@ class PostListCategoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? color.primary.withValues(alpha: 0.12) : null,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Text(
           label,
-          style: theme.textTheme.labelMedium?.copyWith(
-            color: isSelected ? scheme.primary : scheme.onSurfaceVariant,
+          style: text.labelMedium?.copyWith(
+            color: isSelected ? color.primary : color.onSurfaceVariant,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),

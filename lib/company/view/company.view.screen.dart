@@ -3,9 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
+import 'package:philgo/company/review/company_review.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/qr/company.qr_code.screen.dart';
 import 'package:philgo/user/user.state.dart';
@@ -40,7 +40,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   String? _errorMessage;
 
   /// 방문 후기 관련 상태
-  List<dynamic> _reviews = [];
+  List<CompanyReviewModel> _reviews = [];
   bool _isReviewsLoading = true;
 
   @override
@@ -86,7 +86,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     );
     if (!mounted) return;
     setState(() {
-      _reviews = (result['reviews'] as List<dynamic>?) ?? [];
+      _reviews = result.reviews;
       _isReviewsLoading = false;
     });
   }
@@ -621,7 +621,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   Widget _buildReviewsContent() {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
-    final dateFormatter = DateFormat('yyyy.MM.dd');
 
     // 로딩 중
     if (_isReviewsLoading) {
@@ -669,7 +668,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return Column(
       children: [
         for (int i = 0; i < _reviews.length; i++) ...[
-          _buildReviewItem(_reviews[i], theme, scheme, dateFormatter),
+          _buildReviewItem(_reviews[i], theme, scheme),
           if (i < _reviews.length - 1)
             Container(
               height: 1,
@@ -683,26 +682,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
   /// 개별 후기 아이템 빌드
   Widget _buildReviewItem(
-    dynamic review,
+    CompanyReviewModel review,
     ThemeData theme,
     ColorScheme scheme,
-    DateFormat dateFormatter,
   ) {
-    final content = (review['content'] as String?) ?? '';
-    final authorName = (review['author_name'] as String?) ?? '';
-    final createdAtRaw = review['created_at'];
-    final photos = (review['photos'] as List<dynamic>?) ?? [];
-
-    // 날짜 포맷
-    String formattedDate = '';
-    if (createdAtRaw is int && createdAtRaw > 0) {
-      final date = DateTime.fromMillisecondsSinceEpoch(createdAtRaw * 1000);
-      formattedDate = dateFormatter.format(date);
-    } else if (createdAtRaw is String && createdAtRaw.isNotEmpty) {
-      final parsed = DateTime.tryParse(createdAtRaw);
-      if (parsed != null) formattedDate = dateFormatter.format(parsed);
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -716,7 +699,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             ),
             const SizedBox(width: 6),
             Text(
-              authorName,
+              review.authorName,
               style: theme.textTheme.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurface,
@@ -724,7 +707,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             ),
             const Spacer(),
             Text(
-              formattedDate,
+              review.formattedDate,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: scheme.onSurfaceVariant,
               ),
@@ -736,7 +719,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
         // 후기 내용
         Text(
-          content,
+          review.content,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: scheme.onSurfaceVariant,
             height: 1.5,
@@ -744,25 +727,17 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         ),
 
         // 사진 썸네일 (가로 스크롤)
-        if (photos.isNotEmpty) ...[
+        if (review.photos.isNotEmpty) ...[
           const SizedBox(height: 10),
           SizedBox(
             height: 72,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: photos.length,
+              itemCount: review.photos.length,
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
-                final photoData = photos[index];
-                String imageUrl = '';
-                if (photoData is Map) {
-                  final map = Map<String, dynamic>.from(photoData);
-                  imageUrl = (map['thumbnail_400x400_url'] as String?) ??
-                      (map['url'] as String?) ??
-                      '';
-                } else if (photoData is String) {
-                  imageUrl = photoData;
-                }
+                final photo = review.photos[index];
+                final imageUrl = photo.displayUrl;
 
                 return ClipRRect(
                   borderRadius: BorderRadius.circular(8),

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
@@ -25,6 +26,7 @@ import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
+import 'package:philgo/notice/notice.screen.dart';
 import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/currency/currency.screen.dart';
@@ -348,6 +350,21 @@ final router = GoRouter(
       path: EssentialInfoScreen.routeName,
       name: EssentialInfoScreen.routeName,
       builder: (context, state) => const EssentialInfoScreen(),
+    ),
+    GoRoute(
+      path: NoticeScreen.routeName,
+      name: NoticeScreen.routeName,
+      builder: (context, state) => const NoticeScreen(),
+    ),
+    GoRoute(
+      path: AdvertisementViewScreen.routeName,
+      name: AdvertisementViewScreen.routeName,
+      builder: (context, state) {
+        final idx = state.extra as int? ??
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ??
+            0;
+        return AdvertisementViewScreen(idx: idx);
+      },
     ),
     GoRoute(
       path: InfoViewScreen.routeName,

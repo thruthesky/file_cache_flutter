@@ -9,6 +9,9 @@ class Translations {
   static const Map<String, dynamic> ko = {
     // 공통
     '검색': '검색',
+    '알림': '알림',
+    '알림 설정': '알림 설정',
+    '접기': '접기',
     '돌아가기': '돌아가기',
     '이름없음': '이름없음',
     '로그인': '로그인',
@@ -90,6 +93,17 @@ class Translations {
     '인기글': '인기글',
     '주요 게시판': '주요 게시판',
     '공지사항': '공지사항',
+    '해외 여행 공지': '해외 여행 공지',
+    '필고 공지': '필고 공지',
+    '해외 여행 관련 공지가 없습니다': '해외 여행 관련 공지가 없습니다',
+    '외교부 공지사항이 여기에 표시됩니다': '외교부 공지사항이 여기에 표시됩니다',
+    '필고 공지가 없습니다': '필고 공지가 없습니다',
+    '필고 서비스 관련 공지사항이 여기에 표시됩니다': '필고 서비스 관련 공지사항이 여기에 표시됩니다',
+    '공지사항을 불러오는 중...': '공지사항을 불러오는 중...',
+    '공지사항을 불러올 수 없습니다': '공지사항을 불러올 수 없습니다',
+    '새로고침 버튼을 눌러 다시 시도해주세요': '새로고침 버튼을 눌러 다시 시도해주세요',
+    '첨부파일이 있습니다': '첨부파일이 있습니다',
+    '새로고침': '새로고침',
     '필수정보': '필수정보',
     '대사관': '대사관',
     '한인회': '한인회',
@@ -405,6 +419,20 @@ class Translations {
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': '업소를 가져올 수 없습니다. 다시 시도해주세요.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': '업소가 생성되었습니다. 정보를 입력해주세요.',
 
+    // 광고 상세
+    '글을 불러올 수 없습니다': '글을 불러올 수 없습니다',
+    '글이 존재하지 않습니다': '글이 존재하지 않습니다',
+
+    // 광고 연락처 카드
+    '전화/문자': '전화/문자',
+    '터치하여 카카오톡 친구 추가': '터치하여 카카오톡 친구 추가',
+    '터치하여 텔레그램 대화 시작': '터치하여 텔레그램 대화 시작',
+    '터치하여 문자 보내기': '터치하여 문자 보내기',
+    'QR 코드를 스캔하세요': 'QR 코드를 스캔하세요',
+    '터치하여 라인 친구 추가': '터치하여 라인 친구 추가',
+    '터치하여 메신저 대화 시작': '터치하여 메신저 대화 시작',
+    '페이스북 메신저': '페이스북 메신저',
+
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
     '다시 시도': '다시 시도',
@@ -633,6 +661,9 @@ class Translations {
   static const Map<String, dynamic> en = {
     // 공통
     '검색': 'Search',
+    '알림': 'Notifications',
+    '알림 설정': 'Notification Settings',
+    '접기': 'Less',
     '돌아가기': 'Back',
     '이름없음': 'No name',
     '로그인': 'Login',
@@ -714,6 +745,17 @@ class Translations {
     '인기글': 'Popular Posts',
     '주요 게시판': 'Major Forums',
     '공지사항': 'Notices',
+    '해외 여행 공지': 'Travel Notices',
+    '필고 공지': 'PhilGo Notices',
+    '해외 여행 관련 공지가 없습니다': 'No travel notices available',
+    '외교부 공지사항이 여기에 표시됩니다': 'MOFA notices will be displayed here',
+    '필고 공지가 없습니다': 'No PhilGo notices',
+    '필고 서비스 관련 공지사항이 여기에 표시됩니다': 'PhilGo service notices will be displayed here',
+    '공지사항을 불러오는 중...': 'Loading notices...',
+    '공지사항을 불러올 수 없습니다': 'Unable to load notices',
+    '새로고침 버튼을 눌러 다시 시도해주세요': 'Please tap refresh to try again',
+    '첨부파일이 있습니다': 'Attachment available',
+    '새로고침': 'Refresh',
     '필수정보': 'Essentials',
     '대사관': 'Embassy',
     '한인회': 'Korean Assoc.',
@@ -1029,6 +1071,20 @@ class Translations {
     '등록된 업소가 없습니다': 'No businesses registered',
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': 'Unable to load business. Please try again.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': 'Business created. Please enter your info.',
+
+    // 광고 상세
+    '글을 불러올 수 없습니다': 'Unable to load post',
+    '글이 존재하지 않습니다': 'Post does not exist',
+
+    // 광고 연락처 카드
+    '전화/문자': 'Phone/SMS',
+    '터치하여 카카오톡 친구 추가': 'Tap to add KakaoTalk friend',
+    '터치하여 텔레그램 대화 시작': 'Tap to start Telegram chat',
+    '터치하여 문자 보내기': 'Tap to send SMS',
+    'QR 코드를 스캔하세요': 'Scan the QR code',
+    '터치하여 라인 친구 추가': 'Tap to add LINE friend',
+    '터치하여 메신저 대화 시작': 'Tap to start Messenger chat',
+    '페이스북 메신저': 'Facebook Messenger',
 
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',

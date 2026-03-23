@@ -5,10 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/chat/chat.screen.dart';
 import 'package:philgo/common_widgets/app_fab.dart';
-import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
-import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/company/list/company.list.screen.dart';
 import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
@@ -20,6 +18,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post_category_bottom_sheet.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/setting/setting.state.dart';
+import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:provider/provider.dart';
@@ -156,13 +155,23 @@ class _AppScreenState extends State<AppScreen> {
       isExpanded: _isFabExpanded,
       onToggle: _toggleFab,
       onClose: _closeFab,
-      showEventButton: eventEnabled,
+      showEventButton: eventEnabled && UserService.isLoggedIn,
       onEventTap: () => EventEntryScreen.push(context),
     );
   }
 
   /// 탭별 팝업 메뉴 아이템 목록
   List<AppFabMenuItem> _getMenuItems(BuildContext context, int currentIndex) {
+    if (!UserService.isLoggedIn) {
+      return [
+        AppFabMenuItem(
+          icon: FontAwesomeIcons.lightRightToBracket,
+          label: '로그인'.tr(),
+          onTap: () => UserLoginScreen.push(context),
+        ),
+      ];
+    }
+
     switch (currentIndex) {
       case 0: // 홈
       case 4: // 메뉴
