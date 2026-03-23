@@ -28,7 +28,6 @@
   - v7: `lib/post/create/widgets/wanted_hiring_form.dart`
 - [ ] Settings screen — UI screen (service/state exist but no screen)
   - v6: `v6/v7_api/models/v7_settings.dart`, `v6/v7_api/state/v7_settings_state.dart`
-- [ ] Follow/unfollow user — Removed (2026-03-20). _No backend API exists. Code removed from v7. Needs backend API first (`user.toggleFollow`, `user.isFollowing`, `user.followingList`) before Flutter UI can be re-implemented._
 - [ ] Notice dedicated screen — Full notice screen with MOFA announcements
   - v6: `v6/screens/info/notice/notice.screen.dart`, `v6/services/data/mofa_notice.model.dart`, `v6/widgets/home/home_notice_section.dart`
 - [ ] User activity screen — View own posts/comments history
@@ -219,7 +218,7 @@
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
 | Critical                | 3      | 1       | 2         |
-| High Priority           | 6      | 0       | 5         |
+| High Priority           | 6      | 0       | 4         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 6      | 0       | 2         |
 | Infrastructure          | 2      | 0       | 5         |
@@ -227,4 +226,4 @@
 | Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 8      | 0       | 6         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **44** | **1**   | **66**    |
+| **Total**               | **44** | **1**   | **65**    |
