@@ -729,6 +729,55 @@ function block_user(int $idx_member, string $reason): array
 | 5차 | 150분 (2.5시간) |
 | 10차 | 300분 (5시간) |
 
+### 10.1a v7 관리자 차단 API (user.adminBlock)
+
+**v6 `block_user()` 동일 로직을 v7 아키텍처로 구현.**
+
+| 항목 | 내용 |
+|------|------|
+| **API** | `api.php?method=user.adminBlock` |
+| **Controller** | `UserController::adminBlock()` |
+| **Service** | `UserService::adminBlock()` |
+| **권한** | `AuthService::isAdmin()` — `etc/app.config.php`의 `ADMINS` 배열(firebase_uid 목록)에 포함된 사용자만 true |
+| **입력** | `idx_member`(필수), `reason`(필수), `idx_post`(선택 — 블라인드 처리할 글/코멘트 idx) |
+
+**처리 순서:**
+
+1. `AuthService::isAdmin()` 관리자 확인 (ADMINS firebase_uid 배열 기반)
+2. `sf_member.int_8`(BLOCK_COUNT) 증가
+3. `sf_member.int_9`(BLOCK_TIME) = `time() + 60 * 30 * count`
+4. `sf_member.text_5`(BLOCK_REASON) = 사유 텍스트
+5. `idx_post`가 있으면 해당 글/코멘트 `blind='Y'`, `text_8=사유` 설정
+6. Firebase RTDB 채팅 메시지 전송 (`UserService::sendChatMessage()`)
+
+**프론트엔드 동작:**
+
+1. 관리자가 글/코멘트 "차단" 버튼 클릭 → `showAdminBlockDialog()` (wa-dialog 모달)
+2. 4가지 차단 사유 중 라디오 선택 → 즉시 `v7api('user.adminBlock')` 호출
+3. 성공 시 1초 후 페이지 새로고침 → 블라인드 상태 반영
+
+**차단 사유 선택지:**
+- 다중 아이디로 동일 광고 등록
+- 스팸
+- 시비성 또는 모욕성 글 등록
+- 광고 게시판이 아닌 곳에 광고
+
+**관련 JS 파일:** `v7/js/admin-block.js`, `v7/js/post-actions.js`, `v7/js/comment.js`
+
+> **⚠️ `AuthService::isAdmin()` 판별 기준**: `etc/app.config.php`의 `ADMINS` 상수(firebase_uid 배열)에 현재 로그인 사용자의 `firebase_uid`가 포함되어 있으면 `true`. `sf_member.admin` 컬럼이 아닌 **ADMINS 배열** 기반이므로, 관리자를 추가하려면 `etc/app.config.php`의 `ADMINS` 배열에 firebase_uid를 추가해야 한다.
+
+### 10.1b PHP에서 Firebase 채팅 메시지 전송 (UserService::sendChatMessage)
+
+**관리자 차단 시 차단된 사용자에게 채팅 알림을 전송한다.**
+
+```php
+UserService::sendChatMessage(string $senderUid, string $receiverUid, string $text): void
+```
+
+- 1:1 채팅방 roomId = `sort([$uid1, $uid2])` → `implode('---', $uids)`
+- `/chat/messages/{roomId}/{pushKey}` 에 메시지 write
+- Cloud Functions `onChatMessageCreated` 트리거가 자동으로 joins, unread, FCM 푸시 알림 처리
+
 ### 10.2 차단 확인
 
 **파일**: `lib/user/user.block.php:75-78`

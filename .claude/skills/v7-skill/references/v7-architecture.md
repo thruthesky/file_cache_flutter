@@ -122,6 +122,59 @@ v7 시스템은 **Controller 클래스 + Entity(POPO)** 아키텍처를 채택�
 > **모든 SQL 쿼리는 Repository에, 모든 비즈니스 로직은 Service에 위치해야 한다.**
 > **"간단한 쿼리", "빠른 수정"이라는 이유로 뷰에 SQL을 작성하는 것은 허용하지 않는다.**
 
+### 🔴🔴🔴 2.2.1 Service 계층 DB 쿼리 절대 금지 원칙 🔴🔴🔴
+
+> **⛔⛔⛔ Service 클래스(`*Service.php`)에서 절대로 DB 직접 쿼리를 하지 않는다. ⛔⛔⛔**
+> **모든 DB 접근은 반드시 Repository 계층을 통해서만 수행한다.**
+
+#### 핵심 원칙
+
+| 호출 방향 | 허용 여부 |
+|----------|:---:|
+| Service → Service 호출 | ✅ OK |
+| Service → Repository 호출 | ✅ OK |
+| Service → DB 직접 쿼리 (`Db::fetch`, `Db::fetchAll`, `Db::execute`, `Db::insert`, `Db::fetchColumn`, `pdo()->prepare`) | ⛔ **절대 금지** |
+
+#### 금지 코드 예시 (Service 내부)
+
+```php
+// ⛔ 절대 금지: Service에서 직접 DB 쿼리
+$user = Db::fetch("SELECT * FROM sf_member WHERE idx = ?", [$idx]);
+$rows = Db::fetchAll("SELECT * FROM sf_post_data WHERE post_id = ?", [$postId]);
+Db::execute("UPDATE sf_post_data SET deleted = 1 WHERE idx = ?", [$idx]);
+```
+
+#### 올바른 코드 예시
+
+```php
+// ✅ Service → Repository 호출
+$user = UserRepository::findRawByIdx($idx);
+
+// ✅ Service → 다른 Service 호출
+$userEntity = UserService::get(['idx' => $idx]);
+
+// ✅ Service → Repository 호출
+PostRepository::update($idx, ['deleted' => 1]);
+```
+
+#### 예외: 트랜잭션 관리
+
+Service에서 `Db::pdo()`를 통한 트랜잭션 관리(`beginTransaction`, `commit`, `rollBack`)는 비즈니스 로직의 일부이므로 허용한다.
+
+```php
+// ✅ 허용: Service에서 트랜잭션 관리
+$pdo = Db::pdo();
+$pdo->beginTransaction();
+try {
+    SomeRepository::create($data);
+    OtherRepository::update($idx, $updateData);
+    $pdo->commit();
+} catch (\Throwable $e) {
+    $pdo->rollBack();
+    throw $e;
+}
+```
+
 ### 2.3 설계 원칙
 
 1. **Controller 기반 API**: 모든 API 요청은 `api.php`에서 Controller 클래스를 인스턴스화하고 멤버 함수를 호출

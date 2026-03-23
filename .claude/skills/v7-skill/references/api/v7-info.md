@@ -30,13 +30,16 @@ Info 시스템은 여행지, 병원, 경찰, 긴급연락처, 비자, 축제 등
 
 **info 게시글의 생성/수정/삭제는 반드시 `info.*` 전용 API를 사용해야 함.** `post.create` API에서는 `group_id=info` 설정이 차단됨.
 
+> **정보 콘텐츠 생성/가공 시 반드시 `philgo-content` 스킬(`.custom-skills/philgo-content/SKILL.md`)을 참조한다.**
+> 마크다운 구조, 그룹별 템플릿, 완성도 규칙, 인터넷 정보 수집 워크플로우 등이 정의되어 있음.
+
 | 항목 | 설명 |
 |------|------|
 | **네임스페이스** | `Philgo\Info` |
 | **DB 테이블** | `sf_post_data` (기존 게시판과 동일 테이블) |
 | **식별** | `group_id = 'info'` |
 | **API** | `info.*` 전용 API (InfoController) — **post.create에서 group_id=info 차단됨** |
-| **확장** | `text_1`(texts JSON), `text_2`(extra_data JSON) 커스텀 필드 |
+| **확장** | `text_2`(extra_data JSON) 커스텀 필드, `content`(마크다운 본문) |
 | **게시판 기능** | 댓글, 좋아요, 포인트, 검색, 알림, 블라인드, 신고 100% 자동 지원 |
 
 ### 핵심 설계 원칙
@@ -166,7 +169,9 @@ InfoController ------- info.* API 엔드포인트 (관리자 CRUD + 공개 조�
 
 | sf_post_data 컬럼 | info 의미 | 설명 |
 |-------------------|----------|------|
-| `subject` | name | 이름 (한글) |
+| `subject` | subject | 긴 제목 (게시판 목록에 표시) |
+| `user_name` | name | 짧은 이름 (여유 필드) |
+| `user_email` | (여유 필드) | 자유롭게 매핑 가능 |
 | `content` | content | 본문 (마크다운) |
 | `content_type` | (고정 'markdown') | 콘텐츠 타입 |
 | `group_id` | `'info'` (고정) | info 게시글 식별자 |
@@ -234,20 +239,8 @@ InfoController ------- info.* API 엔드포인트 (관리자 CRUD + 공개 조�
 
 | 필드 | info 의미 | 비고 |
 |------|----------|------|
-| `text_1` | texts | JSON 마크다운 섹션 배열 (예: `["## 소개\n...", "## 방문\n..."]`) |
 | `text_2` | extra_data | JSON 카테고리별 추가 데이터 (예: `{"specialties":["내과"]}`) |
 | `text_3` | description | 요약 설명 (2~3문장, 평문) |
-
-#### texts JSON 저장/복원
-
-```php
-// 저장: InfoPostEntity::toPostData()
-'text_1' => !empty($this->texts) ? json_encode($this->texts, JSON_UNESCAPED_UNICODE) : ''
-
-// 복원: InfoPostEntity::fromPost()
-$decoded = json_decode($post->text_1, true);
-$entity->texts = is_array($decoded) ? $decoded : [];
-```
 
 ### char 커스텀 필드
 
@@ -255,13 +248,12 @@ $entity->texts = is_array($decoded) ? $decoded : [];
 |------|----------|---|------|
 | `char_1` | info_status | Y/N/D | 정보 상태 (활성/비활성/삭제) |
 | `char_2` | has_map | Y/'' | 지도 정보 보유 (위도+경도 모두 있으면 자동 Y) |
-| `char_3` | has_texts | Y/'' | texts 섹션 보유 (texts 배열 비어있지 않으면 자동 Y) |
+| `char_3` | has_texts | Y/'' | (하위 호환) 사용하지 않음 |
 | `char_4` | verified | Y/'' | 정보 검증 완료 |
 
-> has_map, has_texts는 toPostData()에서 자동 계산:
+> has_map은 toPostData()에서 자동 계산:
 > ```php
 > 'char_2' => ($this->latitude !== null && $this->longitude !== null) ? 'Y' : '',
-> 'char_3' => !empty($this->texts) ? 'Y' : '',
 > ```
 
 ---
@@ -310,15 +302,13 @@ public int $month = 0;               // post->int_2
 public ?float $latitude = null;       // post->int_3 / 10^7
 public ?float $longitude = null;      // post->int_4 / 10^7
 
-// === text 커스텀 필드 (3개) ===
-public array $texts = [];             // post->text_1 (JSON 디코딩)
+// === text 커스텀 필드 (2개) ===
 public array $extra_data = [];        // post->text_2 (JSON 디코딩)
 public string $description = '';      // post->text_3
 
-// === char 커스텀 필드 (4개) ===
+// === char 커스텀 필드 (3개) ===
 public string $info_status = '';      // post->char_1 (Y/N/D)
 public string $has_map = '';          // post->char_2 (Y/'')
-public string $has_texts = '';        // post->char_3 (Y/'')
 public string $verified = '';         // post->char_4 (Y/'')
 
 // === 게시판 기능 필드 (8개) ===
@@ -345,12 +335,12 @@ echo $infoPost->name;          // = $post->subject
 echo $infoPost->english_name;  // = $post->varchar_1
 echo $infoPost->city;          // = $post->varchar_6
 echo $infoPost->latitude;      // = $post->int_3 / 10^7
-echo $infoPost->texts;         // = json_decode($post->text_1)
+echo $infoPost->description;   // = $post->text_3
 ```
 
 주요 변환 로직:
 - `int_3/int_4 -> latitude/longitude`: `$post->int_3 !== 0 ? $post->int_3 / 10000000.0 : null`
-- `text_1 -> texts`: `json_decode($post->text_1, true)` — 실패 시 빈 배열
+
 - `text_2 -> extra_data`: `json_decode($post->text_2, true)` — 실패 시 빈 배열
 
 #### `toPostData(): array`
@@ -366,10 +356,10 @@ $postData = $infoPost->toPostData();
 - `group_id` = `'info'` (항상 고정)
 - `content_type` = `'markdown'` (항상 고정)
 - `latitude -> int_3`: `(int)($this->latitude * 10000000)`
-- `texts -> text_1`: `json_encode($this->texts, JSON_UNESCAPED_UNICODE)`
+
 - `info_status`: 기본값 `'Y'` (`$this->info_status ?: 'Y'`)
 - `has_map`: latitude+longitude 모두 있으면 자동 `'Y'`
-- `has_texts`: texts 비어있지 않으면 자동 `'Y'`
+
 
 #### `toArray(): array`
 
@@ -510,7 +500,7 @@ $info = InfoService::create([
     'region' => '비사야',
     'latitude' => 11.9612,
     'longitude' => 121.956,
-    'texts' => ['## 소개\n...', '## 방문 정보\n...'],
+    'content' => '## 소개\n보라카이...\n\n## 방문 정보\n...',
     'description' => '보라카이 섬의 대표적인 해변...',
     'image_url' => 'https://...',
     'tags' => '해변,비사야,보라카이',
@@ -669,7 +659,7 @@ InfoService::findCategoryBySubcategory('beach');
 입력값으로 InfoPostEntity의 필드를 채움. **입력에 있는 필드만 업데이트** (기존 값 유지).
 
 지원 필드 (32개):
-`name`, `english_name`, `title`, `icon`, `description`, `content`, `category`, `subcategory`, `category_icon`, `subcategory_icon`, `city`, `province`, `region`, `address`, `phone`, `phone2`, `email`, `url`, `website_url`, `hours`, `fee`, `event_date`, `tags`, `image_url`, `sort_order`, `month`, `latitude`, `longitude`, `texts`, `extra_data`, `info_status`, `verified`
+`name`, `english_name`, `title`, `icon`, `description`, `content`, `category`, `subcategory`, `category_icon`, `subcategory_icon`, `city`, `province`, `region`, `address`, `phone`, `phone2`, `email`, `url`, `website_url`, `hours`, `fee`, `event_date`, `tags`, `image_url`, `sort_order`, `month`, `latitude`, `longitude`, `extra_data`, `info_status`, `verified`
 
 ---
 
@@ -758,7 +748,7 @@ curl -sk -X POST 'https://v7-local.philgo.com/api.php' \
 | `fee` | | 이용료/입장료 |
 | `tags` | | 태그 (쉼표 구분) |
 | `image_url` | | 대표 이미지 URL |
-| `texts` | | JSON 마크다운 섹션 배열 |
+| `content` | | 마크다운 본문 (유일한 메인 콘텐츠) |
 | `extra_data` | | JSON 카테고리별 추가 데이터 |
 | `description` | | 요약 설명 |
 | `info_status` | | Y/N/D (기본 Y) |
@@ -1004,10 +994,7 @@ info-view.php 렌더링 순서
 |          month, event_date, extra_data[duration_days], extra_data[highlight]
 |
 |-- 7. 본문 (info-content)
-|      $infoPost->content -> convertMarkdownToHtml()
-|
-|-- 8. texts 섹션 (info-texts-sections)
-|      $infoPost->texts[] 각 항목을 마크다운 렌더링
+|      $infoPost->content -> v7Markdown() 마크다운 렌더링
 |
 |-- 9. 메타 카드 (info-meta-card.php include)
 |      위치, 연락처, 운영시간, 이용료, 웹사이트, Google Maps 지도
@@ -1130,15 +1117,6 @@ info-meta-card 렌더링 항목 (있는 필드만 표시)
 | `.info-festival-date` | 날짜 |
 | `.info-festival-duration` | 기간 |
 | `.info-festival-highlight` | 하이라이트 |
-
-### texts 섹션 클래스
-
-| 클래스 | 설명 |
-|--------|------|
-| `.info-texts-sections` | texts 전체 컨테이너 |
-| `.info-text-section` | 개별 섹션 (마크다운 렌더링 결과) |
-| `.info-text-section table` | 테이블 (border-collapse) |
-| `.info-text-section img` | 이미지 (max-width: 100%) |
 
 ---
 
@@ -1371,7 +1349,7 @@ const result = await v7api('post.create', {
 테스트 범위:
 - InfoPostEntity 래핑 (fromPost, toPostData, toArray)
 - 위도/경도 x 10^7 변환 정확도
-- texts/extra_data JSON 인코딩/디코딩
+- extra_data JSON 인코딩/디코딩
 - InfoService CRUD (create, read, update, delete, list)
 - 카테고리 메타 검색 (getCategoryMeta, findCategoryBySubcategory)
 - group_id=info 보호 (post.create에서 차단)
@@ -1403,7 +1381,6 @@ PEST 유닛 테스트 8개(27 assertions)로 전체 CRUD 흐름을 검증했다.
 | 항목 | 설명 |
 |------|------|
 | **content** | 마크다운 — 웹/앱 모두에서 렌더링되는 **유일한 메인 콘텐츠** |
-| **text_1** | 더 이상 콘텐츠 저장에 사용하지 않음 (info-view.php에서 렌더링 코드 삭제됨) |
 | **text_2** | 메타데이터 JSON (출처, 최종 확인일 등) |
 | **text_3** | 요약 설명 (2~3문장) |
 

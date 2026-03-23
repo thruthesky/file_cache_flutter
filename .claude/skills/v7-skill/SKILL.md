@@ -676,6 +676,7 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 독립적인 TypeScript 프로
 | **테스트** | Mocha + Chai + Sinon |
 | **Firebase 프로젝트** | `philgo-64b1a` (프로덕션), `withcenter-test-5` (테스트) |
 | **CLAUDE.md** | `firebase/chat-v2/CLAUDE.md` — Cloud Functions 코딩 가이드라인 |
+| **Database Rules** | `firebase/chat-v2/database.rules.json` — Firebase RTDB 보안 규칙 (프로덕션) |
 | **문서** | `firebase/chat-v2/docs/chat/` — DB 스키마, 비즈니스 로직, 플로우차트, 코딩 가이드 |
 
 **소스 코드 모듈 구조** (`firebase/chat-v2/functions/src/`):
@@ -882,6 +883,17 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 주요 테이블: `sf_member`(회원), `sf_post_data`(게시글), `sf_post_config`(게시판 설정), `uploads`(v7 파일 업로드),
 `company`(업체), `company_meta`(업체 메타), `sf_point_log`(포인트 로그) 등.
 
+### 게시판 카테고리 — `v7/utils/Config.php` 하드코딩
+
+게시판별 서브카테고리는 DB가 아닌 `v7/utils/Config.php`의 `subcategories()` 메서드에 하드코딩되어 있습니다.
+카테고리를 추가/수정/삭제하려면 이 PHP 소스를 직접 수정해야 합니다.
+`boardNames()` 메서드는 한글 게시판명 → 영문 post_id 매핑을 제공합니다.
+
+### info 콘텐츠 저장 방식
+
+info 콘텐츠(`group_id='info'`)는 `content` 필드에 마크다운으로만 저장합니다.
+`text_1`(JSON)은 더 이상 사용하지 않으며, 하위 호환만 유지합니다.
+
 ### 모듈별 API 문서 → [references/api/](references/api/)
 
 | 모듈 | 문서 | 상태 |
@@ -899,9 +911,10 @@ v7 시스템 개발 시 테이블 구조, 컬럼명, 데이터 타입, 인덱스
 | Settings | [api/v7-settings.md](references/api/v7-settings.md) | ✅ 완료 |
 | Travel | [api/v7-travel.md](references/api/v7-travel.md) | ✅ 완료 |
 | Bookmark | [api/v7-bookmark.md](references/api/v7-bookmark.md) — 즐겨찾기 그룹(폴더) 관리 + 즐겨찾기 항목 CRUD. 채팅방 즐겨찾기(`entity_type='chat_room'`)에 사용. Firebase RTDB 기반에서 v7 API(`bookmarks`/`bookmark_groups` 테이블)로 마이그레이션 완료 | ✅ 완료 |
-| Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 시스템 (여행지, 병원, 경찰, 긴급연락처, 비자 등). sf_post_data 커스텀 필드(group_id='info') 기반. 웹/앱 공통 | ✅ 완료 |
-| Info access_code | [api/v7-info-access-code.md](references/api/v7-info-access-code.md) — access_code(UNIQUE KEY) 기반 콘텐츠 식별, 로컬→프로덕션 동기화, 웹/앱 공유 레지스트리. `info.getByAccessCode`, `info.upsertByAccessCode`, `info.registry`, `info.listByPrefix` 4개 API. text_1 JSON 디자인 속성 저장. 동기화 스크립트(export/import) | ✅ 완료 |
+| Info | [api/v7-info.md](references/api/v7-info.md) — 다용도 정보 시스템 (여행지, 병원, 경찰, 긴급연락처, 비자 등). sf_post_data 커스텀 필드(group_id='info') 기반. 웹/앱 공통. **정보 콘텐츠 생성/가공 시 반드시 philgo-content 스킬(`.custom-skills/philgo-content/SKILL.md`) 참조** | ✅ 완료 |
+| Info access_code | [api/v7-info-access-code.md](references/api/v7-info-access-code.md) — access_code(UNIQUE KEY) 기반 콘텐츠 식별, 로컬→프로덕션 동기화, 웹/앱 공유 레지스트리. `info.getByAccessCode`, `info.upsertByAccessCode`, `info.registry`, `info.listByPrefix` 4개 API. 동기화 스크립트(export/import). **콘텐츠 마크다운 구조/품질은 philgo-content 스킬 참조** | ✅ 완료 |
 | Report | [api/v7-report.md](references/api/v7-report.md) — 글/코멘트 신고 시스템. sf_post_data의 report + text_10(REPORTER_LIST_FIELD) 컬럼 사용. 신고(report.report), 목록(report.list, 관리자), 해제(report.dismiss, 관리자). PostController/PostService가 ReportService로 위임하여 하위 호환 유지 | ✅ 완료 |
+| ID Merge | [api/v7-id-merge.md](references/api/v7-id-merge.md) — v7 소셜 로그인 계정을 v6 전화번호 계정으로 병합. `user.mergeAccount` API (preview/실행 모드). 별도 Firebase App Phone Auth + 메인 앱 RecaptchaVerifier 하이브리드 인증. firebase_uid 기반 v6 계정 검색, `firebase_uid`+`id` 모두 `merged_` 접두사로 UNIQUE 충돌 방지, 탈퇴 계정 병합 차단, Firebase RTDB 채팅 데이터 마이그레이션(chat/joins, users, user-private). Vue.js 폼은 네이티브 HTML 사용(Web Awesome 호환 문제) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
