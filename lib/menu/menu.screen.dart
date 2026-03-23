@@ -390,14 +390,16 @@ class _MenuScreenState extends State<MenuScreen> {
         /// 프로필 이미지
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: user.photoUrl.isNotEmpty
-              ? Image.network(
-                  user.photoUrl,
+          child: _isValidPhotoUrl(user.photoUrl)
+              ? CachedNetworkImage(
+                  imageUrl: user.photoUrl,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildDefaultAvatar(context),
+                  memCacheWidth: 112,
+                  memCacheHeight: 112,
+                  placeholder: (_, _) => _buildDefaultAvatar(context),
+                  errorWidget: (_, _, _) => _buildDefaultAvatar(context),
                 )
               : _buildDefaultAvatar(context),
         ),
@@ -471,6 +473,12 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 기본 프로필 아바타
+  bool _isValidPhotoUrl(String url) {
+    if (url.isEmpty || url.trim().isEmpty) return false;
+    if (url.toLowerCase() == 'null') return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
   Widget _buildDefaultAvatar(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(

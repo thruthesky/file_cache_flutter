@@ -6,9 +6,13 @@ import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/api/constants/info_access_codes.dart';
 import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
+import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/notice/notice.screen.dart';
+import 'package:philgo/user/edit/user.edit.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
@@ -56,7 +60,8 @@ class HomeHelperMenuSection extends StatelessWidget {
         children: [
           // 내 정보 (항상 첫 번째)
           _buildItem(context, '내 정보', FontAwesomeIcons.circleUser,
-              const Color(0xFF5C6BC0), null),
+              const Color(0xFF5C6BC0), null,
+              onTap: () => UserEditScreen.push(context)),
 
           // 업소이벤트 (설정 활성화 시 표시)
           if (flags.qr)
@@ -96,6 +101,9 @@ class HomeHelperMenuSection extends StatelessWidget {
             final VoidCallback? itemOnTap = switch (label) {
               '공지사항' => () => NoticeScreen.push(context),
               '환율' => () => ExchangeRateScreen.push(context),
+              '날씨' => () => WeatherScreen.push(context),
+              '긴급연락처' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.emergencyNumbers, title: '긴급연락처'),
+              '경찰서' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.policeStations, title: '경찰서'),
               _ => null,
             };
             return _buildItem(context, label, icon, iconColor, url,

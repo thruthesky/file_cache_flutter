@@ -33,9 +33,6 @@ class EventService {
   ///
   /// API: event.viewCoupon
   static Future<void> viewCoupon({required int idx}) async {
-    await ApiService.instance.v7api(
-      'event.viewCoupon',
-      data: {'idx': idx},
-    );
+    await ApiService.instance.v7api('event.viewCoupon', data: {'idx': idx});
   }
 }
