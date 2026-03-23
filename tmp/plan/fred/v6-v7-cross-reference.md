@@ -268,12 +268,12 @@
 | Home / UI               | 5      | 0       | 3         |
 | Infrastructure          | 5      | 0       | 2         |
 | Profile / User          | 4      | 0       | 2         |
-| Static Content          | 6      | 0       | 49        |
+| Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 12     | 1       | 1         |
 | Widgets/Components      | 5      | 0       | 1         |
 | New in This Audit       | 20     | 0       | 0         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **78** | **2**   | **62**    |
+| **Total**               | **78** | **2**   | **56**    |
 
 ---
 
@@ -296,5 +296,25 @@
   - FIXED: `Company event screen` marked [ ] with "EXISTS" note → changed to [x] (fully wired from home helper menu + FAB)
   - FIXED: `Spinning wheel (standalone)` marked [ ] → changed to [x] (v7 has `lib/event/widgets/spinning_wheel.dart`)
   - ADDED 16 previously untracked v6 features now confirmed in v7: Version screen, Search screen, WebView screen, App guide screen, Other user profile, Chat pinned rooms, Chat bookmarked dialog, Chat search friends, Chat report user, YouTube player, Full screen media viewer, Masonry grid, Blocked users management, Push notification icon, Post comment threading, FAB menu
-  - CONFIRMED STILL MISSING: Settings screen (no .screen.dart), Travel API service, Post content service, Memory cache service, Build number check, Content container, Birth date picker, Hero animation, Photo grid section, Latest comments section, all 49 static info content screens
-  - Updated summary counts (70 done / 2 partial / 70 remaining)
+  - CONFIRMED STILL MISSING: Settings screen (no .screen.dart), Travel API service, Post content service, Memory cache service, Build number check, Content container, Birth date picker, Hero animation, Photo grid section, Latest comments section, all 43 remaining static info content screens
+  - Updated summary counts (78 done / 2 partial / 62 remaining — note: Static Content remaining was miscounted as 49 but correct is 43)
+- **2026-03-23 (iteration 4):** Full re-verification of all unchecked items via parallel agent-based code searches.
+  - FIXED: Static Content remaining count 49 → 43 (section has 49 total items: 6 done + 43 remaining; previous count incorrectly used total as remaining)
+  - FIXED: Total remaining 62 → 56
+  - CONFIRMED ALL REMAINING ITEMS STILL MISSING:
+    - Settings screen: service/state/model exist but NO .screen.dart, no navigation route
+    - Build number check: version fields exist in SettingsModel but no comparison logic or forced update dialog
+    - Phone sign-in (OTP): only Google + Kakao OAuth; phoneNumber field exists in UserModel but only for storage
+    - Latest comments on home: translation key '최근 댓글' defined but unused; no widget exists
+    - Homepage stats: no global member/post count on home (only per-user stats on profile)
+    - Content container: no reusable max-width wrapper; ad-hoc BoxConstraints used in dialogs
+    - Memory cache service: no standalone LRU cache; CurrencyService has TTL cache, PostContentService has dual cache, but no generic shared service
+    - Travel API service: 'travel' exists as forum category but no dedicated TravelSpot API service/model
+    - Birth date picker: UserModel has no birthdate fields; commented-out birthdate code in user.firebase_model.dart
+    - Hero animation: no Hero widget usage for profile/avatar photos
+    - Logo widgets: assets exist (philgo_wide_logo.png etc.) but no reusable LogoWidget class
+    - Photo grid on home: masonry grid exists for forums (11 categories) but not wired to home screen
+    - Shimmer loading on home: all home sections use CircularProgressIndicator; .shimmer() only on FAB accent
+    - My comments screen: only MyPostsScreen exists; no comment history screen
+    - All 43 static info content screens (transportation, vehicles, accommodation, visa, delivery, entertainment, destinations, helpers, residential, others)
+  - NO STATUS CHANGES from iteration 3 — all done/partial/remaining items verified accurate
