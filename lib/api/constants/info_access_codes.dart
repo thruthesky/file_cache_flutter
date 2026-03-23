@@ -205,40 +205,6 @@ class InfoAccessCodes {
   static const festivals = 'info:entertainment:festivals';
 
   // ===========================================================================
-  // living — 필리핀 생활 정보
-  // ===========================================================================
-
-  /// 공지
-  static const notice = 'info:living:notice';
-
-  /// 환율
-  static const exchangeRate = 'info:living:exchange-rate';
-
-  /// 날씨
-  static const weather = 'info:living:weather';
-
-  /// 긴급연락처
-  static const emergencyContacts = 'info:living:emergency-contacts';
-
-  /// 초보 필독
-  static const beginnerGuide = 'info:living:beginner-guide';
-
-  /// 한달살기
-  static const monthlyLiving = 'info:living:monthly-living';
-
-  /// 여행
-  static const travelGuide = 'info:living:travel';
-
-  /// 휴일
-  static const holidays = 'info:living:holidays';
-
-  /// 음식 배달
-  static const foodDelivery = 'info:living:food-delivery';
-
-  /// 배달K
-  static const baedalK = 'info:living:baedal-k';
-
-  // ===========================================================================
   // 전체 목록
   // ===========================================================================
 
@@ -257,8 +223,6 @@ class InfoAccessCodes {
     coron, elNido,
     attractions, golf, massage, nightlife, marketTour,
     seafood, restaurants, waterSports, islandTour, festivals,
-    notice, exchangeRate, weather, emergencyContacts, beginnerGuide,
-    monthlyLiving, travelGuide, holidays, foodDelivery, baedalK,
   ];
 
   static const names = {
@@ -315,15 +279,5 @@ class InfoAccessCodes {
     waterSports: '수상스포츠',
     islandTour: '섬투어',
     festivals: '축제',
-    notice: '공지',
-    exchangeRate: '환율',
-    weather: '날씨',
-    emergencyContacts: '긴급연락처',
-    beginnerGuide: '초보 필독',
-    monthlyLiving: '한달살기',
-    travelGuide: '여행',
-    holidays: '휴일',
-    foodDelivery: '음식 배달',
-    baedalK: '배달K',
   };
 }

@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/api/constants/info_access_codes.dart';
+import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/info/info_view.screen.dart';
+import 'package:philgo/notice/notice.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
 
 /// 필수 정보 메뉴 아이템
 class _MenuItem {
@@ -104,16 +107,16 @@ class EssentialInfoScreen extends StatelessWidget {
     ]),
     // 10. 필리핀 생활 정보
     _Section('필리핀 생활 정보', [
-      _MenuItem(FontAwesomeIcons.bullhorn, '공지', accessCode: InfoAccessCodes.notice),
-      _MenuItem(FontAwesomeIcons.coins, '환율', accessCode: InfoAccessCodes.exchangeRate),
-      _MenuItem(FontAwesomeIcons.cloudSun, '날씨', accessCode: InfoAccessCodes.weather),
-      _MenuItem(FontAwesomeIcons.phoneVolume, '긴급연락처', accessCode: InfoAccessCodes.emergencyContacts),
-      _MenuItem(FontAwesomeIcons.circleInfo, '초보 필독', accessCode: InfoAccessCodes.beginnerGuide),
-      _MenuItem(FontAwesomeIcons.calendarDays, '한달살기', accessCode: InfoAccessCodes.monthlyLiving),
-      _MenuItem(FontAwesomeIcons.umbrellaBeach, '여행', accessCode: InfoAccessCodes.travelGuide),
-      _MenuItem(FontAwesomeIcons.calendarCheck, '휴일', accessCode: InfoAccessCodes.holidays),
-      _MenuItem(FontAwesomeIcons.lightMotorcycle, '음식 배달', accessCode: InfoAccessCodes.foodDelivery),
-      _MenuItem(FontAwesomeIcons.lightBowlRice, '배달K', accessCode: InfoAccessCodes.baedalK),
+      _MenuItem(FontAwesomeIcons.bullhorn, '공지'),
+      _MenuItem(FontAwesomeIcons.coins, '환율'),
+      _MenuItem(FontAwesomeIcons.cloudSun, '날씨'),
+      _MenuItem(FontAwesomeIcons.phoneVolume, '긴급연락처'),
+      _MenuItem(FontAwesomeIcons.circleInfo, '초보 필독'),
+      _MenuItem(FontAwesomeIcons.calendarDays, '한달살기'),
+      _MenuItem(FontAwesomeIcons.umbrellaBeach, '여행'),
+      _MenuItem(FontAwesomeIcons.calendarCheck, '휴일'),
+      _MenuItem(FontAwesomeIcons.lightMotorcycle, '음식 배달'),
+      _MenuItem(FontAwesomeIcons.lightBowlRice, '배달K'),
     ]),
   ];
 
@@ -202,6 +205,24 @@ class EssentialInfoScreen extends StatelessWidget {
     );
   }
 
+  /// 아이템별 탭 핸들러
+  VoidCallback? _getOnTap(BuildContext context, _MenuItem item) {
+    // 전용 화면이 있는 항목
+    switch (item.label) {
+      case '공지':
+        return () => NoticeScreen.push(context);
+      case '환율':
+        return () => ExchangeRateScreen.push(context);
+      case '날씨':
+        return () => WeatherScreen.push(context);
+    }
+    // access_code가 있는 항목 → InfoViewScreen
+    if (item.accessCode != null) {
+      return () => InfoViewScreen.push(context, accessCode: item.accessCode!, title: item.label);
+    }
+    return null;
+  }
+
   /// 아이콘 그리드 아이템 빌드 (v6 MenuGridItem 동일)
   Widget _buildGridItem(BuildContext context, _MenuItem item) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -210,9 +231,7 @@ class EssentialInfoScreen extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: item.accessCode != null
-            ? () => InfoViewScreen.push(context, accessCode: item.accessCode!, title: item.label)
-            : null,
+        onTap: _getOnTap(context, item),
         borderRadius: BorderRadius.circular(16),
         splashColor: color.primary.withValues(alpha: 0.1),
         highlightColor: color.primary.withValues(alpha: 0.05),

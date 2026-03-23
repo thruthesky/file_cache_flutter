@@ -12,6 +12,7 @@ import 'package:philgo/info/essential_info.screen.dart';
 import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/notice/notice.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
+import 'package:philgo/weather/weather.screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 홈 헬퍼 메뉴 섹션 - 필리핀 생활 필수 바로가기
@@ -100,7 +101,7 @@ class HomeHelperMenuSection extends StatelessWidget {
             final VoidCallback? itemOnTap = switch (label) {
               '공지사항' => () => NoticeScreen.push(context),
               '환율' => () => ExchangeRateScreen.push(context),
-              '날씨' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.weather, title: '날씨'),
+              '날씨' => () => WeatherScreen.push(context),
               '긴급연락처' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.emergencyNumbers, title: '긴급연락처'),
               '경찰서' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.policeStations, title: '경찰서'),
               _ => null,
