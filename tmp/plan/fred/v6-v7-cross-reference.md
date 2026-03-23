@@ -27,9 +27,7 @@
 - [x] Quick post screen — `lib/home/widgets/home_quick_post_box.dart` (widget on home, opens category sheet → PostCreateScreen) (2026-03-23)
 - [x] Wanted/hiring special form — Job posting dedicated fields (company, salary, scope, etc.) (2026-03-20)
   - v7: `lib/post/create/widgets/wanted_hiring_form.dart`
-- [ ] Settings screen — UI screen (service/state exist but no screen)
-  - v6: `v6/v7_api/models/v7_settings.dart`, `v6/v7_api/state/v7_settings_state.dart`
-  - v7 has: `lib/setting/setting.service.dart`, `lib/setting/setting.state.dart`, `lib/setting/setting.model.dart` — NO `.screen.dart`
+- [x] ~~Settings screen~~ — REMOVED: v6 has no user-facing settings screen either (only app-level config model/state). v7 has equivalent `setting.service.dart` + `setting.state.dart` + `setting.model.dart`. No screen needed. (2026-03-23)
 - [x] Notice dedicated screen — `lib/notice/notice.screen.dart`, `lib/notice/notice.service.dart`, `lib/notice/notice.model.dart` (MOFA + PhilGo notices, wired to home helper menu + menu screen) (2026-03-23)
 - [~] User activity screen — `lib/post/my/my.posts.screen.dart` (own posts with infinite scroll), but NO "my comments" history screen yet
   - v6: `v6/screens/user/user.activity.screen.dart` (has both posts + comments tabs)
@@ -54,14 +52,13 @@
 
 - [x] Exchange rate widget on home — `lib/currency/currency.screen.dart`, `lib/currency/currency.service.dart`, linked from home helper menu (2026-03-23)
 - [x] Weather widget on home — `lib/weather/weather.screen.dart`, `lib/weather/weather.service.dart`, 5 cities + 6-day forecast, linked from home helper menu (2026-03-23)
-- [ ] Homepage stats (member/post count)
+- [x] ~~Homepage stats (member/post count)~~ — REMOVED: v6 has no global homepage stats either; only per-user stats on profile/menu, which v7 already has in `menu.screen.dart` (2026-03-23)
 - [ ] Latest comments section on home — ⚠️ CORRECTION: `home_latest_comments_section.dart` does NOT exist in v7 (previously marked [x] in error)
   - v6: `v6/widgets/home/home_notice_section.dart` (shows latest comments)
 - [x] User avatar + settings in AppBar — `lib/home/home.screen.dart` SliverAppBar (2026-03-20)
 - [x] Collapsible header on scroll — `lib/company/view/company.view.screen.dart` and `lib/post/view/post.view.screen.dart` (SliverAppBar pinned + collapse detection) (2026-03-23)
 - [x] Sequential animation on company list — `lib/company/list/company.list.screen.dart` flutter_animate stagger (2026-03-20)
-- [ ] Content container (max-width)
-  - v6: `v6/widgets/layout/content_container.dart` (ConstrainedBox max 800px)
+- [x] ~~Content container (max-width)~~ — REMOVED per user request. v7 uses ad-hoc BoxConstraints where needed (2026-03-23)
 
 ---
 
@@ -70,8 +67,7 @@
 - [x] Post content service — `lib/post/post_content.service.dart` (memory + file dual cache, 48-hour TTL, loads Post by idx and InfoPost by access_code; InfoViewScreen wired to use cache) (2026-03-23)
 - [x] Post content viewer widget — `lib/post/view/widgets/post.view.content.dart` (supports HTML via flutter_html, Markdown, plain text) (2026-03-23)
 - [x] Post content mapping data — `lib/api/constants/info_access_codes.dart` (17 access codes mapping info screens to server content via `info.getByAccessCode` API) (2026-03-23)
-- [ ] Memory cache service — LRU in-memory cache (maxEntries=200)
-  - v6: `v6/services/memory_cache/memory_cache.service.dart`
+- [x] ~~Memory cache service~~ — REMOVED: v6's MemoryCache class is unused legacy code (all v6 caching uses FileCache with `useMemoryCache: true`). v7 has equivalent caching in CurrencyService (TTL) and PostContentService (dual cache) (2026-03-23)
 - [x] MOFA notice data service — `lib/notice/notice.service.dart` (MOFA API with 6-hour memory cache, `lib/notice/notice.model.dart`) (2026-03-23)
 - [ ] Travel API service — Travel data API service
   - v6: `v6/services/travel/travel_spot.service.dart`, `v6/screens/guide/travel_spots.screen.dart`, `v6/screens/guide/travel_spot.view.screen.dart`
@@ -81,8 +77,7 @@
 
 ## Profile / User
 
-- [ ] Birth date picker
-  - v6: `v6/screens/user/profile.edit.screen.dart` (birthDate int field)
+- [x] ~~Birth date picker~~ — REMOVED per user request: app will be rejected if birthday is collected (2026-03-23)
 - [ ] Hero animation for profile photo
   - v6: `v6/screens/guide/travel_spot.view.screen.dart` (Hero widget pattern)
 - [x] Profile stats (posts, comments, points) — `lib/menu/menu.screen.dart` (noOfPost, noOfComment from UserModel) (2026-03-23)
@@ -263,17 +258,17 @@
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
 | Critical                | 4      | 0       | 2         |
-| High Priority           | 8      | 1       | 1         |
+| High Priority           | 9      | 1       | 0         |
 | QR / Event              | 8      | 0       | 0         |
-| Home / UI               | 5      | 0       | 3         |
-| Infrastructure          | 5      | 0       | 2         |
-| Profile / User          | 4      | 0       | 2         |
+| Home / UI               | 7      | 0       | 1         |
+| Infrastructure          | 6      | 0       | 1         |
+| Profile / User          | 5      | 0       | 1         |
 | Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 12     | 1       | 1         |
 | Widgets/Components      | 5      | 0       | 1         |
 | New in This Audit       | 20     | 0       | 0         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **78** | **2**   | **56**    |
+| **Total**               | **83** | **2**   | **51**    |
 
 ---
 
@@ -318,3 +313,11 @@
     - My comments screen: only MyPostsScreen exists; no comment history screen
     - All 43 static info content screens (transportation, vehicles, accommodation, visa, delivery, entertainment, destinations, helpers, residential, others)
   - NO STATUS CHANGES from iteration 3 — all done/partial/remaining items verified accurate
+- **2026-03-23 (iteration 5):** Deep v6 source analysis + user-directed removals.
+  - REMOVED: `Birth date picker` — per user: app will be rejected if birthday is collected
+  - REMOVED: `Content container (max-width)` — per user request; v7 uses ad-hoc BoxConstraints
+  - REMOVED: `Homepage stats (member/post count)` — v6 audit confirmed no global homepage stats exist in v6 either; only per-user stats on profile/menu, which v7 already has
+  - REMOVED: `Settings screen` — v6 audit confirmed no user-facing settings screen exists in v6; only app-level config model/state, which v7 already has
+  - REMOVED: `Memory cache service` — v6 audit confirmed MemoryCache class is unused legacy code; all v6 caching uses FileCache with `useMemoryCache: true`; v7 has equivalent caching in CurrencyService and PostContentService
+  - CONFIRMED: Build number forced update still needed — v6 has full implementation (5s initial + 5min periodic check, non-dismissible dialog, store links); v7 has version fields in SettingsModel but no comparison logic or dialog
+  - Updated summary counts: 83 done / 2 partial / 51 remaining (was 78/2/56)
