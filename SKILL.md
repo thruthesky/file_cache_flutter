@@ -676,6 +676,7 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 독립적인 TypeScript 프로
 | **테스트** | Mocha + Chai + Sinon |
 | **Firebase 프로젝트** | `philgo-64b1a` (프로덕션), `withcenter-test-5` (테스트) |
 | **CLAUDE.md** | `firebase/chat-v2/CLAUDE.md` — Cloud Functions 코딩 가이드라인 |
+| **Database Rules** | `firebase/chat-v2/database.rules.json` — Firebase RTDB 보안 규칙 (프로덕션) |
 | **문서** | `firebase/chat-v2/docs/chat/` — DB 스키마, 비즈니스 로직, 플로우차트, 코딩 가이드 |
 
 **소스 코드 모듈 구조** (`firebase/chat-v2/functions/src/`):
