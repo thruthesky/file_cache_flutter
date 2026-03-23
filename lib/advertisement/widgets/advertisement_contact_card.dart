@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -182,20 +183,20 @@ class AdvertisementContactCard extends StatelessWidget {
       };
 
   String get _title => switch (type) {
-        ContactType.kakaotalk => '카카오톡',
-        ContactType.telegram => '텔레그램',
-        ContactType.phone => '전화/문자',
+        ContactType.kakaotalk => '카카오톡'.tr(),
+        ContactType.telegram => '텔레그램'.tr(),
+        ContactType.phone => '전화/문자'.tr(),
         ContactType.wechat => 'WeChat',
         ContactType.line => 'LINE',
-        ContactType.messenger => '페이스북 메신저',
+        ContactType.messenger => '페이스북 메신저'.tr(),
       };
 
   String get _description => switch (type) {
-        ContactType.kakaotalk => '터치하여 카카오톡 친구 추가',
-        ContactType.telegram => '터치하여 텔레그램 대화 시작',
-        ContactType.phone => '터치하여 문자 보내기',
-        ContactType.wechat => 'QR 코드를 스캔하세요',
-        ContactType.line => '터치하여 라인 친구 추가',
-        ContactType.messenger => '터치하여 메신저 대화 시작',
+        ContactType.kakaotalk => '터치하여 카카오톡 친구 추가'.tr(),
+        ContactType.telegram => '터치하여 텔레그램 대화 시작'.tr(),
+        ContactType.phone => '터치하여 문자 보내기'.tr(),
+        ContactType.wechat => 'QR 코드를 스캔하세요'.tr(),
+        ContactType.line => '터치하여 라인 친구 추가'.tr(),
+        ContactType.messenger => '터치하여 메신저 대화 시작'.tr(),
       };
 }

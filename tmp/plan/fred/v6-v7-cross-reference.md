@@ -31,7 +31,7 @@
 - [x] Notice dedicated screen — `lib/notice/notice.screen.dart`, `lib/notice/notice.service.dart`, `lib/notice/notice.model.dart` (MOFA + PhilGo notices, wired to home helper menu + menu screen) (2026-03-23)
 - [~] User activity screen — `lib/post/my/my.posts.screen.dart` (own posts with infinite scroll), but NO "my comments" history screen yet
   - v6: `v6/screens/user/user.activity.screen.dart`
-- [x] Advertisement view screen — `lib/advertisement/advertisement.view.screen.dart` (post content + contact cards, wired from banner tap via idx detection) (2026-03-23)
+- [x] Advertisement view screen — `lib/advertisement/advertisement.view.screen.dart` (post content + contact cards + YouTube, wired from banner tap via idx detection, contact card labels localized with .tr()) (2026-03-23)
 
 ---
 
