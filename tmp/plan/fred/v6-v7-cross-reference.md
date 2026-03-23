@@ -206,7 +206,7 @@
 - [x] ~~Step progress indicator~~ — Not needed in v7 (2026-03-23)
 - [x] ~~Information box widget~~ — Not needed in v7 (2026-03-23)
 - [x] Spinning wheel (standalone) — `lib/event/widgets/spinning_wheel.dart` (CustomPainter-based, equivalent to v6) (2026-03-23)
-- [ ] Logo widgets — v6: `v6/widgets/logo/logo.dart`, `philgo.logo.triangle.dart`, `philgo.logo.triangles.dart`
+- [x] Logo widgets — `lib/common_widgets/philgo_logo.dart`, `lib/common_widgets/philgo_logo_triangle.dart` (3-triangle animated composition, CustomPainter-based, used in upgrade dialog) (2026-03-23)
 - [x] ~~Carousel dot indicator~~ — Not needed in v7 (2026-03-23)
 
 ---
@@ -263,10 +263,10 @@
 | Profile / User          | 5      | 0       | 1         |
 | Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 12     | 1       | 1         |
-| Widgets/Components      | 5      | 0       | 1         |
+| Widgets/Components      | 6      | 0       | 0         |
 | New in This Audit       | 20     | 0       | 0         |
 | System-Level            | 2      | 0       | 0         |
-| **Total**               | **85** | **2**   | **49**    |
+| **Total**               | **86** | **2**   | **48**    |
 
 ---
 
