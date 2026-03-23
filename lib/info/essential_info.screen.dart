@@ -26,97 +26,52 @@ class _Section {
 
 /// 필수 정보 화면
 ///
-/// v6의 MustReadScreen과 100% 동일한 10개 섹션 아이콘 그리드 화면.
-/// 클릭 시 세부 페이지는 아직 연결하지 않는다.
+/// 백엔드 InfoAccessCodes.php 기준 17개 access_code만 사용.
 class EssentialInfoScreen extends StatelessWidget {
   static const String routeName = '/essential-info';
   static Function(BuildContext ctx) push = (ctx) => ctx.push(routeName);
 
   const EssentialInfoScreen({super.key});
 
-  /// 10개 섹션 데이터 (v6과 100% 동일)
+  /// 섹션 데이터 (백엔드 InfoAccessCodes.php 기준)
   static const _sections = <_Section>[
     // 1. 긴급 연락처
     _Section('긴급 연락처', [
       _MenuItem(FontAwesomeIcons.landmarkFlag, '대사관', accessCode: InfoAccessCodes.embassy),
+      _MenuItem(FontAwesomeIcons.phoneVolume, '긴급연락처', accessCode: InfoAccessCodes.emergencyNumbers),
       _MenuItem(FontAwesomeIcons.peopleGroup, '한인회', accessCode: InfoAccessCodes.koreanAssociation),
       _MenuItem(FontAwesomeIcons.buildingShield, '경찰서', accessCode: InfoAccessCodes.policeStations),
       _MenuItem(FontAwesomeIcons.hospital, '병원', accessCode: InfoAccessCodes.hospitals),
       _MenuItem(FontAwesomeIcons.buildingColumns, '기관 연락처', accessCode: InfoAccessCodes.otherAgencies),
     ]),
-    // 2. 출입국 & 비자 여권
-    _Section('출입국 & 비자 여권', [
+    // 2. 출입국
+    _Section('출입국', [
       _MenuItem(FontAwesomeIcons.mobileScreenButton, 'e트래블', accessCode: InfoAccessCodes.eTravel),
-      _MenuItem(FontAwesomeIcons.planeDeparture, '여행비자', accessCode: InfoAccessCodes.touristVisa),
-      _MenuItem(FontAwesomeIcons.briefcase, '워킹비자', accessCode: InfoAccessCodes.workingVisa),
-      _MenuItem(FontAwesomeIcons.personCane, '은퇴비자', accessCode: InfoAccessCodes.retirementVisa),
     ]),
-    // 3. 교통 수단
-    _Section('교통 수단', [
-      _MenuItem(FontAwesomeIcons.mobileScreen, '그랩 택시', accessCode: InfoAccessCodes.grabTaxi),
-      _MenuItem(FontAwesomeIcons.taxi, '일반 택시', accessCode: InfoAccessCodes.regularTaxi),
-      _MenuItem(FontAwesomeIcons.bus, '고속 버스', accessCode: InfoAccessCodes.expressBus),
-      _MenuItem(FontAwesomeIcons.car, '렌트카', accessCode: InfoAccessCodes.rentalCar),
+    // 3. 세부 여행지
+    _Section('세부 여행지', [
+      _MenuItem(FontAwesomeIcons.water, '가와산 폭포', accessCode: InfoAccessCodes.kawasanFalls),
+      _MenuItem(FontAwesomeIcons.lightFish, '오슬롭 고래상어', accessCode: InfoAccessCodes.oslobWhaleShark),
+      _MenuItem(FontAwesomeIcons.lightCross, '마젤란 십자가', accessCode: InfoAccessCodes.magellansCross),
+      _MenuItem(FontAwesomeIcons.lightFishFins, '모알보알', accessCode: InfoAccessCodes.moalboalSardineRun),
+      _MenuItem(FontAwesomeIcons.lightWaterLadder, '오션 파크', accessCode: InfoAccessCodes.oceanPark),
+      _MenuItem(FontAwesomeIcons.lightIslandTropical, '반타얀 섬', accessCode: InfoAccessCodes.bantayanIsland),
     ]),
-    // 4. 콘도/주택 임대
-    _Section('콘도/주택 임대', [
-      _MenuItem(FontAwesomeIcons.key, '월세', accessCode: InfoAccessCodes.monthlyRent),
-      _MenuItem(FontAwesomeIcons.airbnb, '에어비앤비', accessCode: InfoAccessCodes.airbnb),
-      _MenuItem(FontAwesomeIcons.hotel, '호텔', accessCode: InfoAccessCodes.hotel),
+    // 4. 보홀 · 보라카이
+    _Section('보홀 · 보라카이', [
+      _MenuItem(FontAwesomeIcons.umbrellaBeach, '알로나 비치', accessCode: InfoAccessCodes.alonaBeach),
+      _MenuItem(FontAwesomeIcons.sun, '화이트 비치', accessCode: InfoAccessCodes.whiteBeach),
     ]),
-    // 5. 자동차
-    _Section('자동차', [
-      _MenuItem(FontAwesomeIcons.cartShopping, '구매', accessCode: InfoAccessCodes.carPurchase),
-      _MenuItem(FontAwesomeIcons.shieldHalved, '보험', accessCode: InfoAccessCodes.carInsurance),
-      _MenuItem(FontAwesomeIcons.fileLines, 'OR 리뉴얼', accessCode: InfoAccessCodes.orRenewal),
+    // 5. 팔라완
+    _Section('팔라완', [
+      _MenuItem(FontAwesomeIcons.lightShip, '코론', accessCode: InfoAccessCodes.coron),
+      _MenuItem(FontAwesomeIcons.lightIslandTropical, '엘니도', accessCode: InfoAccessCodes.elNido),
     ]),
-    // 6. 추천 거주 지역
-    _Section('추천 거주 지역', [
-      _MenuItem(FontAwesomeIcons.building, 'BGC', accessCode: InfoAccessCodes.bgc),
-      _MenuItem(FontAwesomeIcons.city, '올티가스', accessCode: InfoAccessCodes.ortigas),
-      _MenuItem(FontAwesomeIcons.houseChimney, '알라방', accessCode: InfoAccessCodes.alabang),
-    ]),
-    // 7. 도우미 & 가정교사
-    _Section('도우미 & 가정교사', [
-      _MenuItem(FontAwesomeIcons.lightBroom, '하우스헬퍼', accessCode: InfoAccessCodes.houseHelper),
-      _MenuItem(FontAwesomeIcons.lightCarSide, '운전기사', accessCode: InfoAccessCodes.driver),
-      _MenuItem(FontAwesomeIcons.lightChalkboardUser, '가정교사', accessCode: InfoAccessCodes.tutor),
-    ]),
-    // 8. 필리핀 추천 여행지
-    _Section('필리핀 추천 여행지', [
-      _MenuItem(FontAwesomeIcons.city, '마닐라', accessCode: InfoAccessCodes.manila),
-      _MenuItem(FontAwesomeIcons.umbrellaBeach, '세부', accessCode: InfoAccessCodes.cebu),
-      _MenuItem(FontAwesomeIcons.anchor, '수빅', accessCode: InfoAccessCodes.subic),
-      _MenuItem(FontAwesomeIcons.mountain, '보홀', accessCode: InfoAccessCodes.bohol),
-      _MenuItem(FontAwesomeIcons.sun, '보라카이', accessCode: InfoAccessCodes.boracay),
-      _MenuItem(FontAwesomeIcons.water, '팔라완', accessCode: InfoAccessCodes.palawan),
-      _MenuItem(FontAwesomeIcons.lightIslandTropical, '엘니도', accessCode: InfoAccessCodes.elNidoOverview),
-    ]),
-    // 9. 먹거리, 놀거리, 볼거리
-    _Section('먹거리, 놀거리, 볼거리', [
-      _MenuItem(FontAwesomeIcons.lightMapLocationDot, '여행 명소', accessCode: InfoAccessCodes.attractions),
-      _MenuItem(FontAwesomeIcons.lightGolfBallTee, '골프', accessCode: InfoAccessCodes.golf),
-      _MenuItem(FontAwesomeIcons.lightSpa, '마사지', accessCode: InfoAccessCodes.massage),
-      _MenuItem(FontAwesomeIcons.lightMartiniGlass, '밤문화', accessCode: InfoAccessCodes.nightlife),
-      _MenuItem(FontAwesomeIcons.lightStore, '시장 투어', accessCode: InfoAccessCodes.marketTour),
-      _MenuItem(FontAwesomeIcons.lightShrimp, '해산물', accessCode: InfoAccessCodes.seafood),
-      _MenuItem(FontAwesomeIcons.lightUtensils, '맛집', accessCode: InfoAccessCodes.restaurants),
-      _MenuItem(FontAwesomeIcons.lightPersonSwimming, '수상스포츠', accessCode: InfoAccessCodes.waterSports),
-      _MenuItem(FontAwesomeIcons.lightIslandTropical, '섬투어', accessCode: InfoAccessCodes.islandTour),
-      _MenuItem(FontAwesomeIcons.lightPartyHorn, '축제', accessCode: InfoAccessCodes.festivals),
-    ]),
-    // 10. 필리핀 생활 정보
+    // 6. 필리핀 생활 정보
     _Section('필리핀 생활 정보', [
       _MenuItem(FontAwesomeIcons.bullhorn, '공지'),
       _MenuItem(FontAwesomeIcons.coins, '환율'),
       _MenuItem(FontAwesomeIcons.cloudSun, '날씨'),
-      _MenuItem(FontAwesomeIcons.phoneVolume, '긴급연락처'),
-      _MenuItem(FontAwesomeIcons.circleInfo, '초보 필독'),
-      _MenuItem(FontAwesomeIcons.calendarDays, '한달살기'),
-      _MenuItem(FontAwesomeIcons.umbrellaBeach, '여행'),
-      _MenuItem(FontAwesomeIcons.calendarCheck, '휴일'),
-      _MenuItem(FontAwesomeIcons.lightMotorcycle, '음식 배달'),
-      _MenuItem(FontAwesomeIcons.lightBowlRice, '배달K'),
     ]),
   ];
 

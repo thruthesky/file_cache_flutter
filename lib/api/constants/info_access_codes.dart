@@ -38,107 +38,9 @@ class InfoAccessCodes {
   /// 필리핀 eTravel 전자 입국 신고서
   static const eTravel = 'info:immigration:e-travel';
 
-  /// 필리핀 여행비자 안내
-  static const touristVisa = 'info:immigration:tourist-visa';
-
-  /// 필리핀 워킹비자 안내
-  static const workingVisa = 'info:immigration:working-visa';
-
-  /// 필리핀 은퇴비자 안내
-  static const retirementVisa = 'info:immigration:retirement-visa';
-
-  // ===========================================================================
-  // transport — 교통 수단
-  // ===========================================================================
-
-  /// 그랩 택시
-  static const grabTaxi = 'info:transport:grab-taxi';
-
-  /// 일반 택시
-  static const regularTaxi = 'info:transport:regular-taxi';
-
-  /// 고속 버스
-  static const expressBus = 'info:transport:express-bus';
-
-  /// 렌트카
-  static const rentalCar = 'info:transport:rental-car';
-
-  // ===========================================================================
-  // housing — 콘도/주택 임대
-  // ===========================================================================
-
-  /// 월세
-  static const monthlyRent = 'info:housing:monthly-rent';
-
-  /// 에어비앤비
-  static const airbnb = 'info:housing:airbnb';
-
-  /// 호텔
-  static const hotel = 'info:housing:hotel';
-
-  // ===========================================================================
-  // car — 자동차
-  // ===========================================================================
-
-  /// 자동차 구매
-  static const carPurchase = 'info:car:purchase';
-
-  /// 자동차 보험
-  static const carInsurance = 'info:car:insurance';
-
-  /// OR 리뉴얼
-  static const orRenewal = 'info:car:or-renewal';
-
-  // ===========================================================================
-  // area — 추천 거주 지역
-  // ===========================================================================
-
-  /// BGC (보니파시오 글로벌 시티)
-  static const bgc = 'info:area:bgc';
-
-  /// 올티가스
-  static const ortigas = 'info:area:ortigas';
-
-  /// 알라방
-  static const alabang = 'info:area:alabang';
-
-  // ===========================================================================
-  // helper — 도우미 & 가정교사
-  // ===========================================================================
-
-  /// 하우스헬퍼
-  static const houseHelper = 'info:helper:house-helper';
-
-  /// 운전기사
-  static const driver = 'info:helper:driver';
-
-  /// 가정교사
-  static const tutor = 'info:helper:tutor';
-
   // ===========================================================================
   // travel — 여행지
   // ===========================================================================
-
-  /// 마닐라
-  static const manila = 'info:travel:manila';
-
-  /// 세부
-  static const cebu = 'info:travel:cebu';
-
-  /// 수빅
-  static const subic = 'info:travel:subic';
-
-  /// 보홀
-  static const bohol = 'info:travel:bohol';
-
-  /// 보라카이
-  static const boracay = 'info:travel:boracay';
-
-  /// 팔라완
-  static const palawan = 'info:travel:palawan';
-
-  /// 엘니도
-  static const elNidoOverview = 'info:travel:el-nido';
 
   /// 보홀 알로나 비치
   static const alonaBeach = 'info:travel:bohol:alona-beach';
@@ -171,58 +73,15 @@ class InfoAccessCodes {
   static const elNido = 'info:travel:palawan:el-nido';
 
   // ===========================================================================
-  // entertainment — 먹거리, 놀거리, 볼거리
-  // ===========================================================================
-
-  /// 여행 명소
-  static const attractions = 'info:entertainment:attractions';
-
-  /// 골프
-  static const golf = 'info:entertainment:golf';
-
-  /// 마사지
-  static const massage = 'info:entertainment:massage';
-
-  /// 밤문화
-  static const nightlife = 'info:entertainment:nightlife';
-
-  /// 시장 투어
-  static const marketTour = 'info:entertainment:market-tour';
-
-  /// 해산물
-  static const seafood = 'info:entertainment:seafood';
-
-  /// 맛집
-  static const restaurants = 'info:entertainment:restaurants';
-
-  /// 수상스포츠
-  static const waterSports = 'info:entertainment:water-sports';
-
-  /// 섬투어
-  static const islandTour = 'info:entertainment:island-tour';
-
-  /// 축제
-  static const festivals = 'info:entertainment:festivals';
-
-  // ===========================================================================
   // 전체 목록
   // ===========================================================================
 
   static const all = [
     embassy, emergencyNumbers, hospitals, koreanAssociation,
-    otherAgencies, policeStations,
-    eTravel, touristVisa, workingVisa, retirementVisa,
-    grabTaxi, regularTaxi, expressBus, rentalCar,
-    monthlyRent, airbnb, hotel,
-    carPurchase, carInsurance, orRenewal,
-    bgc, ortigas, alabang,
-    houseHelper, driver, tutor,
-    manila, cebu, subic, bohol, boracay, palawan, elNidoOverview,
+    otherAgencies, policeStations, eTravel,
     alonaBeach, whiteBeach, bantayanIsland, kawasanFalls,
     magellansCross, moalboalSardineRun, oceanPark, oslobWhaleShark,
     coron, elNido,
-    attractions, golf, massage, nightlife, marketTour,
-    seafood, restaurants, waterSports, islandTour, festivals,
   ];
 
   static const names = {
@@ -233,32 +92,6 @@ class InfoAccessCodes {
     otherAgencies: '필리핀 기타 기관 연락처',
     policeStations: '필리핀 주요 경찰서 연락처',
     eTravel: '필리핀 eTravel 전자 입국 신고서',
-    touristVisa: '필리핀 여행비자 안내',
-    workingVisa: '필리핀 워킹비자 안내',
-    retirementVisa: '필리핀 은퇴비자 안내',
-    grabTaxi: '그랩 택시',
-    regularTaxi: '일반 택시',
-    expressBus: '고속 버스',
-    rentalCar: '렌트카',
-    monthlyRent: '월세',
-    airbnb: '에어비앤비',
-    hotel: '호텔',
-    carPurchase: '자동차 구매',
-    carInsurance: '자동차 보험',
-    orRenewal: 'OR 리뉴얼',
-    bgc: 'BGC (보니파시오 글로벌 시티)',
-    ortigas: '올티가스',
-    alabang: '알라방',
-    houseHelper: '하우스헬퍼',
-    driver: '운전기사',
-    tutor: '가정교사',
-    manila: '마닐라',
-    cebu: '세부',
-    subic: '수빅',
-    bohol: '보홀',
-    boracay: '보라카이',
-    palawan: '팔라완',
-    elNidoOverview: '엘니도',
     alonaBeach: '보홀 알로나 비치',
     whiteBeach: '보라카이 화이트 비치',
     bantayanIsland: '반타얀 섬',
@@ -269,15 +102,5 @@ class InfoAccessCodes {
     oslobWhaleShark: '오슬롭 고래상어 투어',
     coron: '코론 (팔라완)',
     elNido: '엘니도 (팔라완)',
-    attractions: '여행 명소',
-    golf: '골프',
-    massage: '마사지',
-    nightlife: '밤문화',
-    marketTour: '시장 투어',
-    seafood: '해산물',
-    restaurants: '맛집',
-    waterSports: '수상스포츠',
-    islandTour: '섬투어',
-    festivals: '축제',
   };
 }
