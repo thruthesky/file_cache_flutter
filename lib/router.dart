@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
@@ -25,6 +26,7 @@ import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/search/search.screen.dart';
 import 'package:philgo/version/version.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
+import 'package:philgo/notice/notice.screen.dart';
 import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/currency/currency.screen.dart';
@@ -36,6 +38,7 @@ import 'package:philgo/company/review/company.revisit_point_result.screen.dart';
 import 'package:philgo/company/review/company.review_point_result.screen.dart';
 import 'package:philgo/event/qr_scanner.screen.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/globals.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -67,6 +70,14 @@ final router = GoRouter(
 
     // // 채팅방: /chat/index.php?id=xxx
     // if (result.isChatRoom && result.chatRoomId != null) {
+    //   // Set Globals.screenName  to ChatRoomScreen
+    //   // Set Globals.screenId to the roomId from the URL
+    //   // During onMessageOpen,
+    //   // Not in ChatRoomScreen - simply navigate to the chat room.
+    //   // In ChatRoomScreen with the same roomId - do nothing.
+    //   // In ChatRoomScreen with different roomId - pop current chat room and navigate to the
+    //   Globals.screenName = 'ChatRoomScreen';
+    //   Globals.screenId = state.pathParameters['id'] ?? '';
     //   return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
     // }
 
@@ -343,6 +354,22 @@ final router = GoRouter(
       path: EssentialInfoScreen.routeName,
       name: EssentialInfoScreen.routeName,
       builder: (context, state) => const EssentialInfoScreen(),
+    ),
+    GoRoute(
+      path: NoticeScreen.routeName,
+      name: NoticeScreen.routeName,
+      builder: (context, state) => const NoticeScreen(),
+    ),
+    GoRoute(
+      path: AdvertisementViewScreen.routeName,
+      name: AdvertisementViewScreen.routeName,
+      builder: (context, state) {
+        final idx =
+            state.extra as int? ??
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ??
+            0;
+        return AdvertisementViewScreen(idx: idx);
+      },
     ),
     GoRoute(
       path: InfoViewScreen.routeName,

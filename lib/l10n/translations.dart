@@ -9,6 +9,9 @@ class Translations {
   static const Map<String, dynamic> ko = {
     // 공통
     '검색': '검색',
+    '알림': '알림',
+    '알림 설정': '알림 설정',
+    '접기': '접기',
     '돌아가기': '돌아가기',
     '이름없음': '이름없음',
     '로그인': '로그인',
@@ -46,7 +49,22 @@ class Translations {
     '내 활동': '내 활동',
     '필리핀 생활 정보': '필리핀 생활 정보',
     '프로필 수정': '프로필 수정',
+    '프로필 편집': '프로필 편집',
+    '프로필 사진': '프로필 사진',
+    '저장': '저장',
+    '포인트': '포인트',
+    '닉네임': '닉네임',
+    '닉네임을 입력하세요.': '닉네임을 입력하세요.',
+    '닉네임을 입력해 주세요.': '닉네임을 입력해 주세요.',
+    '이름': '이름',
+    '이름을 입력하세요.': '이름을 입력하세요.',
+    '프로필이 저장되었습니다.': '프로필이 저장되었습니다.',
+    '사진을 삭제하는 중...': '사진을 삭제하는 중...',
     '내 게시글': '내 게시글',
+    '내 글 목록': '내 글 목록',
+    '이벤트응모': '이벤트응모',
+    'AI 답변 생성': 'AI 답변 생성',
+    'AI 답변': 'AI 답변',
     '글쓰기': '글쓰기',
     '친구 검색': '친구 검색',
     '차단된 사용자': '차단된 사용자',
@@ -68,6 +86,9 @@ class Translations {
     '환율': '환율',
     '날씨': '날씨',
     '긴급연락처': '긴급연락처',
+    '정보': '정보',
+    '정보를 불러올 수 없습니다': '정보를 불러올 수 없습니다',
+    '다시 시도': '다시 시도',
     '초보 필독': '초보 필독',
     '한달살기': '한달살기',
     '여행': '여행',
@@ -79,8 +100,11 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': '소셜 계정으로 간편하게 로그인하세요',
     '카카오로 로그인': '카카오로 로그인',
     'Google로 로그인': 'Google로 로그인',
+    '이용약관': '이용약관',
+    '개인정보처리방침': '개인정보처리방침',
 
     // 홈 섹션
+    '오늘, 당신의 필리핀 생활은 어떤가요?': '오늘, 당신의 필리핀 생활은 어떤가요?',
     '필고': '필고',
     '설정': '설정',
     '회원': '회원',
@@ -90,6 +114,17 @@ class Translations {
     '인기글': '인기글',
     '주요 게시판': '주요 게시판',
     '공지사항': '공지사항',
+    '해외 여행 공지': '해외 여행 공지',
+    '필고 공지': '필고 공지',
+    '해외 여행 관련 공지가 없습니다': '해외 여행 관련 공지가 없습니다',
+    '외교부 공지사항이 여기에 표시됩니다': '외교부 공지사항이 여기에 표시됩니다',
+    '필고 공지가 없습니다': '필고 공지가 없습니다',
+    '필고 서비스 관련 공지사항이 여기에 표시됩니다': '필고 서비스 관련 공지사항이 여기에 표시됩니다',
+    '공지사항을 불러오는 중...': '공지사항을 불러오는 중...',
+    '공지사항을 불러올 수 없습니다': '공지사항을 불러올 수 없습니다',
+    '새로고침 버튼을 눌러 다시 시도해주세요': '새로고침 버튼을 눌러 다시 시도해주세요',
+    '첨부파일이 있습니다': '첨부파일이 있습니다',
+    '새로고침': '새로고침',
     '필수정보': '필수정보',
     '대사관': '대사관',
     '한인회': '한인회',
@@ -217,6 +252,12 @@ class Translations {
     '폭력': '폭력',
     '혐오 발언': '혐오 발언',
     '부적절한 콘텐츠': '부적절한 콘텐츠',
+    '온라인': '온라인',
+    '방금 전': '방금 전',
+    '{분}분 전': '{분}분 전',
+    '{시간}시간 전': '{시간}시간 전',
+    '{일}일 전': '{일}일 전',
+    '마지막 접속: {시간}': '마지막 접속: {시간}',
 
     // 메뉴 추가
     '운영자 문의': '운영자 문의',
@@ -271,7 +312,6 @@ class Translations {
     '뉴스': '뉴스',
     '골프': '골프',
     '렌트카': '렌트카',
-    '정보': '정보',
     '코필커플': '코필커플',
     '코피노': '코피노',
     '이민': '이민',
@@ -405,9 +445,22 @@ class Translations {
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': '업소를 가져올 수 없습니다. 다시 시도해주세요.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': '업소가 생성되었습니다. 정보를 입력해주세요.',
 
+    // 광고 상세
+    '글을 불러올 수 없습니다': '글을 불러올 수 없습니다',
+    '글이 존재하지 않습니다': '글이 존재하지 않습니다',
+
+    // 광고 연락처 카드
+    '전화/문자': '전화/문자',
+    '터치하여 카카오톡 친구 추가': '터치하여 카카오톡 친구 추가',
+    '터치하여 텔레그램 대화 시작': '터치하여 텔레그램 대화 시작',
+    '터치하여 문자 보내기': '터치하여 문자 보내기',
+    'QR 코드를 스캔하세요': 'QR 코드를 스캔하세요',
+    '터치하여 라인 친구 추가': '터치하여 라인 친구 추가',
+    '터치하여 메신저 대화 시작': '터치하여 메신저 대화 시작',
+    '페이스북 메신저': '페이스북 메신저',
+
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
-    '다시 시도': '다시 시도',
     '업소 정보': '업소 정보',
     '아직 후기가 없습니다': '아직 후기가 없습니다',
 
@@ -628,11 +681,73 @@ class Translations {
     // 재방문 포인트 결과 화면
     '재방문 포인트 결과': '재방문 포인트 결과',
     '포인트 추첨 중...': '포인트 추첨 중...',
+
+    // 프로필
+    '프로필 보기': '프로필 보기',
+
+    // 게시글 목록
+    '게시글을 불러올 수 없습니다': '게시글을 불러올 수 없습니다',
+    '게시글이 없습니다': '게시글이 없습니다',
+
+    // 차단 다이얼로그
+    '이 사용자를 차단하시겠습니까?': '이 사용자를 차단하시겠습니까?',
+    '차단하면 이 사용자의 메시지를 받지 않습니다.': '차단하면 이 사용자의 메시지를 받지 않습니다.',
+    '사용자가 차단되었습니다': '사용자가 차단되었습니다',
+    '이 사용자의 차단을 해제하시겠습니까?': '이 사용자의 차단을 해제하시겠습니까?',
+    '사용자 차단이 해제되었습니다': '사용자 차단이 해제되었습니다',
+
+    // 유틸리티 다이얼로그
+    '확인': '확인',
+    '예': '예',
+    '아니오': '아니오',
+    '오류가 발생했습니다': '오류가 발생했습니다',
+
+    // 날씨/환율
+    '필리핀 날씨': '필리핀 날씨',
+    '날씨 새로고침': '날씨 새로고침',
+    '날씨 정보를 불러오는 중...': '날씨 정보를 불러오는 중...',
+    '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.':
+        '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.',
+    '환율 정보': '환율 정보',
+    '환율 새로고침': '환율 새로고침',
+    '환율 정보를 불러오는 중...': '환율 정보를 불러오는 중...',
+    '환율 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.':
+        '환율 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.',
+    '금액 입력': '금액 입력',
+    // 이벤트 응모 (스피닝 휠)
+    '쿠폰': '쿠폰',
+    '꽝': '꽝',
+    '현재 쿠폰이 모두 소진되었습니다.\n새로운 쿠폰이 추가될 때까지 잠시만 기다려주세요.':
+        '현재 쿠폰이 모두 소진되었습니다.\n새로운 쿠폰이 추가될 때까지 잠시만 기다려주세요.',
+
+    // 필수 정보 화면 - 섹션 타이틀
+    '긴급 연락처': '긴급 연락처',
+    '기관 연락처': '기관 연락처',
+    '출입국': '출입국',
+    '세부 여행지': '세부 여행지',
+    '보홀 · 보라카이': '보홀 · 보라카이',
+    '팔라완': '팔라완',
+
+    // 필수 정보 화면 - 아이템
+    '가와산 폭포': '가와산 폭포',
+    '오슬롭 고래상어': '오슬롭 고래상어',
+    '마젤란 십자가': '마젤란 십자가',
+    '모알보알': '모알보알',
+    '오션 파크': '오션 파크',
+    '반타얀 섬': '반타얀 섬',
+    '알로나 비치': '알로나 비치',
+    '화이트 비치': '화이트 비치',
+    '코론': '코론',
+    '엘니도': '엘니도',
+    '휴일': '휴일',
   };
 
   static const Map<String, dynamic> en = {
     // 공통
     '검색': 'Search',
+    '알림': 'Notifications',
+    '알림 설정': 'Notification Settings',
+    '접기': 'Less',
     '돌아가기': 'Back',
     '이름없음': 'No name',
     '로그인': 'Login',
@@ -670,7 +785,22 @@ class Translations {
     '내 활동': 'My Activity',
     '필리핀 생활 정보': 'Philippines Info',
     '프로필 수정': 'Edit Profile',
+    '프로필 편집': 'Edit Profile',
+    '프로필 사진': 'Profile Photo',
+    '저장': 'Save',
+    '포인트': 'Points',
+    '닉네임': 'Nickname',
+    '닉네임을 입력하세요.': 'Enter your nickname.',
+    '닉네임을 입력해 주세요.': 'Please enter your nickname.',
+    '이름': 'Name',
+    '이름을 입력하세요.': 'Enter your name.',
+    '프로필이 저장되었습니다.': 'Profile saved.',
+    '사진을 삭제하는 중...': 'Deleting photo...',
     '내 게시글': 'My Posts',
+    '내 글 목록': 'My Posts',
+    '이벤트응모': 'Event Entry',
+    'AI 답변 생성': 'Generate AI Answer',
+    'AI 답변': 'AI Answer',
     '글쓰기': 'Write',
     '친구 검색': 'Find Friends',
     '차단된 사용자': 'Blocked Users',
@@ -692,6 +822,9 @@ class Translations {
     '환율': 'Exchange Rate',
     '날씨': 'Weather',
     '긴급연락처': 'Emergency',
+    '정보': 'Info',
+    '정보를 불러올 수 없습니다': 'Unable to load information',
+    '다시 시도': 'Try Again',
     '초보 필독': 'Beginner Guide',
     '한달살기': 'Month Stay',
     '여행': 'Travel',
@@ -703,8 +836,11 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': 'Sign in with your social account',
     '카카오로 로그인': 'Sign in with Kakao',
     'Google로 로그인': 'Sign in with Google',
+    '이용약관': 'Terms of Service',
+    '개인정보처리방침': 'Privacy Policy',
 
     // 홈 섹션
+    '오늘, 당신의 필리핀 생활은 어떤가요?': 'How is your life in the Philippines today?',
     '필고': 'PhilGo',
     '설정': 'Settings',
     '회원': 'Members',
@@ -714,6 +850,18 @@ class Translations {
     '인기글': 'Popular Posts',
     '주요 게시판': 'Major Forums',
     '공지사항': 'Notices',
+    '해외 여행 공지': 'Travel Notices',
+    '필고 공지': 'PhilGo Notices',
+    '해외 여행 관련 공지가 없습니다': 'No travel notices available',
+    '외교부 공지사항이 여기에 표시됩니다': 'MOFA notices will be displayed here',
+    '필고 공지가 없습니다': 'No PhilGo notices',
+    '필고 서비스 관련 공지사항이 여기에 표시됩니다':
+        'PhilGo service notices will be displayed here',
+    '공지사항을 불러오는 중...': 'Loading notices...',
+    '공지사항을 불러올 수 없습니다': 'Unable to load notices',
+    '새로고침 버튼을 눌러 다시 시도해주세요': 'Please tap refresh to try again',
+    '첨부파일이 있습니다': 'Attachment available',
+    '새로고침': 'Refresh',
     '필수정보': 'Essentials',
     '대사관': 'Embassy',
     '한인회': 'Korean Assoc.',
@@ -843,6 +991,12 @@ class Translations {
     '폭력': 'Violence',
     '혐오 발언': 'Hate Speech',
     '부적절한 콘텐츠': 'Inappropriate Content',
+    '온라인': 'Online',
+    '방금 전': 'just now',
+    '{분}분 전': '{분}m ago',
+    '{시간}시간 전': '{시간}h ago',
+    '{일}일 전': '{일}d ago',
+    '마지막 접속: {시간}': 'Last seen: {시간}',
 
     // 메뉴 추가
     '운영자 문의': 'Contact Admin',
@@ -894,7 +1048,6 @@ class Translations {
     '뉴스': 'News',
     '골프': 'Golf',
     '렌트카': 'Rent a Car',
-    '정보': 'Info',
     '코필커플': 'KoFil Couple',
     '코피노': 'Kopino',
     '이민': 'Immigration',
@@ -1030,9 +1183,22 @@ class Translations {
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': 'Unable to load business. Please try again.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': 'Business created. Please enter your info.',
 
+    // 광고 상세
+    '글을 불러올 수 없습니다': 'Unable to load post',
+    '글이 존재하지 않습니다': 'Post does not exist',
+
+    // 광고 연락처 카드
+    '전화/문자': 'Phone/SMS',
+    '터치하여 카카오톡 친구 추가': 'Tap to add KakaoTalk friend',
+    '터치하여 텔레그램 대화 시작': 'Tap to start Telegram chat',
+    '터치하여 문자 보내기': 'Tap to send SMS',
+    'QR 코드를 스캔하세요': 'Scan the QR code',
+    '터치하여 라인 친구 추가': 'Tap to add LINE friend',
+    '터치하여 메신저 대화 시작': 'Tap to start Messenger chat',
+    '페이스북 메신저': 'Facebook Messenger',
+
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',
-    '다시 시도': 'Try Again',
     '업소 정보': 'Business Info',
     '아직 후기가 없습니다': 'No reviews yet',
 
@@ -1265,5 +1431,62 @@ class Translations {
     // 재방문 포인트 결과 화면
     '재방문 포인트 결과': 'Revisit Point Result',
     '포인트 추첨 중...': 'Drawing points...',
+
+    // 프로필
+    '프로필 보기': 'View Profile',
+
+    // 게시글 목록
+    '게시글을 불러올 수 없습니다': 'Failed to load posts',
+    '게시글이 없습니다': 'No posts',
+
+    // 차단 다이얼로그
+    '이 사용자를 차단하시겠습니까?': 'Are you sure you want to block this user?',
+    '차단하면 이 사용자의 메시지를 받지 않습니다.':
+        'Blocking this user will prevent them from sending you messages.',
+    '사용자가 차단되었습니다': 'User blocked successfully',
+    '이 사용자의 차단을 해제하시겠습니까?': 'Are you sure you want to unblock this user?',
+    '사용자 차단이 해제되었습니다': 'User unblocked successfully',
+
+    // 유틸리티 다이얼로그
+    '확인': 'OK',
+    '예': 'Yes',
+    '아니오': 'No',
+    '오류가 발생했습니다': 'Something went wrong',
+
+    // 날씨/환율
+    '필리핀 날씨': 'Philippines Weather',
+    '날씨 새로고침': 'Refresh weather',
+    '날씨 정보를 불러오는 중...': 'Loading weather data...',
+    '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.':
+        'Unable to load weather data.\nPlease check your network connection.',
+    '환율 정보': 'Exchange Rate',
+    '환율 새로고침': 'Refresh exchange rate',
+    '환율 정보를 불러오는 중...': 'Loading exchange rates...',
+    '환율 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.':
+        'Unable to load exchange rates.\nPlease check your network connection.',
+    '금액 입력': 'Enter amount',
+    // 이벤트 응모 (스피닝 휠)
+    '쿠폰': 'Coupon',
+    '꽝': 'No Prize',
+    '현재 쿠폰이 모두 소진되었습니다.\n새로운 쿠폰이 추가될 때까지 잠시만 기다려주세요.':
+        'All coupons have been used up.\nPlease wait until new coupons are added.',
+
+    // 필수 정보 화면 - 섹션 타이틀
+    '긴급 연락처': 'Emergency Contacts',
+    '기관 연락처': 'Agency Contacts',
+    '출입국': 'Immigration',
+    '세부 여행지': 'Cebu Destinations',
+    '보홀 · 보라카이': 'Bohol · Boracay',
+
+    // 필수 정보 화면 - 아이템
+    '가와산 폭포': 'Kawasan Falls',
+    '오슬롭 고래상어': 'Oslob Whale Shark',
+    '마젤란 십자가': "Magellan's Cross",
+    '모알보알': 'Moalboal',
+    '오션 파크': 'Ocean Park',
+    '반타얀 섬': 'Bantayan Island',
+    '알로나 비치': 'Alona Beach',
+    '화이트 비치': 'White Beach',
+    '휴일': 'Holidays',
   };
 }

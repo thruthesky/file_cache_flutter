@@ -1,13 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
-import 'package:philgo/globals.dart';
 import 'package:philgo/point/point_advertisement.model.dart';
 import 'package:philgo/point/widgets/point_advertisements.dart';
 import 'package:philgo/post/list/widgets/post_list_masonry_view.dart';
 import 'package:philgo/post/list/widgets/post_list_view.dart';
+import 'package:philgo/post/list/widgets/forum_notification_dialog.dart';
 import 'package:philgo/post/list/widgets/post_list_header_categories.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
@@ -144,38 +144,13 @@ class _ForumScreenState extends State<ForumScreen> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: PostListHeaderCategories(
-                        categories: Config.forumCategories,
-                        selectedIndex: _selectedIndex,
-                        onCategoryTap: _onCategoryTap,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8, top: 8),
-                      child: GestureDetector(
-                        onTap: () => _openSearch(context),
-                        child: Container(
-                          width: 36,
-                          height: 36,
-                          decoration: BoxDecoration(
-                            color: color.surfaceContainerHighest,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Center(
-                            child: FaIcon(
-                              FontAwesomeIcons.lightMagnifyingGlass,
-                              size: 16,
-                              color: color.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                child: PostListHeaderCategories(
+                  categories: Config.forumCategories,
+                  selectedIndex: _selectedIndex,
+                  onCategoryTap: _onCategoryTap,
+                  onSearchTap: () => _openSearch(context),
+                  onNotificationTap: () =>
+                      ForumNotificationDialog.show(context),
                 ),
               ),
             ),
@@ -239,16 +214,16 @@ class _ForumScreenState extends State<ForumScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('차단된 사용자'),
-          content: const Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'),
+          title: Text('차단된 사용자'.tr()),
+          content: Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'.tr()),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('취소'),
+              child: Text('취소'.tr()),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('차단 해제'),
+              child: Text('차단 해제'.tr()),
             ),
           ],
         ),

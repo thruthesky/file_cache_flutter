@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -23,7 +24,7 @@ class PostListErrorIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '게시글을 불러올 수 없습니다',
+            '게시글을 불러올 수 없습니다'.tr(),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 16),
           ),
           const SizedBox(height: 12),
@@ -33,7 +34,7 @@ class PostListErrorIndicator extends StatelessWidget {
               FontAwesomeIcons.lightArrowRotateRight,
               size: 14,
             ),
-            label: const Text('다시 시도'),
+            label: Text('다시 시도'.tr()),
           ),
         ],
       ),

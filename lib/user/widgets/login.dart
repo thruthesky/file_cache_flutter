@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -36,7 +37,7 @@ class Login extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
-          return Center(child: Text("Something went wrong"));
+          return Center(child: Text('오류가 발생했습니다'.tr()));
         }
 
         final user = snapshot.data;

@@ -52,6 +52,9 @@ bool isDeepLinkUrl(Uri uri) {
   if (path == '/company/view') return true;
   if (path == '/company' || path == '/company/') return true;
 
+  // declare chat route here
+  if (path.contains('/chat/')) return true;
+
   return false;
 }
 
@@ -112,8 +115,7 @@ DeepLinkResult? parsePhilgoUrl(String url) {
 
   final isPostList = path == '/post/list' || path.contains('/post/list.php');
 
-  final isChatRoom =
-      path.contains('/chat/index.php') && queryParams.containsKey('id');
+  final isChatRoom = path.contains('/chat/');
 
   final isCompanyView =
       path == '/company/view' || path.contains('/company/view.php');

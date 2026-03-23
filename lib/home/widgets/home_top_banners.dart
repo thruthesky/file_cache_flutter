@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/advertisement/advertisement.model.dart';
 import 'package:philgo/advertisement/advertisement.service.dart';
+import 'package:philgo/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -138,6 +139,27 @@ class _HomeTopBannersState extends State<HomeTopBanners> {
 
   void _openBannerUrl(String url) {
     if (url.isEmpty) return;
+
+    // 숫자만이면 post idx → AdvertisementViewScreen
+    if (RegExp(r'^\d+$').hasMatch(url)) {
+      final idx = int.tryParse(url);
+      if (idx != null && idx > 0) {
+        AdvertisementViewScreen.push(context, idx: idx);
+        return;
+      }
+    }
+
+    // idx=xxx 패턴이면 post idx 추출
+    final match = RegExp(r'idx=(\d+)').firstMatch(url);
+    if (match != null) {
+      final idx = int.tryParse(match.group(1) ?? '');
+      if (idx != null && idx > 0) {
+        AdvertisementViewScreen.push(context, idx: idx);
+        return;
+      }
+    }
+
+    // 일반 URL → 외부 브라우저
     final uri = Uri.tryParse(url);
     if (uri != null) {
       launchUrl(uri, mode: LaunchMode.externalApplication);

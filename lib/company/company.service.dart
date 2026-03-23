@@ -5,6 +5,7 @@ import 'package:philgo/api/api.service.dart';
 
 import 'company.model.dart';
 import 'company_list_result.model.dart';
+import 'review/company_review.model.dart';
 
 /// 업소록 API 서비스
 ///
@@ -158,20 +159,18 @@ class CompanyService {
   /// [idxCompany] 업소 고유번호
   /// [page] 페이지 번호 (기본 1)
   /// [limit] 최대 조회 수 (기본 10)
-  /// 반환: { reviews: [...], total, page, limit }
-  static Future<Map<String, dynamic>> getVisitReviews({
+  /// 반환: CompanyReviewListResult (reviews, total, page, limit)
+  static Future<CompanyReviewListResult> getVisitReviews({
     required int idxCompany,
     int page = 1,
     int limit = 10,
   }) async {
-    return await ApiService.instance.v7api(
+    final result = await ApiService.instance.v7api(
       'company.getVisitReviews',
-      data: {
-        'idx_company': idxCompany,
-        'page': page,
-        'limit': limit,
-      },
+      data: {'idx_company': idxCompany, 'page': page, 'limit': limit},
+      debug: true,
     );
+    return CompanyReviewListResult.fromJson(result);
   }
 
   /// 방문 후기 제출

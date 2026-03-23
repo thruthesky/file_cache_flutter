@@ -27,7 +27,9 @@ import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:philgo/user/widgets/blocked_users_bottom_sheet.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
+import 'package:philgo/notice/notice.screen.dart';
 import 'package:philgo/version/version.screen.dart';
+import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:philgo/webview/webview.screen.dart';
 import 'package:provider/provider.dart';
@@ -388,14 +390,16 @@ class _MenuScreenState extends State<MenuScreen> {
         /// 프로필 이미지
         ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: user.photoUrl.isNotEmpty
-              ? Image.network(
-                  user.photoUrl,
+          child: _isValidPhotoUrl(user.photoUrl)
+              ? CachedNetworkImage(
+                  imageUrl: user.photoUrl,
                   width: 56,
                   height: 56,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      _buildDefaultAvatar(context),
+                  memCacheWidth: 112,
+                  memCacheHeight: 112,
+                  placeholder: (_, _) => _buildDefaultAvatar(context),
+                  errorWidget: (_, _, _) => _buildDefaultAvatar(context),
                 )
               : _buildDefaultAvatar(context),
         ),
@@ -469,6 +473,12 @@ class _MenuScreenState extends State<MenuScreen> {
   }
 
   /// 기본 프로필 아바타
+  bool _isValidPhotoUrl(String url) {
+    if (url.isEmpty || url.trim().isEmpty) return false;
+    if (url.toLowerCase() == 'null') return false;
+    return url.startsWith('http://') || url.startsWith('https://');
+  }
+
   Widget _buildDefaultAvatar(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Container(
@@ -572,8 +582,10 @@ class _MenuScreenState extends State<MenuScreen> {
         '필수 정보'.tr(),
         isHighlighted: true,
       ),
-      _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr()),
-      _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr()),
+      _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr(),
+          onTap: () => NoticeScreen.push(context)),
+      _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr(),
+          onTap: () => ExchangeRateScreen.push(context)),
       _MenuItemData(
         FontAwesomeIcons.lightCloudSun,
         '날씨'.tr(),
