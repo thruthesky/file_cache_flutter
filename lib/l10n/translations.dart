@@ -416,6 +416,10 @@ class Translations {
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': '업소를 가져올 수 없습니다. 다시 시도해주세요.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': '업소가 생성되었습니다. 정보를 입력해주세요.',
 
+    // 광고 상세
+    '글을 불러올 수 없습니다': '글을 불러올 수 없습니다',
+    '글이 존재하지 않습니다': '글이 존재하지 않습니다',
+
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
     '다시 시도': '다시 시도',
@@ -1051,6 +1055,10 @@ class Translations {
     '등록된 업소가 없습니다': 'No businesses registered',
     '업소를 가져올 수 없습니다. 다시 시도해주세요.': 'Unable to load business. Please try again.',
     '업소가 생성되었습니다. 정보를 입력해주세요.': 'Business created. Please enter your info.',
+
+    // 광고 상세
+    '글을 불러올 수 없습니다': 'Unable to load post',
+    '글이 존재하지 않습니다': 'Post does not exist',
 
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',

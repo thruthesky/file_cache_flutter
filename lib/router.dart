@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
@@ -347,6 +348,16 @@ final router = GoRouter(
       path: NoticeScreen.routeName,
       name: NoticeScreen.routeName,
       builder: (context, state) => const NoticeScreen(),
+    ),
+    GoRoute(
+      path: AdvertisementViewScreen.routeName,
+      name: AdvertisementViewScreen.routeName,
+      builder: (context, state) {
+        final idx = state.extra as int? ??
+            int.tryParse(state.uri.queryParameters['idx'] ?? '') ??
+            0;
+        return AdvertisementViewScreen(idx: idx);
+      },
     ),
     GoRoute(
       path: InfoViewScreen.routeName,

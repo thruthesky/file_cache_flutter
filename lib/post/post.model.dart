@@ -67,6 +67,15 @@ class Post {
   final int int1; // int_1: 급여
   final String text1; // text_1: 회사 소개
 
+  // 광고 연락처 필드
+  final String varchar13; // varchar_13: 카카오톡 QR URL
+  final String varchar14; // varchar_14: 텔레그램 ID
+  final String varchar15; // varchar_15: 전화번호
+  final String varchar16; // varchar_16: 위챗 ID
+  final String varchar20; // varchar_20: 라인 QR URL
+  final String text2; // text_2: 위챗 QR 이미지
+  final String text3; // text_3: 라인 ID
+
   // AI 답변 필드
   final String text7; // text_7: AI 답변 내용 (마크다운)
 
@@ -144,6 +153,13 @@ class Post {
     this.varchar9 = '',
     this.int1 = 0,
     this.text1 = '',
+    this.varchar13 = '',
+    this.varchar14 = '',
+    this.varchar15 = '',
+    this.varchar16 = '',
+    this.varchar20 = '',
+    this.text2 = '',
+    this.text3 = '',
     this.text7 = '',
     this.adEndTime = 0,
     this.adStartTime = 0,
@@ -276,6 +292,13 @@ class Post {
       varchar9: json['varchar_9']?.toString() ?? '',
       int1: _toInt(json['int_1']),
       text1: json['text_1']?.toString() ?? '',
+      varchar13: json['varchar_13']?.toString() ?? '',
+      varchar14: json['varchar_14']?.toString() ?? '',
+      varchar15: json['varchar_15']?.toString() ?? '',
+      varchar16: json['varchar_16']?.toString() ?? '',
+      varchar20: json['varchar_20']?.toString() ?? '',
+      text2: json['text_2']?.toString() ?? '',
+      text3: json['text_3']?.toString() ?? '',
       text7: json['text_7']?.toString() ?? '',
       adEndTime: _toInt(json['int_5']),
       adStartTime: _toInt(json['int_6']),
@@ -387,6 +410,13 @@ class Post {
       varchar9: varchar9,
       int1: int1,
       text1: text1,
+      varchar13: varchar13,
+      varchar14: varchar14,
+      varchar15: varchar15,
+      varchar16: varchar16,
+      varchar20: varchar20,
+      text2: text2,
+      text3: text3,
       text7: text7 ?? this.text7,
       adEndTime: adEndTime ?? this.adEndTime,
       adStartTime: adStartTime,
