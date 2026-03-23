@@ -1,3 +1,4 @@
+import 'package:philgo/app/app.screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +20,9 @@ import 'package:url_launcher/url_launcher.dart';
 /// 내 업소인 경우 수정 버튼이 표시된다.
 /// 하단에 방문 후기 섹션이 표시된다 (사진 썸네일 + 후기 CTA).
 class CompanyViewScreen extends StatefulWidget {
-  static const String routeName = '/CompanyView';
+  static const String routeName = '/company/view';
   static Function(BuildContext ctx, {required CompanyModel company}) push =
-      (ctx, {required company}) =>
-          ctx.push(routeName, extra: company);
+      (ctx, {required company}) => ctx.push(routeName, extra: company);
 
   final CompanyModel company;
 
@@ -180,7 +180,9 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 Icons.arrow_back,
                 color: _isCollapsed ? null : Colors.white,
               ),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).canPop()
+                  ? Navigator.of(context).pop()
+                  : context.go(AppScreen.routeName),
             ),
             title: _isCollapsed
                 ? Text(_company.name, style: theme.textTheme.titleLarge)
@@ -193,10 +195,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     size: 20,
                     color: _isCollapsed ? null : Colors.white,
                   ),
-                  onPressed: () => CompanyQrCodeScreen.push(
-                    context,
-                    _company.idx,
-                  ),
+                  onPressed: () =>
+                      CompanyQrCodeScreen.push(context, _company.idx),
                 ),
               if (_isMyCompany)
                 IconButton(

@@ -1,3 +1,4 @@
+import 'package:philgo/app/app.screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -466,6 +467,12 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     foregroundColor: scheme.onSurface,
                     elevation: 0,
                     scrolledUnderElevation: 1,
+                    leading: Navigator.of(context).canPop()
+                        ? null
+                        : IconButton(
+                            icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 18),
+                            onPressed: () => context.go(AppScreen.routeName),
+                          ),
                     actions: [
                       if (!_isLoading)
                         PopupMenuButton<String>(
