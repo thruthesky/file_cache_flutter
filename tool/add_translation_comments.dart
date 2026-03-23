@@ -1,6 +1,7 @@
 import 'dart:io';
 
-/// Usage: cd c:/www/flutter/philgo_app && dart run tool/add_translation_comments.dart
+/// Usage:
+/// cd philgo_app && dart run tool/add_translation_comments.dart
 /// Adds English translation comments above .tr() calls in all Dart files.
 ///
 /// Reads the English translation map from lib/l10n/translations.dart,
