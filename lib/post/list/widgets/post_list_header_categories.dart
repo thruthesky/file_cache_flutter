@@ -1,4 +1,5 @@
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
@@ -42,6 +43,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
 
     final hasMore =
         widget.categories.length > PostListHeaderCategories.collapsedCount;
+    final isLoggedIn = FirebaseAuth.instance.currentUser != null;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
@@ -50,17 +52,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
         runSpacing: 0,
         children: [
           // Search item (always first)
-          _buildIconItem(
-            icon: FontAwesomeIcons.lightMagnifyingGlass,
-            label: '검색'.tr(),
-            onTap: widget.onSearchTap,
-          ),
-          // Notification item (second)
-          _buildIconItem(
-            icon: FontAwesomeIcons.lightBell,
-            label: '알림'.tr(),
-            onTap: widget.onNotificationTap,
-          ),
+          _buildSearchItem(),
           // Category items
           for (int i = 0; i < visibleCount; i++)
             PostListCategoryItem(
@@ -68,10 +60,10 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
               isSelected: i == widget.selectedIndex,
               onTap: () => widget.onCategoryTap(i),
             ),
-          // Show More / Hide toggle
-          if (hasMore)
+          // "더보기" only when collapsed and has more
+          if (hasMore && !_expanded)
             GestureDetector(
-              onTap: () => setState(() => _expanded = !_expanded),
+              onTap: () => setState(() => _expanded = true),
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 8,
@@ -81,7 +73,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _expanded ? '접기'.tr() : '더보기'.tr(),
+                      '더보기'.tr(),
                       style: text.labelMedium?.copyWith(
                         color: color.primary,
                         fontWeight: FontWeight.bold,
@@ -89,13 +81,27 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                     ),
                     const SizedBox(width: 2),
                     FaIcon(
-                      _expanded
-                          ? FontAwesomeIcons.lightChevronUp
-                          : FontAwesomeIcons.lightChevronDown,
+                      FontAwesomeIcons.lightChevronDown,
                       size: 10,
                       color: color.primary,
                     ),
                   ],
+                ),
+              ),
+            ),
+          // Notification icon at the end (only when logged in)
+          if (isLoggedIn)
+            GestureDetector(
+              onTap: widget.onNotificationTap,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                child: FaIcon(
+                  FontAwesomeIcons.lightBell,
+                  size: 14,
+                  color: color.onSurfaceVariant,
                 ),
               ),
             ),
@@ -104,22 +110,22 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
     );
   }
 
-  Widget _buildIconItem({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _buildSearchItem() {
     return GestureDetector(
-      onTap: onTap,
+      onTap: widget.onSearchTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(icon, size: 12, color: color.onSurfaceVariant),
+            FaIcon(
+              FontAwesomeIcons.lightMagnifyingGlass,
+              size: 12,
+              color: color.onSurfaceVariant,
+            ),
             const SizedBox(width: 4),
             Text(
-              label,
+              '검색'.tr(),
               style: text.labelMedium?.copyWith(
                 color: color.onSurfaceVariant,
               ),
