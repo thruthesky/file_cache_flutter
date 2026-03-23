@@ -1,15 +1,13 @@
-# Firebase 웹 SDK 초기화 및 사용 가이드
+# v7 Firebase 웹 SDK 초기화 및 사용 가이드
 
 ## 목차
 
 - [개요](#개요)
-- [Firebase SDK 로딩 구조](#firebase-sdk-로딩-구조)
-- [페이지 라이프사이클과 Firebase 초기화 흐름](#페이지-라이프사이클과-firebase-초기화-흐름)
-- [핵심 함수: ready()](#핵심-함수-ready)
-- [핵심 함수: firebase_ready()](#핵심-함수-firebase_ready)
-- [Firebase 설정(Config) 주입](#firebase-설정config-주입)
-- [Firebase Auth - 인증 상태 감지](#firebase-auth---인증-상태-감지)
-- [Firebase ID Token 관리](#firebase-id-token-관리)
+- [v7 Firebase SDK 로딩 구조](#v7-firebase-sdk-로딩-구조)
+- [defer 스크립트 실행 순서와 타이밍 보장](#defer-스크립트-실행-순서와-타이밍-보장)
+- [firebase_ready()는 일반적으로 불필요](#firebase_ready는-일반적으로-불필요)
+- [v7 페이지에서 Firebase 사용법](#v7-페이지에서-firebase-사용법)
+- [Firebase Auth — 인증 상태 감지](#firebase-auth--인증-상태-감지)
 - [Firebase Realtime Database 사용](#firebase-realtime-database-사용)
 - [Firebase Cloud Messaging (FCM)](#firebase-cloud-messaging-fcm)
 - [Firebase Storage](#firebase-storage)
@@ -21,383 +19,376 @@
 
 ## 개요
 
-필고 웹사이트는 Firebase JavaScript SDK의 **compat (호환) 버전**을 사용한다. compat 버전은 `firebase.xxx()` 네임스페이스 방식의 API를 제공하며, CDN에서 `defer` 속성으로 로딩한다.
+v7에서는 Firebase JavaScript SDK의 **compat (호환) 버전**을 사용함. compat 버전은 `firebase.xxx()` 네임스페이스 방식의 API를 제공하며, CDN에서 `defer` 속성으로 로딩함.
 
 ### 사용하는 Firebase 서비스
 
 | 서비스 | 네임스페이스 | 용도 |
 |--------|------------|------|
 | Authentication | `firebase.auth()` | 사용자 로그인/로그아웃, ID Token 관리 |
-| Realtime Database | `firebase.database()` | 온/오프라인 상태, 채팅 읽지 않은 수 |
+| Realtime Database | `firebase.database()` | 채팅 읽지 않은 수, 온/오프라인 상태 |
 | Cloud Messaging | `firebase.messaging()` | 푸시 알림 (FCM) |
 | Storage | `firebase.storage()` | 파일 업로드/다운로드 |
 
 ### SDK 버전
 
-현재 사용 중인 Firebase SDK 버전: **12.3.0** (compat)
+현재 사용 중인 Firebase SDK 버전: **12.10.0** (compat)
 
 ---
 
-## Firebase SDK 로딩 구조
+## v7 Firebase SDK 로딩 구조
 
-### 로딩 위치와 파일
+v7에서는 `layout.php` 한 곳에서 Firebase SDK 로딩, 설정 주입, 초기화를 모두 처리함.
 
-Firebase SDK는 **`</body>` 직전**에서 로딩된다. `<head>`에서 로딩하지 않는 이유는 페이지 렌더링 성능을 위해서이다.
+### 1단계: 설정 객체 및 유틸리티 함수 정의 (인라인 스크립트)
 
-**로딩 체인:**
-
-```
-page.footer.php
-  └─ modules/final-init.php
-       └─ etc/firebase/firebase-js-setup.php  ← Firebase SDK 스크립트 태그
-```
-
-### 소스 파일: `etc/firebase/firebase-js-setup.php`
+**소스**: `v7/layout.php:186-206`
 
 ```html
-<!-- 파이어베이스 코드를 </body> 직전에 넣어서, 로딩하는데 시간이 걸리지 않도록 한다. -->
-<script defer src="https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/12.3.0/firebase-auth-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/12.3.0/firebase-database-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/12.3.0/firebase-storage-compat.js"></script>
-<script defer src="https://www.gstatic.com/firebasejs/12.3.0/firebase-messaging-compat.js"></script>
 <script>
-    const vapidKey = "<?= get_firebase_vapid_key() ?>"; // FCM VAPID Key
-    const firebaseConfig = <?php echo config()->firebase->web_config_json; ?>;
-    ready(() => {
-        firebase_ready(() => {});
+    function ready(fn) {
+        if (document.readyState !== 'loading') fn();
+        else document.addEventListener('DOMContentLoaded', fn);
+    }
+    window._v7fb = {
+        ready: false,
+        cbs: [],
+        config: <?= Config::firebaseConfigJson() ?>,
+        vapidKey: "<?= Config::firebaseVapidKey() ?>",
+        isDev: <?= Env::isDev() ? 'true' : 'false' ?>
+    };
 
-        // 인증 상태 변화 감지 및 온/오프라인 상태 관리
-        firebase.auth().onAuthStateChanged(async function(user) {
-            if (user) {
-                appConfig.token = await user.getIdToken();
-                // 온/오프라인 Presence 시스템 등록
-                const database = firebase.database();
-                const myConnectionsRef = database.ref(`status/${user.uid}/connections`);
-                const lastChangedRef = database.ref(`status/${user.uid}/last_changed`);
-                const connectedRef = database.ref('.info/connected');
-                connectedRef.on('value', (snap) => {
-                    if (snap.val() === true) {
-                        var ref = myConnectionsRef.push();
-                        ref.set(true);
-                        ref.onDisconnect().remove();
-                        lastChangedRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
-                    }
-                });
-            } else {
-                appConfig.token = "";
-            }
-        });
-    });
+    function firebase_ready(fn) {
+        if (window._v7fb.ready) {
+            fn();
+            return;
+        }
+        window._v7fb.cbs.push(fn);
+    }
 </script>
 ```
 
-**핵심 포인트:**
+- `window._v7fb.config`: PHP에서 주입된 Firebase 설정 (apiKey, authDomain 등)
+- `window._v7fb.ready`: Firebase 초기화 완료 플래그
+- `window._v7fb.cbs`: 초기화 전에 등록된 콜백 큐
+- `firebase_ready(fn)`: 초기화 완료 시 즉시 실행, 미완료 시 큐에 push
 
-- 5개의 Firebase SDK 스크립트가 모두 `defer` 속성으로 로딩됨
-- `vapidKey`와 `firebaseConfig`는 PHP에서 서버 설정 값을 주입
-- `ready()` 콜백 안에서 `firebase_ready(() => {})`를 호출하여 Firebase 앱을 초기화
-- `onAuthStateChanged`로 로그인 사용자의 ID Token을 `appConfig.token`에 저장
-- 온/오프라인 Presence 시스템을 RTDB로 관리
+### 2단계: Firebase SDK defer 로딩
 
----
+**소스**: `v7/layout.php:208-213`
 
-## 페이지 라이프사이클과 Firebase 초기화 흐름
-
-전체 흐름을 시간 순서대로 정리하면:
-
-```
-[1] 브라우저가 HTML 파싱 시작
-    │
-[2] <head> 파싱 - etc/default-head-javascript.php 실행
-    │  ├─ ready() 함수 정의
-    │  ├─ firebase_ready() 함수 정의
-    │  └─ (아직 Firebase SDK는 로딩되지 않음)
-    │
-[3] <body> 파싱 - 페이지 콘텐츠 렌더링
-    │
-[4] </body> 직전 - modules/final-init.php 실행
-    │  ├─ etc/firebase/firebase-js-setup.php include
-    │  │   ├─ Firebase SDK 5개 <script defer> 태그 삽입
-    │  │   ├─ vapidKey, firebaseConfig 전역 변수 선언
-    │  │   └─ ready(() => { firebase_ready(() => {}); ... }) 등록
-    │  │
-    │  ├─ appConfig, __HYDRATE__ 전역 변수 선언
-    │  ├─ firebase_ready(() => { messaging.onMessage(...) }) 등록
-    │  ├─ firebase_ready(() => { onAuthStateChanged(...) }) 등록 (채팅 알림)
-    │  └─ FCM 권한 요청 로직 등록
-    │
-[5] DOMContentLoaded 이벤트 발생
-    │  ├─ initialize_on_ready() 실행 (Vue 전역 스토어 초기화)
-    │  ├─ 모든 ready() 콜백 실행
-    │  │   └─ firebase_ready() 콜백들 실행
-    │  │       ├─ 첫 번째 호출: firebase.initializeApp(firebaseConfig)
-    │  │       └─ 이후 호출: 이미 초기화됨 → 콜백 즉시 실행
-    │  │
-    │  └─ Firebase 서비스 사용 가능
-    │
-[6] Firebase Auth 상태 확인
-    ├─ 로그인 상태: onAuthStateChanged에서 user 객체 수신
-    │   ├─ ID Token 저장
-    │   ├─ Presence 등록
-    │   └─ 채팅 알림 리스너 등록
-    └─ 비로그인 상태: user === null
+```html
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-auth-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-database-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-storage-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js"></script>
 ```
 
----
+### 3단계: Firebase 초기화 실행
 
-## 핵심 함수: ready()
-
-### 소스 파일: `etc/default-head-javascript.php`
+**소스**: `v7/js/firebase-init.js`
 
 ```javascript
-/** DOMContentLoaded 이벤트가 발생했을 때 실행할 함수 등록. */
-function ready(fn) {
-    if (document.readyState !== "loading") {
-        initialize_on_ready();
-        fn();
-        return;
+(function() {
+    if (typeof firebase !== 'undefined' && window._v7fb && !window._v7fb.ready) {
+        firebase.initializeApp(window._v7fb.config);
+        window._v7fb.ready = true;
+        window._v7fb.cbs.forEach(function(fn) {
+            try { fn(); } catch(e) { console.error('firebase_ready 콜백 에러:', e); }
+        });
+        window._v7fb.cbs = [];
     }
-    document.addEventListener("DOMContentLoaded", () => {
-        initialize_on_ready();
-        fn();
-    });
-}
+})();
 ```
 
-### 동작 설명
-
-- `document.readyState`가 이미 `"loading"`이 아니면 (= DOM 파싱 완료됨) 즉시 실행
-- 아직 로딩 중이면 `DOMContentLoaded` 이벤트 리스너에 등록
-- 콜백 실행 전 항상 `initialize_on_ready()`를 먼저 호출하여 Vue 전역 스토어를 초기화
-- **모든 JavaScript 코드는 반드시 `ready(() => { ... })` 안에서 실행해야 한다** (defer 로딩 때문)
+- `firebase-init.js`도 `defer`로 로딩되며, SDK 스크립트들보다 **아래에 선언**되어 있으므로 반드시 SDK 이후에 실행됨
+- 초기화 완료 후 `_v7fb.ready = true`로 설정하고, 큐에 쌓인 콜백들을 순차 실행
+- 이후 `firebase_ready(fn)` 호출 시 즉시 실행됨
 
 ---
 
-## 핵심 함수: firebase_ready()
+## defer 스크립트 실행 순서와 타이밍 보장
 
-### 소스 파일: `etc/default-head-javascript.php`
+### 핵심: defer 스크립트는 선언 순서대로 실행됨
 
-```javascript
-// Firebase 초기화 함수. 여러번 호출해도 한번만 초기화 함.
-function firebase_ready(callback) {
-    ready(() => {
-        if (typeof firebase === 'undefined') {
-            throw new Error("No firebase. Firebase SDK script not loaded.");
-        }
-        if (firebase.apps.length > 0) {
-            // 이미 초기화 되었으면 바로 콜백 호출
-            callback();
-            return;
-        }
-        // 파이어베이스 app 초기화
-        firebase.initializeApp(firebaseConfig);
-        console.log("---> Firebase 초기화 됨");
-        callback();
-    })
-}
+HTML 표준 스펙에 의해, `defer` 속성이 붙은 외부 스크립트는 **다운로드는 병렬**로 하되, **실행은 HTML에 선언된 순서를 반드시 보장**함. 이것이 `async`와의 핵심 차이임.
+
+| 속성 | 다운로드 | 실행 순서 | 실행 시점 |
+|------|---------|----------|----------|
+| (없음) | 즉시 | 선언 순서 | 즉시 (HTML 파싱 블로킹) |
+| `defer` | 병렬 | **선언 순서 보장** | HTML 파싱 완료 후, DOMContentLoaded 직전 |
+| `async` | 병렬 | 도착 순서 (비보장) | 다운로드 완료 즉시 |
+
+### v7 layout.php의 실제 실행 순서
+
+```
+선언 순서 (layout.php)              실행 순서 (브라우저)
+─────────────────────              ─────────────────────
+209: firebase-app-compat.js        1번째 실행
+210: firebase-auth-compat.js       2번째 실행
+211: firebase-database-compat.js   3번째 실행
+212: firebase-storage-compat.js    4번째 실행
+213: firebase-messaging-compat.js  5번째 실행
+216: firebase-init.js              6번째 실행 (SDK 모두 로딩된 후)
+219: chat-unread.js                7번째 실행
+... 이하 defer 스크립트들 ...       선언 순서대로
 ```
 
-### 동작 설명
+### 타이밍 문제가 발생하지 않는 이유
 
-1. `ready()` 안에서 실행 → DOMContentLoaded 이후 실행 보장
-2. `firebase` 글로벌 객체 존재 확인 → 없으면 에러 발생
-3. **싱글톤 패턴**: `firebase.apps.length > 0`이면 이미 초기화됨 → 콜백 즉시 실행
-4. 초기화 안 됐으면 `firebase.initializeApp(firebaseConfig)` 호출 후 콜백 실행
-5. **여러 번 호출해도 `initializeApp()`은 한 번만 실행됨**
+1. **defer 스크립트 간 순서 보장**: `firebase-init.js`가 SDK 스크립트들보다 아래에 선언되어 있으므로, SDK가 모두 실행된 후에 `firebase.initializeApp()`이 호출됨. `firebase-init.js`가 먼저 실행될 가능성은 **불가능**함.
 
-### 사용 예시
+2. **defer → DOMContentLoaded 순서 보장**: HTML 스펙에 의해 모든 `defer` 스크립트가 실행 완료된 후에 `DOMContentLoaded` 이벤트가 발생함. 따라서 `ready()` 콜백이나 `DOMContentLoaded` 핸들러 안에서는 Firebase가 **100% 초기화 완료** 상태임.
+
+3. **사용자 인터랙션 시점**: Vue.js 앱의 버튼 클릭 등 사용자 이벤트 핸들러가 실행되는 시점은 페이지 로드 완료 이후이므로, Firebase가 초기화되지 않았을 가능성은 **없음**.
+
+```
+[타임라인]
+
+HTML 파싱 시작
+    │
+    ├─ <script> (인라인): ready(), firebase_ready(), _v7fb 정의
+    │
+    ├─ <script defer> SDK 5개 + firebase-init.js + 기타: 병렬 다운로드 시작
+    │
+HTML 파싱 완료
+    │
+    ├─ firebase-app-compat.js 실행     ← defer 순서 1
+    ├─ firebase-auth-compat.js 실행    ← defer 순서 2
+    ├─ firebase-database-compat.js 실행 ← defer 순서 3
+    ├─ firebase-storage-compat.js 실행  ← defer 순서 4
+    ├─ firebase-messaging-compat.js 실행 ← defer 순서 5
+    ├─ firebase-init.js 실행            ← defer 순서 6 (여기서 initializeApp)
+    ├─ chat-unread.js 실행              ← defer 순서 7
+    ├─ fcm.js 실행                      ← defer 순서 8
+    │  ... 기타 defer 스크립트 ...
+    │
+DOMContentLoaded 이벤트 발생
+    │  ├─ ready() 콜백들 실행
+    │  └─ Vue.createApp().mount() 실행
+    │
+사용자 인터랙션 가능 (Firebase는 이미 초기화 완료)
+```
+
+---
+
+## firebase_ready()는 일반적으로 불필요
+
+### 왜 불필요한가
+
+`firebase-init.js`가 `defer`로 로딩되어 다른 모든 `defer` 스크립트 및 `DOMContentLoaded` 이전에 실행됨. 따라서 다음 상황에서는 Firebase가 **항상 초기화되어 있으므로** `firebase_ready()`를 호출할 필요 없음:
+
+| 상황 | Firebase 초기화 상태 | firebase_ready() 필요 여부 |
+|------|---------------------|--------------------------|
+| `ready(() => { ... })` 콜백 안 | 초기화 완료 | 불필요 |
+| `DOMContentLoaded` 핸들러 안 | 초기화 완료 | 불필요 |
+| Vue.js `mounted()` 안 | 초기화 완료 | 불필요 |
+| Vue.js `methods`의 이벤트 핸들러 안 | 초기화 완료 | 불필요 |
+| 다른 `defer` 스크립트 안 (firebase-init.js 이후 선언) | 초기화 완료 | 불필요 |
+
+### 올바른 사용법 (직접 호출)
 
 ```javascript
-// 위젯이나 페이지에서 Firebase를 사용할 때
-firebase_ready(() => {
-    // 여기서 Firebase 서비스를 안전하게 사용할 수 있다
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            console.log('로그인됨:', user.uid);
-        }
-    });
+// v7 페이지에서 Firebase를 바로 사용할 수 있음
+ready(() => {
+    Vue.createApp({
+        methods: {
+            async doLogout() {
+                await firebase.auth().signOut();
+                window.location.href = '/';
+            },
+        },
+    }).mount('#my-app');
 });
 ```
 
-### Firebase 준비 상태 확인 방법
+```javascript
+// defer 스크립트에서도 바로 사용 가능 (firebase-init.js 이후에 선언된 경우)
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+        console.log('로그인됨:', user.uid);
+    }
+});
+```
 
-| 확인 방법 | 코드 | 설명 |
-|-----------|------|------|
-| SDK 로딩 여부 | `typeof firebase !== 'undefined'` | Firebase SDK 스크립트가 로딩되었는지 |
-| 앱 초기화 여부 | `firebase.apps.length > 0` | `initializeApp()`이 호출되었는지 |
-| 안전한 사용 방법 | `firebase_ready(() => { ... })` | 모든 조건을 자동으로 보장 |
+### firebase_ready()가 여전히 필요한 경우
 
-**항상 `firebase_ready()` 래퍼를 사용하는 것을 권장한다.** 직접 `firebase.apps.length`를 확인하는 것보다 안전하고 일관적이다.
+`firebase_ready()`는 **firebase-init.js보다 먼저 실행될 수 있는 스크립트**에서만 필요함. 실제로 이런 경우는 거의 없지만, 예를 들면:
+
+- layout.php의 인라인 `<script>`에서 Firebase를 사용해야 하는 경우 (인라인 스크립트는 defer보다 먼저 실행됨)
+- `firebase-init.js`보다 위에 선언된 defer 스크립트에서 Firebase를 사용하는 경우
+
+이런 특수한 경우에만 `firebase_ready()`로 감싸면 됨.
+
+### 실제 사용 예시: firebase_ready() 불필요
+
+```javascript
+// v7/js/fcm.js (firebase-init.js 이후에 defer로 선언됨)
+// firebase_ready()로 감싸져 있지만, 실제로는 직접 호출해도 동작함
+firebase_ready(async function () {
+    // FCM 토큰 처리...
+});
+```
+
+```javascript
+// v7/js/chat-unread.js (firebase-init.js 이후에 defer로 선언됨)
+// firebase_ready()로 감싸져 있지만, 불필요함
+firebase_ready(function () {
+    firebase.auth().onAuthStateChanged(function(user) { ... });
+});
+```
+
+> **정리**: 기존 코드에 `firebase_ready()`가 사용된 곳이 있지만, v7 layout.php 구조에서는 대부분 불필요함. 새 코드 작성 시에는 `firebase_ready()` 없이 직접 `firebase.auth()` 등을 호출하면 됨.
 
 ---
 
-## Firebase 설정(Config) 주입
+## v7 페이지에서 Firebase 사용법
 
-### PHP 서버에서 설정 값 주입
+### 기본 원칙
 
-```javascript
-// etc/firebase/firebase-js-setup.php 에서
-const vapidKey = "<?= get_firebase_vapid_key() ?>"; // FCM VAPID Key
-const firebaseConfig = <?php echo config()->firebase->web_config_json; ?>;
+1. **Firebase SDK를 중복 로딩하지 않음** — layout.php에서 이미 로딩됨
+2. **`firebase.initializeApp()`을 직접 호출하지 않음** — firebase-init.js에서 이미 처리됨
+3. **`firebase_ready()`로 감쌀 필요 없음** — defer 순서에 의해 항상 초기화 완료 상태
+
+### 올바른 패턴 vs 잘못된 패턴
+
+```php
+<!-- 잘못된 패턴: SDK 중복 로딩 + 수동 초기화 -->
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js"></script>
+<script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-auth-compat.js"></script>
+<script>
+ready(() => {
+    const firebaseConfig = <?= firebase_config_json() ?>;
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+    firebase.auth().signOut();
+});
+</script>
+
+<!-- 올바른 패턴: 직접 사용 -->
+<script>
+ready(() => {
+    firebase.auth().signOut();
+});
+</script>
 ```
 
-- `firebaseConfig`: Firebase 프로젝트 설정 (apiKey, authDomain, projectId 등)
-- `vapidKey`: FCM 푸시 알림용 VAPID Key
+### 실제 적용 사례
 
-### firebaseConfig 객체 구조
+#### 로그아웃 (v7/user/logout.php)
 
 ```javascript
-const firebaseConfig = {
-    apiKey: "...",
-    authDomain: "xxx.firebaseapp.com",
-    databaseURL: "https://xxx.firebaseio.com",
-    projectId: "xxx",
-    storageBucket: "xxx.firebasestorage.app",
-    messagingSenderId: "...",
-    appId: "...",
-    measurementId: "..."
-};
+ready(async function() {
+    // Firebase 로그아웃 (layout.php에서 이미 초기화됨)
+    try {
+        await firebase.auth().signOut();
+    } catch (e) {
+        console.warn('[Logout] Firebase signOut 실패 (무시):', e.message);
+    }
+    window.location.href = '/';
+});
 ```
 
-- PHP 설정 파일 `etc/app.config.php`에서 관리됨
-- `config()->firebase->web_config_json`으로 JSON 문자열 출력
+#### 회원 탈퇴 (v7/user/resign.php)
+
+```javascript
+// Vue.js methods 안에서 직접 사용
+async doResign() {
+    const result = await v7api('user.resign', {});
+    try {
+        await firebase.auth().signOut();
+    } catch (e) {
+        console.warn('[Resign] Firebase signOut 실패 (무시):', e.message);
+    }
+    alert(result.message);
+    window.location.href = '/';
+},
+```
+
+#### 카카오/네이버 로그인 완료 (v7/auth/kakao/complete.php, v7/auth/naver/complete.php)
+
+```javascript
+// Vue.js mounted() 안에서 직접 사용
+async mounted() {
+    try {
+        const result = await firebase.auth().signInWithCustomToken(customToken);
+        const idToken = await result.user.getIdToken();
+        await v7api('user.socialLogin', { id_token: idToken, login_provider: 'kakaotalk' });
+        window.location.href = '/';
+    } catch (e) {
+        this.error = e.message;
+    }
+},
+```
 
 ---
 
-## Firebase Auth - 인증 상태 감지
+## Firebase Auth — 인증 상태 감지
 
 ### 핵심 패턴: onAuthStateChanged
 
-Firebase 인증 상태 변화를 감지하는 패턴은 프로젝트 전체에서 일관되게 사용된다.
-
 ```javascript
-firebase_ready(() => {
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            // 로그인 상태
-            const uid = user.uid;
-            const email = user.email;
-            // user.getIdToken()으로 서버 API 인증용 토큰 획득 가능
-        } else {
-            // 비로그인 상태
-        }
-    });
-});
-```
-
-### 사용 위치 (실제 소스코드)
-
-| 파일 | 용도 |
-|------|------|
-| `etc/firebase/firebase-js-setup.php` | ID Token 저장, Presence 관리 |
-| `modules/final-init.php:199` | 채팅 읽지 않은 메시지 수 표시 |
-| `widgets/user/login.php:223` | 로그인 UI 처리 |
-| `chat/list.php:113` | 채팅 목록 Firebase 연동 |
-
----
-
-## Firebase ID Token 관리
-
-### 소스 파일: `etc/firebase/firebase-js-setup.php`
-
-```javascript
-firebase.auth().onAuthStateChanged(async function(user) {
+// defer 스크립트에서 직접 사용 가능 (firebase-init.js 이후 선언된 경우)
+firebase.auth().onAuthStateChanged(function(user) {
     if (user) {
-        appConfig.token = await user.getIdToken();
+        // 로그인 상태
+        const uid = user.uid;
+        const email = user.email;
     } else {
-        appConfig.token = "";
+        // 비로그인 상태
     }
 });
 ```
 
-### 전역 접근
+### ID Token 획득
 
 ```javascript
-// modules/final-init.php 에서 선언됨
-window.appConfig = {
-    api: { ... },   // PHP에서 주입된 API 설정
-    token: "",       // Firebase ID Token (로그인 후 자동 설정됨)
-};
+// 로그인된 사용자의 Firebase ID Token 획득
+const user = firebase.auth().currentUser;
+if (user) {
+    const idToken = await user.getIdToken();
+    // 서버 API 호출에 사용
+}
 ```
-
-- `appConfig.token`은 `onAuthStateChanged` 콜백에서 자동으로 설정됨
-- 서버 API 호출 시 이 토큰을 사용하여 사용자 인증
-- `func()` 함수에서 `auth: true` 옵션으로 자동 포함 가능
 
 ---
 
 ## Firebase Realtime Database 사용
 
-### Presence (온/오프라인 상태) 시스템
-
-```javascript
-// etc/firebase/firebase-js-setup.php
-firebase.auth().onAuthStateChanged(async function(user) {
-    if (user) {
-        const database = firebase.database();
-        const myConnectionsRef = database.ref(`status/${user.uid}/connections`);
-        const lastChangedRef = database.ref(`status/${user.uid}/last_changed`);
-        const connectedRef = database.ref('.info/connected');
-
-        connectedRef.on('value', (snap) => {
-            if (snap.val() === true) {
-                var ref = myConnectionsRef.push();
-                ref.set(true);
-                ref.onDisconnect().remove();
-                lastChangedRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
-            }
-        });
-    }
-});
-```
-
 ### 채팅 읽지 않은 메시지 수 (실시간 감시)
 
+**소스**: `v7/js/chat-unread.js`
+
 ```javascript
-// modules/final-init.php
-firebase_ready(() => {
+firebase_ready(function () {
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             const uid = user.uid;
-            const database = firebase.database();
-            database.ref(`users/${uid}/chatUnreadCount`).on('value', (snapshot) => {
-                const chatUnreadCount = snapshot.val() || 0;
-                document.querySelectorAll('.chat-unread-count').forEach(el => {
-                    if (chatUnreadCount > 0) {
-                        el.style.display = 'inline-block';
-                        el.textContent = chatUnreadCount > 99 ? '99+' : chatUnreadCount;
-                    } else {
-                        el.style.display = 'none';
-                        el.textContent = '';
-                    }
-                });
-                if (chatUnreadCount > 0) {
-                    play_beep_sound();
-                }
-            });
-        } else {
-            document.querySelectorAll('.chat-unread-count').forEach(el => {
-                el.style.display = 'none';
-                el.textContent = '';
+            firebase.database().ref(`chat-rooms/${uid}/unread-count-total`).on('value', (snapshot) => {
+                const count = snapshot.val() || 0;
+                // 배지 UI 업데이트
             });
         }
     });
 });
 ```
 
-### 사용자 정보 로드 (js/user.js)
+### 데이터 읽기/쓰기
 
 ```javascript
-async function getUser(uid) {
-    const snapshot = await firebase.database().ref(`users/${uid}`).once('value');
-    const userData = snapshot.val();
-    if (userData) {
-        userData.photoUrl = userData.photoUrl || userData.photo_url;
-        return userData;
-    }
-    return null;
-}
+// 데이터 읽기
+const snapshot = await firebase.database().ref(`users/${uid}`).once('value');
+const userData = snapshot.val();
+
+// 데이터 쓰기
+await firebase.database().ref(`users/${uid}/nickname`).set('새닉네임');
+
+// 실시간 감시
+firebase.database().ref(`path/to/data`).on('value', (snapshot) => {
+    const data = snapshot.val();
+});
 ```
 
 ---
@@ -406,98 +397,76 @@ async function getUser(uid) {
 
 ### FCM 초기화 및 메시지 수신
 
+**소스**: `v7/js/fcm.js`
+
 ```javascript
-// modules/final-init.php
-firebase_ready(() => {
+firebase_ready(async function () {
+    // 페이지 로드 카운터 증가
+    increase_page_load_counter();
+
+    firebase.auth().onAuthStateChanged(async function(user) {
+        if (user) {
+            // FCM 권한 요청 및 토큰 저장
+        }
+    });
+
+    // 포그라운드 메시지 수신
     const messaging = firebase.messaging();
     messaging.onMessage((payload) => {
-        // 앱이 포커스 상태일 때 메시지 수신
+        // 알림 표시
     });
 });
 ```
 
-### FCM 토큰 획득 흐름
+### FCM 토큰 획득
 
 ```javascript
-// js/app.js
-async function get_fcm_token() {
-    const current_permission = get_notification_permission();
-    if (current_permission !== 'granted') {
-        const permission = await Notification.requestPermission();
-        if (permission !== 'granted') {
-            throw new Error("푸시 알림 권한이 거부되었습니다.");
-        }
+async function getFcmToken() {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+        throw new Error('푸시 알림 권한이 거부됨');
     }
     const messaging = firebase.messaging();
-    const token = await messaging.getToken({ vapidKey: vapidKey });
+    const token = await messaging.getToken({ vapidKey: window._v7fb.vapidKey });
     return token;
 }
 ```
-
-### FCM 권한 요청 흐름 (modules/final-init.php)
-
-```
-[1] 페이지 로드 카운터 확인 (increase_page_load_counter())
-    │
-[2] 10회 이상 방문 시 → begin_fcm_permission_request() 호출
-    │
-[3] 이미 granted → request_now() → 토큰 획득 및 서버 저장
-    │
-[4] denied → 설정 페이지 유도 다이얼로그 표시
-    │
-[5] default → 권한 요청 다이얼로그 표시 → 허용 시 request_now()
-```
-
-### FCM 관련 핵심 함수 (js/app.js)
-
-| 함수 | 설명 |
-|------|------|
-| `get_fcm_token()` | FCM 토큰 획득 (권한 요청 포함) |
-| `save_fcm_token(token)` | 토큰을 서버에 저장 (변경 시에만) |
-| `update_fcm_token(token, uid)` | 토큰에 Firebase UID 연결 |
-| `get_notification_permission()` | 알림 권한 상태 반환 ('granted'/'denied'/'default'/'unsupported') |
-| `can_show_fcm_dialog(isDev)` | FCM 다이얼로그 표시 가능 여부 (시간 제한) |
-| `increase_page_load_counter()` | 페이지 로드 카운터 증가 |
-| `update_fcm_dialog_time()` | 다이얼로그 표시 시간 기록 |
 
 ---
 
 ## Firebase Storage
 
-Firebase Storage SDK가 로딩되어 있으므로 다음과 같이 사용 가능하다:
-
 ```javascript
-firebase_ready(() => {
-    const storageRef = firebase.storage().ref();
-    // 파일 업로드/다운로드 작업
-});
+// Firebase Storage 사용 (layout.php에서 SDK 이미 로딩됨)
+const storageRef = firebase.storage().ref();
+const fileRef = storageRef.child('uploads/photo.jpg');
+
+// 파일 업로드
+await fileRef.put(file);
+
+// 다운로드 URL 획득
+const url = await fileRef.getDownloadURL();
 ```
 
 ---
 
 ## 서비스 워커 (Service Worker)
 
-### 소스 파일: `firebase-messaging-sw.js` (웹 루트)
+**소스**: `firebase-messaging-sw.js` (웹 루트)
 
 ```javascript
-importScripts("https://www.gstatic.com/firebasejs/12.3.0/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/12.3.0/firebase-messaging-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js");
+importScripts("https://www.gstatic.com/firebasejs/12.10.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
     apiKey: "...",
-    authDomain: "...",
-    databaseURL: "...",
-    projectId: "...",
-    storageBucket: "...",
-    messagingSenderId: "...",
-    appId: "...",
-    measurementId: "..."
+    // ... Firebase 설정
 });
 
 firebase.messaging();
 ```
 
-- 서비스 워커는 별도의 스레드에서 실행되므로 독립적으로 Firebase를 초기화함
+- 서비스 워커는 별도의 스레드에서 실행되므로 독립적으로 Firebase를 초기화해야 함
 - 앱이 백그라운드일 때 푸시 알림을 수신/표시하는 역할
 - `firebase-messaging-sw.js`는 반드시 **웹 루트**에 위치해야 함
 
@@ -505,63 +474,90 @@ firebase.messaging();
 
 ## 전체 초기화 순서 요약
 
-### 관련 파일 순서
+### v7 관련 파일
 
 ```
-1. etc/default-head-javascript.php     ← <head>에서 로딩. ready(), firebase_ready() 함수 정의
-2. etc/firebase/firebase-js-setup.php  ← </body> 직전. Firebase SDK 로딩 + Config 주입 + 초기 이벤트 등록
-3. modules/final-init.php              ← </body> 직전. appConfig/HYDRATE 선언, FCM/RTDB 리스너 등록
-4. js/app.js                           ← defer 로딩. FCM 토큰 관련 함수, func() API 호출 함수 등
-5. firebase-messaging-sw.js            ← 서비스 워커. 백그라운드 FCM 수신
+1. v7/layout.php (인라인 <script>)
+   ├─ ready() 함수 정의
+   ├─ firebase_ready() 함수 정의
+   └─ window._v7fb 객체 생성 (config, vapidKey, cbs, ready 플래그)
+
+2. v7/layout.php (defer <script> 태그들)
+   ├─ firebase-app-compat.js      ← defer 1
+   ├─ firebase-auth-compat.js     ← defer 2
+   ├─ firebase-database-compat.js ← defer 3
+   ├─ firebase-storage-compat.js  ← defer 4
+   ├─ firebase-messaging-compat.js ← defer 5
+   └─ firebase-init.js            ← defer 6 (initializeApp 실행)
+
+3. v7/js/firebase-init.js
+   ├─ firebase.initializeApp(window._v7fb.config)
+   ├─ window._v7fb.ready = true
+   └─ 큐에 쌓인 firebase_ready() 콜백들 실행
+
+4. DOMContentLoaded 이벤트
+   └─ ready() 콜백들 실행 (이 시점에서 Firebase 100% 초기화 완료)
 ```
 
-### 변수/객체 흐름
+### 핵심 정리
 
-```
-[PHP 서버]
-    ├─ config()->firebase->web_config_json  → firebaseConfig (JS 전역)
-    ├─ get_firebase_vapid_key()             → vapidKey (JS 전역)
-    └─ login()?->toArray()                  → window.__HYDRATE__.user (JS 전역)
-
-[JavaScript 전역]
-    ├─ window.appConfig.token               ← Firebase ID Token (Auth 상태 변화 시 갱신)
-    ├─ window.state.user                    ← Vue reactive 사용자 정보
-    └─ window.__HYDRATE__                   ← PHP에서 주입된 초기 데이터
-```
+| 항목 | 설명 |
+|------|------|
+| SDK 로딩 위치 | `v7/layout.php` (유일) |
+| 초기화 위치 | `v7/js/firebase-init.js` (유일) |
+| 설정 주입 방식 | `window._v7fb.config` (PHP → JS) |
+| 타이밍 보장 | `defer` 선언 순서에 의해 SDK → init 순서 보장 |
+| `firebase_ready()` | 대부분 불필요, 직접 호출 가능 |
 
 ---
 
 ## 주의사항 및 안티패턴
 
-### 반드시 지켜야 할 것
-
-1. **Firebase 코드는 항상 `firebase_ready()` 안에서 실행한다**
-   ```javascript
-   // 올바른 사용법
-   firebase_ready(() => {
-       firebase.auth().onAuthStateChanged(...);
-   });
-   ```
-
-2. **`ready()` 래퍼로 모든 JavaScript를 감싼다** (defer 로딩 때문)
-   ```javascript
-   ready(() => {
-       // DOM 및 라이브러리 접근 가능
-   });
-   ```
-
-3. **Firebase SDK를 중복 로딩하지 않는다** — `etc/firebase/firebase-js-setup.php`에서 이미 로딩됨
-
 ### 절대 하지 말아야 할 것
 
-1. **`firebase_ready()` 없이 직접 Firebase 사용 금지**
-   ```javascript
-   // 잘못된 사용법 - SDK 로딩 전에 실행될 수 있음
-   firebase.auth().onAuthStateChanged(...); // Error!
+1. **Firebase SDK를 개별 페이지에서 중복 로딩 금지**
+   ```html
+   <!-- 금지: layout.php에서 이미 로딩됨 -->
+   <script defer src="https://www.gstatic.com/firebasejs/12.10.0/firebase-app-compat.js"></script>
    ```
 
-2. **`firebase.initializeApp()` 직접 호출 금지** — `firebase_ready()`가 자동으로 처리
+2. **`firebase.initializeApp()` 직접 호출 금지**
+   ```javascript
+   // 금지: firebase-init.js에서 이미 처리됨
+   firebase.initializeApp(firebaseConfig);
+   ```
 
-3. **Firebase SDK 스크립트를 `<head>`에 넣지 않는다** — 성능 문제 발생
+3. **`firebase_config_json()` PHP 함수를 JS에 인라인 주입 금지**
+   ```javascript
+   // 금지: layout.php의 window._v7fb.config으로 이미 주입됨
+   const firebaseConfig = <?= firebase_config_json() ?>;
+   ```
 
-4. **`const { createApp, ref } = Vue;` 구조 분해 할당 사용 금지** — defer 로딩 환경에서 오류 발생 가능
+4. **Firebase SDK를 `<head>`에 넣지 않음** — 성능 문제 발생
+
+5. **`const { createApp, ref } = Vue;` 구조 분해 할당 금지** — v7 Vue.js 규칙
+
+### 올바른 패턴
+
+1. **Firebase는 바로 사용** — `ready()` 또는 Vue.js `mounted()` 안에서 직접 호출
+   ```javascript
+   ready(() => {
+       firebase.auth().signOut();
+   });
+   ```
+
+2. **signOut 실패는 catch로 무시** — 서버 측 세션이 이미 처리된 경우가 많음
+   ```javascript
+   try {
+       await firebase.auth().signOut();
+   } catch (e) {
+       console.warn('Firebase signOut 실패 (무시):', e.message);
+   }
+   ```
+
+3. **`ready()` 래퍼로 모든 JavaScript를 감쌈** (defer 로딩 때문)
+   ```javascript
+   ready(() => {
+       // DOM 및 모든 라이브러리 접근 가능
+   });
+   ```
