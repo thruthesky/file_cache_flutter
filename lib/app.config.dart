@@ -26,6 +26,14 @@ class Config {
     return '${uri.scheme}://${uri.host}';
   }();
 
+  /// Play Store URL
+  static const String playstoreUrl =
+      'https://play.google.com/store/apps/details?id=com.withcenter.philgo';
+
+  /// App Store URL
+  static const String appstoreUrl =
+      'https://apps.apple.com/us/app/philgo/id1480215987';
+
   /// Masonry 레이아웃을 사용하는 게시판/카테고리 목록
   /// v7/utils/Config.php의 masonryCategories()와 동일
   static const masonryCategories = <String>{

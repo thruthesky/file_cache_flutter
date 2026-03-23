@@ -13,8 +13,7 @@
 - [x] Emergency contact screen — `lib/info/essential_info.screen.dart` (integrated into Essential Info with InfoAccessCodes) (2026-03-23)
 - [x] Policy acceptance links — Terms/Privacy links on login screen (`lib/user/login/user.login.screen.dart`) with FA icons + url_launcher, plus menu WebView items (2026-03-23)
 - [ ] Phone sign-in (OTP) — Phone number login. _Note: v7 uses Google + Kakao instead — clarify if still needed_
-- [ ] Build number check / forced update — Force app update when min build number changes
-  - v6: `v6/functions/init/build_number_check.dart` (5s first check, 5min interval, calls `settings.get` API)
+- [x] Build number check / forced update — `lib/setting/build_number_check.dart` (checks on every settings.get refresh, non-dismissible upgrade dialog with store links) (2026-03-23)
 
 ---
 
@@ -248,8 +247,7 @@
 ## System-Level
 
 - [x] Shorebird code push — `shorebird_code_push: ^2.0.5` in pubspec.yaml + shorebird.yaml asset (2026-03-23)
-- [ ] Build number forced update — Min build number check with upgrade dialog
-  - v6: `v6/functions/init/build_number_check.dart`
+- [x] Build number forced update — `lib/setting/build_number_check.dart` (2026-03-23)
 
 ---
 
@@ -257,7 +255,7 @@
 
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
-| Critical                | 4      | 0       | 2         |
+| Critical                | 5      | 0       | 1         |
 | High Priority           | 9      | 1       | 0         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 7      | 0       | 1         |
@@ -267,8 +265,8 @@
 | Partial Implementations | 12     | 1       | 1         |
 | Widgets/Components      | 5      | 0       | 1         |
 | New in This Audit       | 20     | 0       | 0         |
-| System-Level            | 1      | 0       | 1         |
-| **Total**               | **83** | **2**   | **51**    |
+| System-Level            | 2      | 0       | 0         |
+| **Total**               | **85** | **2**   | **49**    |
 
 ---
 
