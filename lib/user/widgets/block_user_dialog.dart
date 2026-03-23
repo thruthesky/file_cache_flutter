@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:philgo/user/user.functions.dart';
@@ -53,7 +54,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                'Block User',
+                '사용자 차단'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -82,14 +83,14 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                       ),
                     ),
                   Text(
-                    'Are you sure you want to block this user?',
+                    '이 사용자를 차단하시겠습니까?'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Blocking this user will prevent them from sending you messages.",
+                    '차단하면 이 사용자의 메시지를 받지 않습니다.'.tr(),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.outline,
                     ),
@@ -142,7 +143,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text('Cancel'),
+                    child: Text('취소'.tr()),
                   ),
                   const SizedBox(width: 8),
                   // Block button - Comic design error button (destructive action)
@@ -196,7 +197,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text('Block'),
+                        : Text('차단'.tr()),
                   ),
                 ],
               ),
@@ -216,7 +217,7 @@ class _BlockUserDialogState extends State<BlockUserDialog> {
         Navigator.of(context).pop();
         widget.onBlocked?.call();
         setState(() => _isLoading = false);
-        showSuccessSnackBar(context, 'User blocked successfully');
+        showSuccessSnackBar(context, '사용자가 차단되었습니다'.tr());
       }
     } catch (e) {
       if (mounted) {
@@ -272,7 +273,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
               child: Text(
-                'Unblock User',
+                '차단 해제'.tr(),
                 style: theme.textTheme.titleLarge?.copyWith(
                   color: colorScheme.onSurface,
                   fontWeight: FontWeight.w600,
@@ -284,7 +285,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
               child: Text(
-                'Are you sure you want to unblock this user?',
+                '이 사용자의 차단을 해제하시겠습니까?'.tr(),
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: colorScheme.onSurface,
                 ),
@@ -335,7 +336,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                         theme.textTheme.bodyMedium,
                       ),
                     ),
-                    child: Text('Cancel'),
+                    child: Text('취소'.tr()),
                   ),
                   const SizedBox(width: 8),
                   // Unblock button - Comic design primary button
@@ -389,7 +390,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
-                        : Text('Unblock'),
+                        : Text('차단 해제'.tr()),
                   ),
                 ],
               ),
@@ -409,7 +410,7 @@ class _UnblockUserDialogState extends State<UnblockUserDialog> {
         Navigator.of(context).pop();
         widget.onUnblocked?.call();
         setState(() => _isLoading = false);
-        showSuccessSnackBar(context, 'User unblocked successfully');
+        showSuccessSnackBar(context, '사용자 차단이 해제되었습니다'.tr());
       }
     } catch (e) {
       if (mounted) {

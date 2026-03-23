@@ -13,6 +13,7 @@ import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/user/widgets/online.status.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
 import 'package:philgo/util/util.functions.dart';
@@ -585,7 +586,7 @@ class SingleChatRoomHeader extends StatelessWidget {
           Avatar(photoUrl: getPhotoUrl()),
           const SizedBox(width: 12),
 
-          // Room/User Name
+          // Room/User Name + Last seen
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -598,6 +599,37 @@ class SingleChatRoomHeader extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
+                ),
+                OnlineStatus(
+                  uid: otherUser.firebaseUid,
+                  yes: Text(
+                    '온라인'.tr(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.green,
+                    ),
+                  ),
+                  lastSeenBuilder: (lastChanged) {
+                    final lastSeen = DateTime.fromMillisecondsSinceEpoch(
+                      lastChanged,
+                    );
+                    final diff = DateTime.now().difference(lastSeen);
+                    final String timeText;
+                    if (diff.inMinutes < 1) {
+                      timeText = '방금 전'.tr();
+                    } else if (diff.inMinutes < 60) {
+                      timeText = '{분}분 전'.tr(args: ['${diff.inMinutes}']);
+                    } else if (diff.inHours < 24) {
+                      timeText = '{시간}시간 전'.tr(args: ['${diff.inHours}']);
+                    } else {
+                      timeText = '{일}일 전'.tr(args: ['${diff.inDays}']);
+                    }
+                    return Text(
+                      '마지막 접속: {시간}'.tr(args: [timeText]),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

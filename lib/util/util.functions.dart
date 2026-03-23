@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -151,7 +152,7 @@ void showInfoDialog(BuildContext context, String title, String message) {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text('Ok'),
+          child: Text('확인'.tr()),
         ),
       ],
     ),
@@ -163,12 +164,12 @@ void showErrorDialog(BuildContext context, String message, {String? title}) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text(title ?? "Error"),
+      title: Text(title ?? '오류'.tr()),
       content: Text(message),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text("Ok"),
+          child: Text('확인'.tr()),
         ),
       ],
     ),
@@ -230,16 +231,16 @@ Future<bool> showConfirmDialog({required String message, String? title}) async {
     barrierDismissible: false,
     builder: (BuildContext dialogContext) {
       return AlertDialog(
-        title: Text(title ?? "Confirm"),
+        title: Text(title ?? '확인'.tr()),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text("No"),
+            child: Text('아니오'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text("Yes"),
+            child: Text('예'.tr()),
           ),
         ],
       );

@@ -50,7 +50,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
           // Comic design: Use theme background color
           backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
+            preferredSize: const Size.fromHeight(kToolbarHeight + 8),
             child: SingleChatRoomHeader(
               join: init.join,
               otherUser: init.otherUserProfile!,

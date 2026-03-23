@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/app.config.dart';
@@ -213,16 +214,16 @@ class _ForumScreenState extends State<ForumScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('차단된 사용자'),
-          content: const Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'),
+          title: Text('차단된 사용자'.tr()),
+          content: Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'.tr()),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('취소'),
+              child: Text('취소'.tr()),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('차단 해제'),
+              child: Text('차단 해제'.tr()),
             ),
           ],
         ),

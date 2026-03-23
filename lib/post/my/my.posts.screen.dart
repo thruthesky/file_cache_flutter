@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -83,7 +84,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
               color: scheme.primary,
             ),
             const SizedBox(width: 8),
-            Text('내 글 목록', style: theme.textTheme.titleMedium),
+            Text('내 글 목록'.tr(), style: theme.textTheme.titleMedium),
           ],
         ),
       ),
