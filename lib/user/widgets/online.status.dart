@@ -8,12 +8,17 @@ class OnlineStatus extends StatefulWidget {
     this.yes,
     this.no,
     this.loading,
+    this.lastSeenBuilder,
   });
 
   final String uid;
   final Widget? yes;
   final Widget? no;
   final Widget? loading;
+
+  /// Builder called when user is offline and a last_changed timestamp exists.
+  /// The [lastChanged] is a millisecond epoch timestamp from Firebase.
+  final Widget Function(int lastChanged)? lastSeenBuilder;
 
   @override
   State<OnlineStatus> createState() => _OnlineStatusState();
@@ -22,8 +27,9 @@ class OnlineStatus extends StatefulWidget {
 class _OnlineStatusState extends State<OnlineStatus> {
   @override
   Widget build(BuildContext context) {
+    // Read from users/{uid} to match web v7ChatSetupPresence pattern
     return StreamBuilder(
-      stream: FirebaseDatabase.instance.ref('status/${widget.uid}').onValue,
+      stream: FirebaseDatabase.instance.ref('users/${widget.uid}').onValue,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return widget.loading ?? const SizedBox.shrink();
@@ -34,11 +40,15 @@ class _OnlineStatusState extends State<OnlineStatus> {
         }
 
         final statusData = snapshot.data?.snapshot.value as Map?;
-        // final state = statusData?['state'] as String?;
+        final isOnline = statusData?['online'] == true;
 
-        final connections = statusData?['connections'] as Map?;
-
-        if (connections == null || connections.isEmpty) {
+        if (!isOnline) {
+          if (widget.lastSeenBuilder != null) {
+            final lastSeen = statusData?['lastSeen'];
+            if (lastSeen is int) {
+              return widget.lastSeenBuilder!(lastSeen);
+            }
+          }
           return widget.no ?? const SizedBox.shrink();
         }
 

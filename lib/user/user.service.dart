@@ -273,32 +273,17 @@ class UserService {
   }
 
   void initUserPresence(String firebaseUid) {
-    DatabaseReference myConnectionsRef = database.ref(
-      "status/$firebaseUid/connections",
-    );
-    DatabaseReference lastOnlineRef = database.ref(
-      "status/$firebaseUid/last_changed",
-    );
-    DatabaseReference connectedRef = database.ref('.info/connected');
+    final userOnlineRef = database.ref('users/$firebaseUid/online');
+    final userLastSeenRef = database.ref('users/$firebaseUid/lastSeen');
+    final connectedRef = database.ref('.info/connected');
 
     connectedRef.onValue.listen((event) {
-      // If we're not currently connected, don't do anything.
-      // true - connected, false - not connected
-      if (event.snapshot.value == false) {
-        return;
-      }
-      // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
-      DatabaseReference con = myConnectionsRef.push();
-      // debugPrint('Connected to Firebase Realtime Database:: ${con.key}');
-      // When I disconnect, remove this device
-      con.onDisconnect().remove();
+      if (event.snapshot.value == false) return;
 
-      // Add this device to my connections list
-      // this value could contain info about the device or a timestamp too
-      con.set(true);
-
-      // When I disconnect, update the last time I was seen online
-      lastOnlineRef.onDisconnect().set(ServerValue.timestamp);
+      // Connected — set online (matches web v7ChatSetupPresence pattern)
+      userOnlineRef.set(true);
+      userOnlineRef.onDisconnect().set(false);
+      userLastSeenRef.onDisconnect().set(ServerValue.timestamp);
     });
   }
 }
