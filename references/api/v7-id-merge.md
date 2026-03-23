@@ -276,7 +276,32 @@ public function socialLogin(array $input): UserEntity|array { ... }
 
 ## 6. 프론트엔드 핵심 소스코드
 
-### 6.1 merge-account.php — 4단계 Vue.js
+### 6.1 merge-account.php — 페이지 진입 조건
+
+페이지 진입 시 다음 조건을 순서대로 체크하여 합치기 양식 표시 여부를 결정한다:
+
+```php
+// 1. varchar_1에 id_merged_to: 있으면 → "이미 합쳐진 계정"
+$alreadyMerged = str_starts_with($varchar1, 'id_merged_to:');
+
+// 2. login_provider가 비어있거나 phone_sign_in이면 → v6 계정
+$isV6Account = ($loginProvider === '' || $loginProvider === 'phone_sign_in');
+
+// 3. 다른 v7 계정이 id_merged_to:<나의UID>로 병합되어 있으면 → 이미 병합 대상
+$mergedFromAccounts = Db::fetchAll(
+    "SELECT idx, nickname, login_provider FROM sf_member WHERE varchar_1 = :tag",
+    ['tag' => 'id_merged_to:' . $myFirebaseUid]
+);
+$hasMergedFrom = !empty($mergedFromAccounts);
+```
+
+```
+if ($alreadyMerged)           → "이미 아이디가 합쳐진 계정입니다"
+elseif ($isV6Account || $hasMergedFrom) → "이미 기존 계정입니다" + 병합된 소셜 계정 목록
+else                          → 4단계 합치기 양식 표시
+```
+
+### 6.2 merge-account.php — 4단계 Vue.js
 
 **1단계: 전화번호 검색** (SMS 전송 전 v6 계정 확인)
 ```javascript
@@ -305,8 +330,10 @@ async verifySmsAndMerge() {
     const phoneIdToken = await userCredential.user.getIdToken();
     await v7api('user.mergeAccount', { phone_id_token: phoneIdToken }, { alertOnError: false });
     this.step = 'complete';
+    // Firebase + PHP 세션 쿠키 모두 삭제
     setTimeout(async () => {
         await firebase.auth().signOut();
+        document.cookie = 'session_id_v7=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         location.href = '/user/login';
     }, 3000);
 }
@@ -365,10 +392,13 @@ Firebase나 RTDB 조작 불필요. varchar_1 초기화만으로 복구된다.
 | 상황 | 처리 |
 |------|------|
 | 전화번호가 DB에 없음 | findV6Account에서 에러. SMS 발송 안 함 |
-| 이미 병합된 계정 | mergeAccount에서 "이미 합치기 완료" 에러 |
+| 이미 병합된 소셜 계정 (varchar_1에 id_merged_to:) | mergeAccount에서 "이미 합치기 완료" 에러 |
 | 자기 자신과 병합 | mergeAccount에서 에러 |
 | 여러 소셜 → 같은 v6 | 허용. 각 소셜 varchar_1에 동일한 `id_merged_to:BBB` |
 | 전화번호 포맷 불일치 | findV6ByPhoneNumber에서 4가지 포맷 OR 검색 |
+| v6 전화번호 계정이 합치기 시도 | `login_provider`가 비어있거나 `phone_sign_in`이면 "이미 기존 계정입니다" 표시 |
+| **다른 v7 계정이 이미 병합된 계정** | `id_merged_to:<나의UID>`를 가진 레코드가 존재하면 합치기 양식 차단 + 병합된 소셜 계정 목록 표시 |
+| 자동 로그아웃 | 합치기 완료 후 `firebase.auth().signOut()` + `session_id_v7` 쿠키 삭제 |
 
 ### 플러터 앱에서의 구현
 
