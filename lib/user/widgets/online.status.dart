@@ -41,16 +41,6 @@ class _OnlineStatusState extends State<OnlineStatus> {
   }
 
   @override
-  void didUpdateWidget(OnlineStatus oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.uid != widget.uid) {
-      _stopListeners();
-      _loaded = false;
-      _startListeners();
-    }
-  }
-
-  @override
   void dispose() {
     _stopListeners();
     super.dispose();
