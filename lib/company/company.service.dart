@@ -167,11 +167,8 @@ class CompanyService {
   }) async {
     final result = await ApiService.instance.v7api(
       'company.getVisitReviews',
-      data: {
-        'idx_company': idxCompany,
-        'page': page,
-        'limit': limit,
-      },
+      data: {'idx_company': idxCompany, 'page': page, 'limit': limit},
+      debug: true,
     );
     return CompanyReviewListResult.fromJson(result);
   }

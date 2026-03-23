@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/review/company.visit_review.screen.dart';
 import 'package:philgo/globals.dart';
