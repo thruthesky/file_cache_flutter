@@ -67,8 +67,7 @@
 
 ## Infrastructure / Services (Prerequisites for 50+ Info Screens)
 
-- [ ] Post content service — Server-stored content loader with file cache
-  - v6: `v6/services/post_content/post_content.service.dart` (48-hour cache via `file_cache_flutter`)
+- [x] Post content service — `lib/post/post_content.service.dart` (memory + file dual cache, 48-hour TTL, loads Post by idx and InfoPost by access_code; InfoViewScreen wired to use cache) (2026-03-23)
 - [x] Post content viewer widget — `lib/post/view/widgets/post.view.content.dart` (supports HTML via flutter_html, Markdown, plain text) (2026-03-23)
 - [x] Post content mapping data — `lib/api/constants/info_access_codes.dart` (17 access codes mapping info screens to server content via `info.getByAccessCode` API) (2026-03-23)
 - [ ] Memory cache service — LRU in-memory cache (maxEntries=200)
@@ -268,14 +267,14 @@
 | High Priority           | 8      | 1       | 1         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 5      | 0       | 3         |
-| Infrastructure          | 4      | 0       | 3         |
+| Infrastructure          | 5      | 0       | 2         |
 | Profile / User          | 4      | 0       | 2         |
 | Static Content          | 6      | 0       | 49        |
 | Partial Implementations | 12     | 1       | 1         |
 | Widgets/Components      | 1      | 0       | 5         |
 | New in This Audit       | 17     | 0       | 3         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **70** | **2**   | **70**    |
+| **Total**               | **71** | **2**   | **69**    |
 
 ---
 

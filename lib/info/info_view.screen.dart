@@ -2,10 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:philgo/api/api.service.dart';
 import 'package:philgo/common_widgets/app_markdown.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/info/info_post.model.dart';
+import 'package:philgo/post/post_content.service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Info 상세 화면
@@ -43,15 +43,15 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
     _loadInfo();
   }
 
-  Future<void> _loadInfo() async {
+  Future<void> _loadInfo({bool forceRefresh = false}) async {
     try {
-      final res = await ApiService.instance.v7api<Map<String, dynamic>>(
-        'info.getByAccessCode',
-        data: {'access_code': widget.accessCode},
+      final info = await PostContentService.instance.loadInfo(
+        widget.accessCode,
+        forceRefresh: forceRefresh,
       );
       if (!mounted) return;
       setState(() {
-        _info = InfoPost.fromJson(res);
+        _info = info;
         _loading = false;
       });
     } catch (e) {
@@ -103,7 +103,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
                   _loading = true;
                   _error = null;
                 });
-                _loadInfo();
+                _loadInfo(forceRefresh: true);
               },
               child: Text('다시 시도'.tr()),
             ),

@@ -132,17 +132,12 @@ class _AppScreenState extends State<AppScreen> {
               ),
               BottomNavigationBarItem(
                 icon: ValueListenableBuilder<int>(
-                  valueListenable:
-                      ChatService.instance.unreadCountStream,
+                  valueListenable: ChatService.instance.unreadCountStream,
                   builder: (context, count, child) {
                     return Badge(
                       isLabelVisible: count > 0,
-                      label: Text(
-                        count > 99 ? '99+' : count.toString(),
-                      ),
-                      child: const FaIcon(
-                        FontAwesomeIcons.lightCommentDots,
-                      ),
+                      label: Text(count > 99 ? '99+' : count.toString()),
+                      child: const FaIcon(FontAwesomeIcons.lightCommentDots),
                     );
                   },
                 ),
