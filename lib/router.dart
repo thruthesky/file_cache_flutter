@@ -37,8 +37,6 @@ import 'package:philgo/company/review/company.visit_review.screen.dart';
 import 'package:philgo/company/review/company.revisit_point_result.screen.dart';
 import 'package:philgo/company/review/company.review_point_result.screen.dart';
 import 'package:philgo/event/qr_scanner.screen.dart';
-import 'package:provider/provider.dart';
-import 'package:philgo/globals.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -47,54 +45,41 @@ BuildContext get globalContext => globalNavigatorKey.currentContext!;
 final router = GoRouter(
   navigatorKey: globalNavigatorKey,
   redirect: (context, state) {
-    // 리다이렉트가 필요 없는 일반 앱 내부 경로는 건너뜀 (무한 루프 방지)
-    if (!isDeepLinkUrl(state.uri)) return null;
+    // // 리다이렉트가 필요 없는 일반 앱 내부 경로는 건너뜀 (무한 루프 방지)
+    // if (!isDeepLinkUrl(state.uri)) return null;
 
-    final result = parsePhilgoUrl(state.uri.toString());
-    if (result == null) return null;
+    // final result = parsePhilgoUrl(state.uri.toString());
+    // if (result == null) return null;
 
-    // 게시글 보기: /post/view?idx=123 또는 /post/view.php?idx=123
-    if (result.isPostView && result.idx != null) {
-      return '${PostViewScreen.routeName}?idx=${result.idx}&post_id=${result.postId ?? ''}';
-    }
-
-    // 게시판 목록 → 포럼 탭으로 이동
-    if (result.isPostList && result.postId != null) {
-      final navState = context.read<AppNavigationState>();
-      navState.openForumScreen(
-        postId: result.postId,
-        category: result.category,
-      );
-      return AppScreen.routeName;
-    }
-
-    // // 채팅방: /chat/index.php?id=xxx
-    // if (result.isChatRoom && result.chatRoomId != null) {
-    //   // Set Globals.screenName  to ChatRoomScreen
-    //   // Set Globals.screenId to the roomId from the URL
-    //   // During onMessageOpen,
-    //   // Not in ChatRoomScreen - simply navigate to the chat room.
-    //   // In ChatRoomScreen with the same roomId - do nothing.
-    //   // In ChatRoomScreen with different roomId - pop current chat room and navigate to the
-    //   Globals.screenName = 'ChatRoomScreen';
-    //   Globals.screenId = state.pathParameters['id'] ?? '';
-    //   return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
+    // // 게시글 보기: /post/view?idx=123 또는 /post/view.php?idx=123
+    // if (result.isPostView && result.idx != null) {
+    //   return '${PostViewScreen.routeName}?idx=${result.idx}&post_id=${result.postId ?? ''}';
     // }
 
-    // 업소록 보기: /company/view?idx=5422 또는 /company/view.php?idx=1025
-    if (result.isCompanyView && result.idx != null) {
-      return '${CompanyViewScreen.routeName}?idx=${result.idx}';
-    }
+    // // 게시판 목록 → 포럼 탭으로 이동
+    // if (result.isPostList && result.postId != null) {
+    //   final navState = context.read<AppNavigationState>();
+    //   navState.openForumScreen(
+    //     postId: result.postId,
+    //     category: result.category,
+    //   );
+    //   return AppScreen.routeName;
+    // }
 
-    // 업소록 목록: /company → 업소록 탭으로 이동
-    if (result.isCompanyList) {
-      final navState = context.read<AppNavigationState>();
-      navState.openCompanyScreen();
-      return AppScreen.routeName;
-    }
+    // // 업소록 보기: /company/view?idx=5422 또는 /company/view.php?idx=1025
+    // if (result.isCompanyView && result.idx != null) {
+    //   return '${CompanyViewScreen.routeName}?idx=${result.idx}';
+    // }
 
-    // 홈
-    if (result.isHome) return AppScreen.routeName;
+    // // 업소록 목록: /company → 업소록 탭으로 이동
+    // if (result.isCompanyList) {
+    //   final navState = context.read<AppNavigationState>();
+    //   navState.openCompanyScreen();
+    //   return AppScreen.routeName;
+    // }
+
+    // // 홈
+    // if (result.isHome) return AppScreen.routeName;
 
     return null;
   },
@@ -218,16 +203,7 @@ final router = GoRouter(
       path: ChatRoomScreen.routeName,
       name: ChatRoomScreen.routeName,
       builder: (context, state) {
-        String id = state.pathParameters['id']!;
-        if (id == '') {
-          id = state.uri.queryParameters['uid'] ?? '';
-        }
-
-        return ChatRoomScreen(
-          key: UniqueKey(),
-          id: id,
-          // homeRouteName: AppScreen.routeName,
-        );
+        return ChatRoomScreen(key: UniqueKey(), state: state);
       },
     ),
     GoRoute(
