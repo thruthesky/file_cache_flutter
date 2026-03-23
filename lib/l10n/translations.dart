@@ -101,6 +101,7 @@ class Translations {
     '개인정보처리방침': '개인정보처리방침',
 
     // 홈 섹션
+    '오늘, 당신의 필리핀 생활은 어떤가요?': '오늘, 당신의 필리핀 생활은 어떤가요?',
     '필고': '필고',
     '설정': '설정',
     '회원': '회원',
@@ -770,6 +771,7 @@ class Translations {
     '개인정보처리방침': 'Privacy Policy',
 
     // 홈 섹션
+    '오늘, 당신의 필리핀 생활은 어떤가요?': 'How is your life in the Philippines today?',
     '필고': 'PhilGo',
     '설정': 'Settings',
     '회원': 'Members',
