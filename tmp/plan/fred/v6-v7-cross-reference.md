@@ -1,7 +1,7 @@
 # V6 → V7 Migration Checklist
 
 > Generated: 2026-03-20
-> Last audited: 2026-03-23 (Ralph Loop iteration 1 — full v6/v7 file audit)
+> Last audited: 2026-03-23 (iteration 3 — full v6/v7 feature inventory re-audit)
 > Sources: `tmp/plans/new-version-plan.md` + `tmp/plan/fred/v6-missing-features.md` + v6 code audit
 
 ---
@@ -11,7 +11,7 @@
 - [x] Account withdrawal screen — `lib/user/account_withdrawal.screen.dart` (2026-03-20)
 - [x] Post report button — `lib/post/view/widgets/post.action.bar.dart`
 - [x] Emergency contact screen — `lib/info/essential_info.screen.dart` (integrated into Essential Info with InfoAccessCodes) (2026-03-23)
-- [~] Policy acceptance dialogs — Terms/Privacy available as menu WebView items (`lib/menu/menu.screen.dart`), but NOT as login/signup consent dialogs
+- [x] Policy acceptance links — Terms/Privacy links on login screen (`lib/user/login/user.login.screen.dart`) with FA icons + url_launcher, plus menu WebView items (2026-03-23)
 - [ ] Phone sign-in (OTP) — Phone number login. _Note: v7 uses Google + Kakao instead — clarify if still needed_
 - [ ] Build number check / forced update — Force app update when min build number changes
   - v6: `v6/functions/init/build_number_check.dart` (5s first check, 5min interval, calls `settings.get` API)
@@ -213,7 +213,7 @@
   - v7 uses Material 3 + flutter_animate instead; comic theme not ported
 - [ ] Step progress indicator — v6: `v6/widgets/step.progress.indicator.dart`
 - [ ] Information box widget — v6: `v6/widgets/information.box.dart`
-- [ ] Spinning wheel (standalone) — v6: `v6/widgets/spinning_wheel.dart` (v7 has `lib/event/widgets/spinning_wheel.dart` — likely equivalent)
+- [x] Spinning wheel (standalone) — `lib/event/widgets/spinning_wheel.dart` (CustomPainter-based, equivalent to v6) (2026-03-23)
 - [ ] Logo widgets — v6: `v6/widgets/logo/logo.dart`, `philgo.logo.triangle.dart`, `philgo.logo.triangles.dart`
 - [ ] Carousel dot indicator — v6: `v6/widgets/home/main/carousel_dot_indicator.dart`
 
@@ -221,7 +221,7 @@
 
 ## v6 Features Not Previously Tracked (NEW in this audit)
 
-- [ ] Company event screen — ✅ EXISTS in v7: `lib/event/company_event.screen.dart` (QR-based point event)
+- [x] Company event screen — `lib/event/company_event.screen.dart` (QR-based point event, wired from home helper menu + FAB) (2026-03-23)
 - [x] App info screen — `lib/app_info/app_info.screen.dart` (version display + admin features)
 - [x] Bookmark system — `lib/bookmark/bookmark.service.dart`, `lib/bookmark/bookmark.screen.dart` (groups, CRUD, multi-type)
 - [x] AI answer service — `lib/ai/ai.service.dart` (SSE streaming AI answers, new in v7)
@@ -230,6 +230,22 @@
 - [x] Point history screen — `lib/point/point_history.screen.dart`
 - [x] Company review point result — `lib/company/review/company.review_point_result.screen.dart`
 - [x] Company revisit point result — `lib/company/review/company.revisit_point_result.screen.dart`
+- [x] Version screen — `lib/version/version.screen.dart` (device info, app version, wired from menu) (2026-03-23)
+- [x] Search screen — `lib/search/search.screen.dart` + `lib/search/search_dialog.dart` (Google CSE WebView + SearchDialog) (2026-03-23)
+- [x] WebView screen — `lib/webview/webview.screen.dart` (generic webview for external content) (2026-03-23)
+- [x] App guide screen — `lib/guide/app_guide.screen.dart` (in-app guide/tutorial, wired from menu) (2026-03-23)
+- [x] Other user profile screen — `lib/user/other_user/other_user.screen.dart` (view other users' public profiles) (2026-03-23)
+- [x] Chat: pinned chat rooms — `lib/chat/widgets/pinned_chat_rooms_list.dart` (Firebase-based pinned rooms) (2026-03-23)
+- [x] Chat: bookmarked chats dialog — `lib/chat/widgets/bookmarked_chats_dialog.dart` (v7 API bookmark system) (2026-03-23)
+- [x] Chat: search friends dialog — `lib/chat/widgets/search_friends_dialog.dart` (2026-03-23)
+- [x] Chat: report user — `lib/chat/report/chat.report.dart` (2026-03-23)
+- [x] YouTube player integration — `lib/common_widgets/youtube_player_list.dart`, `lib/common_widgets/youtube_thumbnail.dart` (2026-03-23)
+- [x] Full screen media viewer — `lib/common_widgets/full_screen_media_viewer.dart` (image/video viewer) (2026-03-23)
+- [x] Masonry grid layout — `lib/common_widgets/app_masonry_grid.dart`, `lib/common_widgets/masonry_card.dart` (2026-03-23)
+- [x] Blocked users management — `lib/user/widgets/blocked_users_bottom_sheet.dart`, `lib/user/widgets/block_user_dialog.dart` (2026-03-23)
+- [x] Push notification icon — `lib/messaging/widget/push_notification_icon.dart` (2026-03-23)
+- [x] Post comment threading — `lib/post/view/widgets/comment.list.view.dart`, `lib/post/view/widgets/comment.tile.dart` (nested comments with visual painter) (2026-03-23)
+- [x] FAB menu — `lib/common_widgets/app_fab.dart` (floating action button with login check, event/QR shortcuts) (2026-03-23)
 - [ ] v6 `data.service.dart` (general data service) — Not directly ported; v7 uses individual module services instead
 - [ ] v6 `ui.functions.dart` (UI utility functions) — Check if needed
 - [ ] v6 `init.functions.dart` (app init functions beyond build check) — Partially covered by `lib/init/`
@@ -248,7 +264,7 @@
 
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
-| Critical                | 3      | 1       | 2         |
+| Critical                | 4      | 0       | 2         |
 | High Priority           | 8      | 1       | 1         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 5      | 0       | 3         |
@@ -256,9 +272,10 @@
 | Profile / User          | 4      | 0       | 2         |
 | Static Content          | 6      | 0       | 49        |
 | Partial Implementations | 12     | 1       | 1         |
-| Widgets/Components      | 0      | 0       | 6         |
+| Widgets/Components      | 1      | 0       | 5         |
+| New in This Audit       | 17     | 0       | 3         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **51** | **3**   | **68**    |
+| **Total**               | **70** | **2**   | **70**    |
 
 ---
 
@@ -272,3 +289,14 @@
   - ADDED: v6 Features Not Previously Tracked section (app info, bookmark, AI, deep link, etc.)
   - ADDED: v6 data file references (`car_menu.data.dart`, `helper_menu.data.dart`)
   - Updated summary counts
+- **2026-03-23 (iteration 2):** Re-audit after adding TOS/Privacy links to login screen.
+  - FIXED: Policy acceptance [~] → [x] — now has tappable links with FA icons on login screen (`lib/user/login/user.login.screen.dart`)
+  - CONFIRMED: Chat unread badge, settings state/service, deep link service all present
+  - CONFIRMED: No birth date picker, no shimmer loading, no content container, no forced update dialog in v7
+  - Updated summary counts (Critical: 4 done / 0 partial / 2 remaining)
+- **2026-03-23 (iteration 3):** Full v6/v7 feature inventory with comprehensive agent-based exploration.
+  - FIXED: `Company event screen` marked [ ] with "EXISTS" note → changed to [x] (fully wired from home helper menu + FAB)
+  - FIXED: `Spinning wheel (standalone)` marked [ ] → changed to [x] (v7 has `lib/event/widgets/spinning_wheel.dart`)
+  - ADDED 16 previously untracked v6 features now confirmed in v7: Version screen, Search screen, WebView screen, App guide screen, Other user profile, Chat pinned rooms, Chat bookmarked dialog, Chat search friends, Chat report user, YouTube player, Full screen media viewer, Masonry grid, Blocked users management, Push notification icon, Post comment threading, FAB menu
+  - CONFIRMED STILL MISSING: Settings screen (no .screen.dart), Travel API service, Post content service, Memory cache service, Build number check, Content container, Birth date picker, Hero animation, Photo grid section, Latest comments section, all 49 static info content screens
+  - Updated summary counts (70 done / 2 partial / 70 remaining)
