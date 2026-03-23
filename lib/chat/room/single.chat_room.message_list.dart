@@ -110,6 +110,7 @@ class SingleChatRoomMessageListState extends State<SingleChatRoomMessageList> {
                 ),
                 SizedBox(height: msgListEmptySpacing),
                 Text(
+                  // "Send a message to start a conversation"
                   '메시지를 보내 대화를 시작하세요'.tr(),
                   style: TextStyle(fontSize: msgListEmptyTextFontSize, color: msgListEmptyTextColor),
                   textAlign: TextAlign.center,

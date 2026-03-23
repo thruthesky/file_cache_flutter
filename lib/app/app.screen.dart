@@ -120,14 +120,17 @@ class _AppScreenState extends State<AppScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightHouse),
+                // "Home"
                 label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightClipboard),
+                // "Forum"
                 label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightBuilding),
+                // "Company"
                 label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
@@ -141,10 +144,12 @@ class _AppScreenState extends State<AppScreen> {
                     );
                   },
                 ),
+                // "Chat"
                 label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightBars),
+                // "Menu"
                 label: '메뉴'.tr(),
               ),
             ],
@@ -176,6 +181,7 @@ class _AppScreenState extends State<AppScreen> {
       return [
         AppFabMenuItem(
           icon: FontAwesomeIcons.lightRightToBracket,
+          // "Login"
           label: '로그인'.tr(),
           onTap: () => UserLoginScreen.push(context),
         ),
@@ -188,11 +194,13 @@ class _AppScreenState extends State<AppScreen> {
         return [
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightPen,
+            // "Write"
             label: '글쓰기'.tr(),
             onTap: () => _openPostWrite(context),
           ),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -201,11 +209,13 @@ class _AppScreenState extends State<AppScreen> {
         return [
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightPen,
+            // "Write"
             label: '글쓰기'.tr(),
             onTap: () => _openPostCreateForForum(context),
           ),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -215,6 +225,7 @@ class _AppScreenState extends State<AppScreen> {
           _buildCompanyEditMenuItem(context),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -233,6 +244,7 @@ class _AppScreenState extends State<AppScreen> {
       icon: hasCompany
           ? FontAwesomeIcons.lightPenToSquare
           : FontAwesomeIcons.lightPlus,
+      // "Edit Business", "Register Business"
       label: hasCompany ? '업소 수정'.tr() : '업소 등록'.tr(),
       onTap: () {
         if (!UserService.isLoggedIn) {

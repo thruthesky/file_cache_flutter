@@ -13,6 +13,7 @@ import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/user/widgets/online.status.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
 import 'package:philgo/util/util.functions.dart';
@@ -51,6 +52,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         IconButton(
           onPressed: () => showMenuModal(context),
           icon: const Icon(Icons.settings),
+          // "Menu"
           tooltip: '메뉴'.tr(),
         ),
       ],
@@ -88,6 +90,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // "Menu"
                     '메뉴'.tr(),
 
                     /// Comic design: Use theme text style
@@ -98,6 +101,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
+                    // "Close"
                     tooltip: '닫기'.tr(),
                   ),
                 ],
@@ -149,6 +153,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             SizedBox(width: dialogAvatarSpacing),
                             Expanded(
                               child: Text(
+                                // "Admin Chat Notice"
                                 '관리자 채팅 안내'.tr(),
                                 style: Theme.of(context).textTheme.bodyMedium
                                     ?.copyWith(
@@ -171,6 +176,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             FontAwesomeIcons.lightUserPlus,
                             color: Theme.of(context).colorScheme.primary,
                           ),
+                          // "Unblock User"
                           title: '차단 해제'.tr(),
                           onTap: () {
                             Navigator.of(context).pop();
@@ -196,7 +202,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                                     ).colorScheme.primary,
                                   ),
                                   title: isPinned
+                                      // "Unpin Chat"
                                       ? '채팅 고정 해제'.tr()
+                                      // "Pin Chat"
                                       : '채팅 고정'.tr(),
                                   onTap: () async {
                                     Navigator.of(context).pop();
@@ -211,6 +219,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                             _buildComicMenuItem(
                               context: context,
                               icon: Avatar(photoUrl: getPhotoUrl()),
+                              // "Profile"
                               title: '프로필'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -226,6 +235,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightNewspaper,
                                 color: Theme.of(context).colorScheme.onSurface,
                               ),
+                              // "Recent Posts"
                               title: '최근 글'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -244,6 +254,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightFlag,
                                 color: Theme.of(context).colorScheme.error,
                               ),
+                              // "Report"
                               title: '신고'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -259,6 +270,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
+                              // "Block User"
                               title: '사용자 차단'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -274,6 +286,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightArrowRightFromBracket,
                                 color: Theme.of(context).colorScheme.error,
                               ),
+                              // "Leave Room"
                               title: '방 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -289,6 +302,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                 FontAwesomeIcons.lightBan,
                                 color: Theme.of(context).colorScheme.error,
                               ),
+                              // "Block & Leave"
                               title: '차단 및 나가기'.tr(),
                               onTap: () {
                                 Navigator.of(context).pop();
@@ -359,6 +373,7 @@ class SingleChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: dialogTitlePadding,
                 child: Text(
+                  // "Leave Room"
                   '방 나가기'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -371,6 +386,7 @@ class SingleChatRoomHeader extends StatelessWidget {
               Padding(
                 padding: dialogBodyPadding,
                 child: Text(
+                  // "Are you sure you want to leave this room?"
                   '이 방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -412,6 +428,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Block & Leave"
                       child: Text('차단 및 나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
@@ -444,6 +461,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Leave"
                       child: Text('나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
@@ -475,6 +493,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Cancel"
                       child: Text('취소'.tr()),
                     ),
                   ],
@@ -558,6 +577,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         await ref.remove();
 
         if (context.mounted) {
+          // "Chat room unpinned successfully"
           showSuccessSnackBar(context, '채팅방 고정 해제 완료'.tr());
         }
       } else {
@@ -565,11 +585,13 @@ class SingleChatRoomHeader extends StatelessWidget {
         await ref.set(true);
 
         if (context.mounted) {
+          // "Chat room pinned successfully"
           showSuccessSnackBar(context, '채팅방 고정 완료'.tr());
         }
       }
     } catch (e) {
       if (context.mounted) {
+        // "Error: {}"
         showErrorSnackBar(context, '오류: {}'.tr(args: [e.toString()]));
       }
     }
@@ -585,7 +607,7 @@ class SingleChatRoomHeader extends StatelessWidget {
           Avatar(photoUrl: getPhotoUrl()),
           const SizedBox(width: 12),
 
-          // Room/User Name
+          // Room/User Name + Last seen
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -598,6 +620,43 @@ class SingleChatRoomHeader extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
+                ),
+                OnlineStatus(
+                  uid: otherUser.firebaseUid,
+                  yes: Text(
+                    // "Online"
+                    '온라인'.tr(),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.green,
+                    ),
+                  ),
+                  lastSeenBuilder: (lastChanged) {
+                    final lastSeen = DateTime.fromMillisecondsSinceEpoch(
+                      lastChanged,
+                    );
+                    final diff = DateTime.now().difference(lastSeen);
+                    final String timeText;
+                    if (diff.inMinutes < 1) {
+                      // "just now"
+                      timeText = '방금 전'.tr();
+                    } else if (diff.inMinutes < 60) {
+                      // "{분}m ago"
+                      timeText = '{분}분 전'.tr(args: ['${diff.inMinutes}']);
+                    } else if (diff.inHours < 24) {
+                      // "{시간}h ago"
+                      timeText = '{시간}시간 전'.tr(args: ['${diff.inHours}']);
+                    } else {
+                      // "{일}d ago"
+                      timeText = '{일}일 전'.tr(args: ['${diff.inDays}']);
+                    }
+                    return Text(
+                      // "Last seen: {시간}"
+                      '마지막 접속: {시간}'.tr(args: [timeText]),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -627,6 +686,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     if (join.userDisplayName.isNotEmpty) {
       return join.userDisplayName;
     }
+    // "No name"
     return '이름없음'.tr();
   }
 
@@ -729,6 +789,7 @@ class _FavoriteIconButtonState extends State<_FavoriteIconButton> {
         color: _isBookmarked! ? Colors.amberAccent : null,
         size: 20,
       ),
+      // "Add to Favorites"
       tooltip: '즐겨찾기에 추가'.tr(),
     );
   }

@@ -60,6 +60,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                     color: color.onSurface, size: 18),
                 const SizedBox(width: 4),
                 Text(
+                  // "Back"
                   '돌아가기'.tr(),
                   style: text.bodyMedium?.copyWith(color: color.onSurface),
                 ),
@@ -105,6 +106,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                   FaIcon(FontAwesomeIcons.lightCircleExclamation,
                       size: 48, color: color.error),
                   const SizedBox(height: 16),
+                  // "Unable to load post"
                   Text('글을 불러올 수 없습니다'.tr(), style: text.titleMedium),
                   const SizedBox(height: 8),
                   Text(
@@ -120,6 +122,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
                         _postFuture = PostService.get(widget.idx);
                       });
                     },
+                    // "Try Again"
                     child: Text('다시 시도'.tr()),
                   ),
                 ],
@@ -129,6 +132,7 @@ class _AdvertisementViewScreenState extends State<AdvertisementViewScreen> {
 
           if (!snapshot.hasData) {
             return Center(
+              // "Post does not exist"
               child: Text('글이 존재하지 않습니다'.tr(), style: text.bodyLarge),
             );
           }

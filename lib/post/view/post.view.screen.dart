@@ -148,17 +148,21 @@ class _PostViewScreenState extends State<PostViewScreen> {
           final confirm = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
+              // "[NO TRANSLATION: 포인트 광고 $label]"
               title: Text('포인트 광고 $label'.tr()),
               content: Text(
+                // "[NO TRANSLATION: 일]", "[NO TRANSLATION: 사용]"
                 '$days${'일'.tr()} $label ($cost P ${'사용'.tr()})',
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(ctx, false),
+                  // "Cancel"
                   child: Text('취소'.tr()),
                 ),
                 FilledButton(
                   onPressed: () => Navigator.pop(ctx, true),
+                  // "OK"
                   child: Text('확인'.tr()),
                 ),
               ],
@@ -178,6 +182,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
             });
             showSuccessSnackBar(
               context,
+              // "[NO TRANSLATION: 포인트 광고가 $label되었습니다]"
               '포인트 광고가 $label되었습니다'.tr(),
             );
           } catch (e) {
@@ -203,16 +208,20 @@ class _PostViewScreenState extends State<PostViewScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        // "Delete Post"
         title: Text('게시글 삭제'.tr()),
+        // "Are you sure you want to delete this post?"
         content: Text('정말 이 게시글을 삭제하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            // "Delete"
             child: Text('삭제'.tr()),
           ),
         ],
@@ -229,22 +238,27 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   Future<void> _reportPost() async {
     if (_post.reported) {
+      // "You already reported this post"
       if (mounted) showErrorSnackBar(context, '이미 신고한 글입니다'.tr());
       return;
     }
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Report"
         title: Text('신고'.tr()),
+        // "Do you want to report this post?"
         content: Text('이 글을 신고하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            // "Report"
             child: Text('신고'.tr()),
           ),
         ],
@@ -259,12 +273,14 @@ class _PostViewScreenState extends State<PostViewScreen> {
         _post = _post.copyWith(reported: true);
         _postChanged = true;
       });
+      // "Report submitted successfully"
       showSuccessSnackBar(context, '신고가 접수되었습니다'.tr());
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString();
       if (msg.contains('already-reported')) {
         setState(() => _post = _post.copyWith(reported: true));
+        // "You already reported this post"
         showErrorSnackBar(context, '이미 신고한 글입니다'.tr());
       } else {
         showErrorSnackBar(context, msg);
@@ -275,7 +291,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
   // ── 차단 ──────────────────────────────────────────
 
   Future<void> _blockAuthor() async {
+    // "Unblock User", "Block"
     final label = _post.blocked ? '차단 해제'.tr() : '차단'.tr();
+    // "No name"
     final name = _post.userName.isNotEmpty ? _post.userName : '이름없음'.tr();
     final confirm = await showDialog<bool>(
       context: context,
@@ -283,12 +301,15 @@ class _PostViewScreenState extends State<PostViewScreen> {
         title: Text(label),
         content: Text(
           _post.blocked
+              // "Do you want to unblock {name}?"
               ? '{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})
+              // "Do you want to block {name}?", "Blocking this user will hide their posts from the list"
               : '${'{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name})}\n${'차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr()}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
@@ -313,6 +334,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           _post = _post.copyWith(blocked: false);
           _postChanged = true;
         });
+        // "User has been unblocked"
         showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
       }
     } catch (e) {
@@ -509,6 +531,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                             color: popScheme.onSurface,
                                           ),
                                           const SizedBox(width: 10),
+                                          // "Edit"
                                           Text('수정'.tr()),
                                         ],
                                       ),
@@ -525,7 +548,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           const SizedBox(width: 10),
                                           Text(
                                             _post.isAdActive
+                                                // "[NO TRANSLATION: 포인트 광고 연장]"
                                                 ? '포인트 광고 연장'.tr()
+                                                // "Point Ad"
                                                 : '포인트 광고'.tr(),
                                             style: TextStyle(
                                               color: popScheme.primary,
@@ -545,6 +570,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           ),
                                           const SizedBox(width: 10),
                                           Text(
+                                            // "Delete"
                                             '삭제'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
@@ -569,7 +595,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           const SizedBox(width: 10),
                                           Text(
                                             _post.blocked
+                                                // "Unblock User"
                                                 ? '차단 해제'.tr()
+                                                // "Block"
                                                 : '차단'.tr(),
                                           ),
                                         ],
@@ -589,7 +617,9 @@ class _PostViewScreenState extends State<PostViewScreen> {
                                           const SizedBox(width: 10),
                                           Text(
                                             _post.reported
+                                                // "Reported"
                                                 ? '신고됨'.tr()
+                                                // "Report"
                                                 : '신고'.tr(),
                                             style: TextStyle(
                                               color: popScheme.error,
@@ -648,6 +678,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: Text(
+                              // "Unable to load content"
                               '내용을 불러올 수 없습니다'.tr(),
                               style: TextStyle(color: scheme.error),
                             ),
@@ -754,6 +785,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
+              // "[NO TRANSLATION: 광고 만료일]"
               '${'광고 만료일'.tr()}: $formatted (D-${_post.adRemainingDays})',
               style: TextStyle(
                 fontSize: 12,
@@ -785,6 +817,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
               GestureDetector(
                 onTap: () => _openUserProfile(post.idxMember),
                 child: Text(
+                  // "No name"
                   post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: scheme.onSurface,

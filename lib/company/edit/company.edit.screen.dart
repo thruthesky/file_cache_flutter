@@ -60,6 +60,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  // "Basic Info", "Contact", "Images", "Review"
   static final _stepLabels = ['기본정보'.tr(), '연락처'.tr(), '이미지'.tr(), '검토'.tr()];
 
   @override
@@ -150,6 +151,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        // "Business info saved. It will be reflected after admin review."
         content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'.tr()),
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
@@ -164,6 +166,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        // "Edit Business Info"
         title: Text('업소 정보 수정'.tr()),
         leading: IconButton(
           icon: const Icon(Icons.close),
@@ -270,6 +273,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size(80, 44),
               ),
+              // "Cancel", "Previous"
               child: Text(_currentStep == 0 ? '취소'.tr() : '이전'.tr()),
             ),
             const SizedBox(width: 12),
@@ -290,6 +294,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
                           color: Colors.white,
                         ),
                       )
+                    // "Save", "Next"
                     : Text(isLastStep ? '저장하기'.tr() : '다음'.tr()),
               ),
             ),

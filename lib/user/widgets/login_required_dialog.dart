@@ -36,8 +36,10 @@ class LoginRequiredDialog extends StatelessWidget {
           color: color.primary,
         ),
       ),
+      // "Login required"
       title: Text('로그인이 필요합니다'.tr()),
       content: Text(
+        // "Login to access all features"
         '로그인하여 모든 기능을 이용하세요'.tr(),
         textAlign: TextAlign.center,
         style: text.bodyMedium?.copyWith(color: color.onSurfaceVariant),
@@ -45,10 +47,12 @@ class LoginRequiredDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
+          // "Cancel"
           child: Text('취소'.tr()),
         ),
         FilledButton(
           onPressed: () => Navigator.pop(context, true),
+          // "Login"
           child: Text('로그인'.tr()),
         ),
       ],

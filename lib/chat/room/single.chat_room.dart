@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/room/chat.room.message_input.dart';
@@ -13,14 +14,9 @@ import 'package:philgo/util/util.functions.dart';
 /// Single Chat Room Screen
 /// Displays a 1:1 chat room with another user following Comic design theme
 class SingleChatRoom extends StatefulWidget {
-  const SingleChatRoom({
-    super.key,
-    required this.id,
-    required this.homeRouteName,
-  });
+  const SingleChatRoom({super.key, required this.id});
 
   final String id;
-  final String homeRouteName;
 
   @override
   State<SingleChatRoom> createState() => _SingleChatRoomState();
@@ -50,7 +46,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
           // Comic design: Use theme background color
           backgroundColor: Theme.of(context).colorScheme.surface,
           appBar: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
+            preferredSize: const Size.fromHeight(kToolbarHeight + 8),
             child: SingleChatRoomHeader(
               join: init.join,
               otherUser: init.otherUserProfile!,
@@ -59,10 +55,8 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   roomId: init.join.id,
                   success: () {
                     if (mounted) {
-                      showSuccessSnackBar(
-                        context,
-                        '방을 나갔습니다'.tr(),
-                      );
+                      // "Left the room successfully"
+                      showSuccessSnackBar(context, '방을 나갔습니다'.tr());
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
                       }
@@ -71,6 +65,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   error: (e) {
                     debugPrint('Error leaving room: $e');
                     if (mounted) {
+                      // "Error leaving room"
                       showErrorSnackBar(context, '방 나가기 오류'.tr());
                     }
                   },
@@ -81,7 +76,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 if (Navigator.canPop(context)) {
                   Navigator.of(context).pop();
                 } else {
-                  context.go(widget.homeRouteName);
+                  context.go(AppScreen.routeName);
                 }
               },
             ),

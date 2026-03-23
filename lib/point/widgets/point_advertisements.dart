@@ -42,6 +42,7 @@ class PointAdvertisements extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
+                  // "Point Ad"
                   '포인트 광고'.tr(),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: scheme.primary,
@@ -115,6 +116,7 @@ class PointAdvertisements extends StatelessWidget {
                   Row(
                     children: [
                       Text(
+                        // "[NO TRANSLATION: 조회 ${_formatNumber(ad.noOfView)}]"
                         '조회 ${_formatNumber(ad.noOfView)}'.tr(),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: scheme.onSurfaceVariant,
@@ -131,6 +133,7 @@ class PointAdvertisements extends StatelessWidget {
                       if (ad.noOfComment > 0) ...[
                         _separator(scheme),
                         Text(
+                          // "[NO TRANSLATION: 댓글 ${ad.noOfComment}]"
                           '댓글 ${ad.noOfComment}'.tr(),
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: scheme.onSurfaceVariant,

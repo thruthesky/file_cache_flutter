@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/post/post.model.dart';
 
@@ -40,21 +41,24 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('댓글 수정'),
+      // "Edit Comment"
+      title: Text('댓글 수정'.tr()),
       content: TextField(
         controller: _controller,
         autofocus: true,
         minLines: 2,
         maxLines: 8,
-        decoration: const InputDecoration(
-          hintText: '댓글 내용을 입력하세요',
-          border: OutlineInputBorder(),
+        decoration: InputDecoration(
+          // "Please enter comment content"
+          hintText: '댓글 내용을 입력하세요'.tr(),
+          border: const OutlineInputBorder(),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('취소'),
+          // "Cancel"
+          child: Text('취소'.tr()),
         ),
         FilledButton(
           onPressed: () {
@@ -62,7 +66,8 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
             if (content.isEmpty) return;
             Navigator.pop(context, content);
           },
-          child: const Text('수정'),
+          // "Edit"
+          child: Text('수정'.tr()),
         ),
       ],
     );

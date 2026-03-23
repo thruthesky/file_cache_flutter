@@ -96,6 +96,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          // "Bookmarked Chats"
                           '북마크된 채팅'.tr(),
                           style: textTheme.titleMedium,
                         ),
@@ -157,6 +158,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                     ),
                     SizedBox(height: dialogEmptySpacing),
                     Text(
+                      // "No bookmarked chats yet"
                       '북마크된 채팅이 없습니다'.tr(),
                       style: textTheme.bodyLarge?.copyWith(
                         color: colorScheme.outline,

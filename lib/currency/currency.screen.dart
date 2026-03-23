@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -58,7 +59,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
       });
     } catch (e) {
       setState(() {
-        _errorMessage = '환율 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.';
+        // "Unable to load exchange rates.\nPlease check your network connection."
+        _errorMessage = '환율 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.'.tr();
         _isLoading = false;
       });
     }
@@ -84,7 +86,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            '환율 정보',
+            // "Exchange Rate"
+            '환율 정보'.tr(),
             style: text.titleLarge?.copyWith(
               color: color.onSurface,
               fontWeight: FontWeight.w600,
@@ -104,7 +107,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                       await _currencyService.clearCache();
                       await _loadExchangeRates();
                     },
-              tooltip: '환율 새로고침',
+              // "Refresh exchange rate"
+              tooltip: '환율 새로고침'.tr(),
             ),
           ],
         ),
@@ -125,7 +129,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
           CircularProgressIndicator(color: color.primary),
           const SizedBox(height: 16),
           Text(
-            '환율 정보를 불러오는 중...',
+            // "Loading exchange rates..."
+            '환율 정보를 불러오는 중...'.tr(),
             style: TextStyle(color: color.onSurfaceVariant),
           ),
         ],
@@ -157,7 +162,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
             FilledButton.icon(
               onPressed: _loadExchangeRates,
               icon: const FaIcon(FontAwesomeIcons.lightArrowsRotate, size: 16),
-              label: const Text('다시 시도'),
+              // "Try Again"
+              label: Text('다시 시도'.tr()),
             ),
           ],
         ),
@@ -452,7 +458,8 @@ class _ExchangeRateScreenState extends State<ExchangeRateScreen> {
                       horizontal: 16,
                       vertical: 12,
                     ),
-                    hintText: '금액 입력',
+                    // "Enter amount"
+                    hintText: '금액 입력'.tr(),
                     hintStyle: TextStyle(color: color.onSurfaceVariant),
                   ),
                   style: text.bodyLarge?.copyWith(

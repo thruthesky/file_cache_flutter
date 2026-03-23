@@ -35,6 +35,7 @@ class ForumNotificationDialog extends StatelessWidget {
         children: [
           FaIcon(FontAwesomeIcons.lightBell, size: 20, color: color.primary),
           const SizedBox(width: 8),
+          // "Notification Settings"
           Text('알림 설정'.tr(), style: text.titleMedium),
         ],
       ),
@@ -45,6 +46,7 @@ class ForumNotificationDialog extends StatelessWidget {
             ? Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
+                  // "Login required"
                   '로그인이 필요합니다'.tr(),
                   textAlign: TextAlign.center,
                   style: text.bodyMedium?.copyWith(
@@ -57,6 +59,7 @@ class ForumNotificationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          // "Close"
           child: Text('닫기'.tr()),
         ),
       ],

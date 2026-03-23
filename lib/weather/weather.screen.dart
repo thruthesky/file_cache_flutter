@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -49,7 +50,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
     } catch (e) {
       debugPrint('WeatherScreen: 데이터 로드 실패 - $e');
       setState(() {
-        _errorMessage = '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.';
+        // "Unable to load weather data.\nPlease check your network connection."
+        _errorMessage = '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.'.tr();
         _isLoading = false;
       });
     }
@@ -78,7 +80,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
-        '필리핀 날씨',
+        // "Philippines Weather"
+        '필리핀 날씨'.tr(),
         style: text.titleLarge?.copyWith(
           color: color.onSurface,
           fontWeight: FontWeight.w600,
@@ -98,7 +101,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   await _weatherService.clearCache();
                   await _loadWeatherData();
                 },
-          tooltip: '날씨 새로고침',
+          // "Refresh weather"
+          tooltip: '날씨 새로고침'.tr(),
         ),
       ],
     );
@@ -112,7 +116,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
           CircularProgressIndicator(color: color.primary),
           const SizedBox(height: 16),
           Text(
-            '날씨 정보를 불러오는 중...',
+            // "Loading weather data..."
+            '날씨 정보를 불러오는 중...'.tr(),
             style: TextStyle(color: color.onSurfaceVariant),
           ),
         ],
@@ -144,7 +149,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
             FilledButton.icon(
               onPressed: _loadWeatherData,
               icon: const FaIcon(FontAwesomeIcons.lightArrowsRotate, size: 16),
-              label: const Text('다시 시도'),
+              // "Try Again"
+              label: Text('다시 시도'.tr()),
             ),
           ],
         ),

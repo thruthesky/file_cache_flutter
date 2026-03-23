@@ -48,6 +48,7 @@ class HomeQuickPostBox extends StatelessWidget {
               /// 가짜 입력 텍스트
               Expanded(
                 child: Text(
+                  // "How is your life in the Philippines today?"
                   '오늘, 당신의 필리핀 생활은 어떤가요?'.tr(),
                   style: text.bodyMedium?.copyWith(
                     color: color.onSurfaceVariant,
@@ -76,6 +77,7 @@ class HomeQuickPostBox extends StatelessWidget {
     if (!userState.isLoggedIn) {
       ScaffoldMessenger.of(
         context,
+      // "Login required"
       ).showSnackBar(SnackBar(content: Text('로그인이 필요합니다'.tr())));
       return;
     }

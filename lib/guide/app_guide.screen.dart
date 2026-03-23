@@ -34,6 +34,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "App Guide"
         title: Text('앱 사용 안내'.tr()),
         centerTitle: true,
         bottom: PreferredSize(
@@ -94,6 +95,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
 
           /// 환영 타이틀
           Text(
+            // "Welcome to PhilGo!"
             '필고에 오신 것을 환영합니다!'.tr(),
             style: text.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
@@ -105,6 +107,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
 
           /// 환영 설명
           Text(
+            // "Discover everything about life in the Philippines on PhilGo. Community, chat, business directory and..."
             '필리핀 생활의 모든 것을 필고에서 만나보세요. 커뮤니티, 채팅, 업소록 등 다양한 기능을 제공합니다.'.tr(),
             style: text.bodyMedium?.copyWith(
               color: color.onSurfaceVariant,
@@ -124,17 +127,23 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
     final steps = [
       _GuideStepData(
         icon: FontAwesomeIcons.lightCompass,
+        // "Explore"
         title: '둘러보기'.tr(),
+        // "Browse forums, business directory, chat, and more."
         description: '게시판, 업소록, 채팅 등 다양한 메뉴를 탐색해 보세요.'.tr(),
       ),
       _GuideStepData(
         icon: FontAwesomeIcons.lightPenToSquare,
+        // "Write"
         title: '글쓰기'.tr(),
+        // "Post freely in the community forum, Q&A, and more."
         description: '자유게시판, 묻고 답하기 등에서 자유롭게 글을 작성하세요.'.tr(),
       ),
       _GuideStepData(
         icon: FontAwesomeIcons.lightUsers,
+        // "Connect"
         title: '소통하기'.tr(),
+        // "Chat with other members in real-time via open chat rooms."
         description: '오픈 채팅방에서 다른 회원들과 실시간으로 소통하세요.'.tr(),
       ),
     ];
@@ -144,6 +153,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
       children: [
         _buildSectionHeader(
           icon: FontAwesomeIcons.lightRocket,
+          // "Getting Started"
           title: '시작하기'.tr(),
         ),
         const SizedBox(height: 16),
@@ -165,22 +175,30 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
     final features = [
       _GuideStepData(
         icon: FontAwesomeIcons.lightComments,
+        // "Community"
         title: '커뮤니티'.tr(),
+        // "Share information across various forums including free board, Q&A, and blogs."
         description: '자유게시판, 묻고 답하기, 블로그 등 다양한 게시판에서 정보를 공유하세요.'.tr(),
       ),
       _GuideStepData(
         icon: FontAwesomeIcons.lightMessage,
+        // "Chat"
         title: '채팅'.tr(),
+        // "Join open chat rooms or have 1:1 conversations."
         description: '오픈 채팅방에 참여하거나 1:1 채팅으로 대화하세요.'.tr(),
       ),
       _GuideStepData(
         icon: FontAwesomeIcons.lightStore,
+        // "Company"
         title: '업소록'.tr(),
+        // "Search local business info and register your own business."
         description: '필리핀 현지 업소 정보를 검색하고 나의 업소를 등록하세요.'.tr(),
       ),
       _GuideStepData(
         icon: FontAwesomeIcons.lightCartShopping,
+        // "Marketplace"
         title: '회원장터'.tr(),
+        // "Buy, sell, and find jobs in the marketplace."
         description: '사고팔기, 구인구직 게시판에서 거래하세요.'.tr(),
       ),
     ];
@@ -190,6 +208,7 @@ class _AppGuideScreenState extends State<AppGuideScreen> {
       children: [
         _buildSectionHeader(
           icon: FontAwesomeIcons.lightStar,
+          // "Key Features"
           title: '주요 기능'.tr(),
         ),
         const SizedBox(height: 16),

@@ -79,6 +79,7 @@ class EssentialInfoScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "Essential Info"
         title: Text('필수 정보'.tr()),
         actions: [
           IconButton(

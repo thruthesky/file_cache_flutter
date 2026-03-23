@@ -74,6 +74,7 @@ class _CompanyRevisitPointResultScreenState
 
     return Scaffold(
       appBar: AppBar(
+        // "Revisit Point Result"
         title: Text('재방문 포인트 결과'.tr()),
         elevation: 0,
       ),
@@ -108,6 +109,7 @@ class _CompanyRevisitPointResultScreenState
                   },
                   icon: const FaIcon(FontAwesomeIcons.lightPenToSquare,
                       size: 18),
+                  // "Earn Points by Writing a Review"
                   label: Text('후기 작성으로 포인트 받기'.tr()),
                 ),
               ),
@@ -131,6 +133,7 @@ class _CompanyRevisitPointResultScreenState
         ),
         const SizedBox(height: 24),
         Text(
+          // "Drawing points..."
           '포인트 추첨 중...'.tr(),
           style: text.titleMedium?.copyWith(color: color.onSurfaceVariant),
         ),
@@ -160,6 +163,7 @@ class _CompanyRevisitPointResultScreenState
             _claimRevisitPoint();
           },
           icon: const FaIcon(FontAwesomeIcons.lightArrowsRotate, size: 16),
+          // "Try Again"
           label: Text('다시 시도'.tr()),
         ),
       ],

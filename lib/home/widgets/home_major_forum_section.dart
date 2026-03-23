@@ -32,6 +32,7 @@ class HomeMajorForumSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
+            // "Major Forums"
             '주요 게시판'.tr(),
             style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
           ),

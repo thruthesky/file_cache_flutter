@@ -104,6 +104,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
                 size: 16,
                 color: scheme.primary,
               ),
+              // "Generate AI Answer"
               label: Text('AI 답변 생성'.tr()),
               style: OutlinedButton.styleFrom(
                 foregroundColor: scheme.primary,
@@ -142,6 +143,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
               ),
               const SizedBox(width: 6),
               Text(
+                // "AI Answer"
                 'AI 답변'.tr(),
                 style: TextStyle(
                   fontSize: 14,

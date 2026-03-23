@@ -20,6 +20,7 @@ class CompanyEventScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // "Business Event"
       appBar: AppBar(title: Text('업소이벤트'.tr())),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -65,6 +66,7 @@ class CompanyEventScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
+              // "Request and scan QR codes at partner businesses to earn points!"
               '제휴 업소에서 QR 코드를 요청하고 스캔하여 포인트를 적립하세요!'.tr(),
               style: text.bodyMedium?.copyWith(
                 color: color.onSurface,
@@ -95,6 +97,7 @@ class CompanyEventScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
+            // "Triple Combo Event"
             '삼단콤보 이벤트'.tr(),
             style: text.headlineSmall?.copyWith(
               color: color.onPrimaryContainer,
@@ -103,6 +106,7 @@ class CompanyEventScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
+            // "QR Scan → Earn Points → Enter Draw"
             'QR 스캔 → 포인트 획득 → 포인트 응모'.tr(),
             style: text.bodyMedium?.copyWith(
               color: color.onPrimaryContainer.withValues(alpha: 0.8),
@@ -125,19 +129,25 @@ class CompanyEventScreen extends StatelessWidget {
         children: [
           _buildCompactStep(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Step 1. Scan QR Code"
             title: 'Step 1. QR 코드 스캔'.tr(),
+            // "Scan the QR code at a partner business."
             description: '제휴 업소에서 QR 코드를 스캔하세요.'.tr(),
           ),
           const Divider(height: 24),
           _buildCompactStep(
             icon: FontAwesomeIcons.lightRotate,
+            // "Step 2. Earn Points"
             title: 'Step 2. 포인트 획득'.tr(),
+            // "Instantly earn 1,000~2,000 points per scan."
             description: 'QR 스캔 시 1,000~2,000 포인트를 바로 획득합니다.'.tr(),
           ),
           const Divider(height: 24),
           _buildCompactStep(
             icon: FontAwesomeIcons.lightPenToSquare,
+            // "Step 3. Enter Draw"
             title: 'Step 3. 포인트 응모'.tr(),
+            // "Use your points on the spinning wheel to win coupons!"
             description: '획득한 포인트로 스피닝 휠에 응모하여 쿠폰을 받으세요!'.tr(),
           ),
         ],
@@ -197,6 +207,7 @@ class CompanyEventScreen extends StatelessWidget {
         onPressed: () => QrScannerScreen.push(context),
         icon: const FaIcon(FontAwesomeIcons.lightQrcode, size: 28),
         label: Text(
+          // "Scan QR Code"
           'QR 코드 스캔하기'.tr(),
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),

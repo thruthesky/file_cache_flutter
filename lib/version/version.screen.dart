@@ -52,6 +52,7 @@ class _VersionScreenState extends State<VersionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // "Version Info"
       appBar: AppBar(title: Text('버전 정보'.tr()), centerTitle: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -63,23 +64,28 @@ class _VersionScreenState extends State<VersionScreen> {
                   /// 앱 정보 섹션
                   _buildSectionHeader(
                     icon: FontAwesomeIcons.mobileScreen,
+                    // "App Info"
                     title: '앱 정보'.tr(),
                   ),
                   _buildInfoCard(
                     children: [
                       _buildInfoRow(
+                        // "[NO TRANSLATION: 앱 이름]"
                         '앱 이름'.tr(),
                         _packageInfo?.appName ?? '-',
                       ),
                       _buildInfoRow(
+                        // "[NO TRANSLATION: 패키지 이름]"
                         '패키지 이름'.tr(),
                         _packageInfo?.packageName ?? '-',
                       ),
                       _buildInfoRow(
+                        // "[NO TRANSLATION: 버전]"
                         '버전'.tr(),
                         _packageInfo?.version ?? '-',
                       ),
                       _buildInfoRow(
+                        // "[NO TRANSLATION: 빌드 번호]"
                         '빌드 번호'.tr(),
                         _packageInfo?.buildNumber ?? '-',
                       ),
@@ -125,20 +131,31 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 기본 정보
         _buildSectionHeader(
           icon: FontAwesomeIcons.android,
+          // "Basic Info"
           title: '기본 정보'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 디바이스 이름]"
             _buildInfoRow('디바이스 이름'.tr(), info.name),
+            // "[NO TRANSLATION: 모델]"
             _buildInfoRow('모델'.tr(), info.model),
+            // "[NO TRANSLATION: 브랜드]"
             _buildInfoRow('브랜드'.tr(), info.brand),
+            // "[NO TRANSLATION: 제조사]"
             _buildInfoRow('제조사'.tr(), info.manufacturer),
+            // "[NO TRANSLATION: 제품]"
             _buildInfoRow('제품'.tr(), info.product),
+            // "[NO TRANSLATION: 디바이스]"
             _buildInfoRow('디바이스'.tr(), info.device),
+            // "[NO TRANSLATION: 하드웨어]"
             _buildInfoRow('하드웨어'.tr(), info.hardware),
+            // "[NO TRANSLATION: 보드]"
             _buildInfoRow('보드'.tr(), info.board),
             _buildInfoRow(
+              // "[NO TRANSLATION: 물리 디바이스]"
               '물리 디바이스'.tr(),
+              // "Yes", "No"
               info.isPhysicalDevice ? '예'.tr() : '아니오'.tr(),
             ),
           ],
@@ -148,22 +165,31 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 시스템 정보
         _buildSectionHeader(
           icon: FontAwesomeIcons.gear,
+          // "[NO TRANSLATION: 시스템 정보]"
           title: '시스템 정보'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: Android 버전]"
             _buildInfoRow('Android 버전'.tr(), info.version.release),
             _buildInfoRow('SDK Int', info.version.sdkInt.toString()),
             _buildInfoRow(
+              // "[NO TRANSLATION: 보안 패치]"
               '보안 패치'.tr(),
               info.version.securityPatch ?? '-',
             ),
+            // "[NO TRANSLATION: 디스플레이]"
             _buildInfoRow('디스플레이'.tr(), info.display),
             _buildInfoRow('ID', info.id),
+            // "[NO TRANSLATION: 핑거프린트]"
             _buildInfoRow('핑거프린트'.tr(), info.fingerprint),
+            // "[NO TRANSLATION: 호스트]"
             _buildInfoRow('호스트'.tr(), info.host),
+            // "[NO TRANSLATION: 부트로더]"
             _buildInfoRow('부트로더'.tr(), info.bootloader),
+            // "[NO TRANSLATION: 타입]"
             _buildInfoRow('타입'.tr(), info.type),
+            // "[NO TRANSLATION: 태그]"
             _buildInfoRow('태그'.tr(), info.tags),
           ],
         ),
@@ -172,17 +198,24 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 메모리 및 저장소
         _buildSectionHeader(
           icon: FontAwesomeIcons.memory,
+          // "[NO TRANSLATION: 메모리 및 저장소]"
           title: '메모리 및 저장소'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 물리 RAM]"
             _buildInfoRow('물리 RAM'.tr(), '${info.physicalRamSize} MB'),
+            // "[NO TRANSLATION: 가용 RAM]"
             _buildInfoRow('가용 RAM'.tr(), '${info.availableRamSize} MB'),
             _buildInfoRow(
+              // "[NO TRANSLATION: 저메모리 디바이스]"
               '저메모리 디바이스'.tr(),
+              // "Yes", "No"
               info.isLowRamDevice ? '예'.tr() : '아니오'.tr(),
             ),
+            // "[NO TRANSLATION: 전체 디스크]"
             _buildInfoRow('전체 디스크'.tr(), _formatBytes(info.totalDiskSize)),
+            // "[NO TRANSLATION: 여유 디스크]"
             _buildInfoRow('여유 디스크'.tr(), _formatBytes(info.freeDiskSize)),
           ],
         ),
@@ -191,16 +224,20 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 지원 ABI
         _buildSectionHeader(
           icon: FontAwesomeIcons.microchip,
+          // "[NO TRANSLATION: 지원 ABI]"
           title: '지원 ABI'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 지원 ABI]"
             _buildInfoRow('지원 ABI'.tr(), info.supportedAbis.join(', ')),
             _buildInfoRow(
+              // "[NO TRANSLATION: 32비트 ABI]"
               '32비트 ABI'.tr(),
               info.supported32BitAbis.join(', '),
             ),
             _buildInfoRow(
+              // "[NO TRANSLATION: 64비트 ABI]"
               '64비트 ABI'.tr(),
               info.supported64BitAbis.join(', '),
             ),
@@ -211,11 +248,13 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 시스템 기능
         _buildSectionHeader(
           icon: FontAwesomeIcons.listCheck,
+          // "[NO TRANSLATION: 시스템 기능]"
           title: '시스템 기능'.tr(),
         ),
         _buildInfoCard(
           children: [
             _buildExpandableInfoRow(
+              // "[NO TRANSLATION: 시스템 기능]"
               '시스템 기능'.tr(),
               info.systemFeatures.join('\n'),
             ),
@@ -234,20 +273,29 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 기본 정보
         _buildSectionHeader(
           icon: FontAwesomeIcons.apple,
+          // "Basic Info"
           title: '기본 정보'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 디바이스 이름]"
             _buildInfoRow('디바이스 이름'.tr(), info.name),
+            // "[NO TRANSLATION: 모델]"
             _buildInfoRow('모델'.tr(), info.model),
+            // "[NO TRANSLATION: 모델 이름]"
             _buildInfoRow('모델 이름'.tr(), info.modelName),
+            // "[NO TRANSLATION: 로컬 모델]"
             _buildInfoRow('로컬 모델'.tr(), info.localizedModel),
             _buildInfoRow(
+              // "[NO TRANSLATION: 물리 디바이스]"
               '물리 디바이스'.tr(),
+              // "Yes", "No"
               info.isPhysicalDevice ? '예'.tr() : '아니오'.tr(),
             ),
             _buildInfoRow(
+              // "[NO TRANSLATION: Mac에서 iOS 앱]"
               'Mac에서 iOS 앱'.tr(),
+              // "Yes", "No"
               info.isiOSAppOnMac ? '예'.tr() : '아니오'.tr(),
             ),
           ],
@@ -257,13 +305,17 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 시스템 정보
         _buildSectionHeader(
           icon: FontAwesomeIcons.gear,
+          // "[NO TRANSLATION: 시스템 정보]"
           title: '시스템 정보'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 시스템 이름]"
             _buildInfoRow('시스템 이름'.tr(), info.systemName),
+            // "[NO TRANSLATION: 시스템 버전]"
             _buildInfoRow('시스템 버전'.tr(), info.systemVersion),
             _buildInfoRow(
+              // "[NO TRANSLATION: Vendor ID]"
               'Vendor ID'.tr(),
               info.identifierForVendor ?? '-',
             ),
@@ -274,13 +326,18 @@ class _VersionScreenState extends State<VersionScreen> {
         /// 메모리 및 저장소
         _buildSectionHeader(
           icon: FontAwesomeIcons.memory,
+          // "[NO TRANSLATION: 메모리 및 저장소]"
           title: '메모리 및 저장소'.tr(),
         ),
         _buildInfoCard(
           children: [
+            // "[NO TRANSLATION: 물리 RAM]"
             _buildInfoRow('물리 RAM'.tr(), '${info.physicalRamSize} MB'),
+            // "[NO TRANSLATION: 가용 RAM]"
             _buildInfoRow('가용 RAM'.tr(), '${info.availableRamSize} MB'),
+            // "[NO TRANSLATION: 전체 디스크]"
             _buildInfoRow('전체 디스크'.tr(), _formatBytes(info.totalDiskSize)),
+            // "[NO TRANSLATION: 여유 디스크]"
             _buildInfoRow('여유 디스크'.tr(), _formatBytes(info.freeDiskSize)),
           ],
         ),
@@ -289,6 +346,7 @@ class _VersionScreenState extends State<VersionScreen> {
         /// UTSNAME 정보
         _buildSectionHeader(
           icon: FontAwesomeIcons.terminal,
+          // "[NO TRANSLATION: UTSNAME 정보]"
           title: 'UTSNAME 정보'.tr(),
         ),
         _buildInfoCard(

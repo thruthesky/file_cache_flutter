@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -18,7 +19,8 @@ class EmptyPostList extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '게시글이 없습니다',
+            // "No posts"
+            '게시글이 없습니다'.tr(),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 16),
           ),
         ],

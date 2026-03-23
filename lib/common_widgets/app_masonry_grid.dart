@@ -81,6 +81,7 @@ class AppMasonryGrid<T> extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(32),
                         child: Text(
+                          // "[NO TRANSLATION: 항목이 없습니다]"
                           '항목이 없습니다'.tr(),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
@@ -93,10 +94,12 @@ class AppMasonryGrid<T> extends StatelessWidget {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // "[NO TRANSLATION: 불러오기에 실패했습니다]"
                             Text('불러오기에 실패했습니다'.tr()),
                             const SizedBox(height: 8),
                             TextButton(
                               onPressed: () => pagingController.refresh(),
+                              // "Try Again"
                               child: Text('다시 시도'.tr()),
                             ),
                           ],

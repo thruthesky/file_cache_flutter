@@ -87,6 +87,7 @@ class SingleChatRoomInitState extends State<SingleChatRoomInit> {
       debugPrint('Error initializing chat room: $e');
       debugPrintStack(stackTrace: stack);
       if (globalContext.mounted) {
+        // "Error loading chat room"
         showErrorSnackBar(globalContext, '채팅방 로딩 오류'.tr());
         setState(() => isChatRoomLoading = false);
         if (Navigator.canPop(globalContext)) {

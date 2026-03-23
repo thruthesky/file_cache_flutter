@@ -64,11 +64,13 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
     final content = _contentController.text.trim();
 
     if (content.length < 10) {
+      // "Please write at least 10 characters for the review."
       _showSnackBar('후기 내용을 10자 이상 입력해 주세요.'.tr());
       return;
     }
 
     if (_uploadedPhotos.isEmpty) {
+      // "Please attach at least 1 photo."
       _showSnackBar('사진을 1장 이상 첨부해 주세요.'.tr());
       return;
     }
@@ -113,6 +115,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
+          // "Visit Review"
           '${widget.companyName} ${'방문 후기'.tr()}',
           overflow: TextOverflow.ellipsis,
         ),
@@ -134,6 +137,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                           color: color.onSurfaceVariant),
                       const SizedBox(width: 8),
                       Text(
+                        // "Visit Review"
                         '방문 후기'.tr(),
                         style: text.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
@@ -147,6 +151,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                     maxLines: 5,
                     maxLength: 500,
                     decoration: InputDecoration(
+                      // "Write your visit review. (min. 10 characters)"
                       hintText: '방문 후기를 작성해 주세요. (10자 이상)'.tr(),
                       hintStyle: text.bodyMedium?.copyWith(
                         color: color.onSurfaceVariant.withValues(alpha: 0.5),
@@ -227,6 +232,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                       : const FaIcon(FontAwesomeIcons.lightPenToSquare,
                           size: 18),
                   label: Text(
+                    // "Saving...", "Save Review"
                     _isSubmitting ? '저장 중...'.tr() : '후기 저장'.tr(),
                   ),
                 ),
@@ -266,6 +272,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
+                  // "Earn points by writing a review!"
                   '후기 작성 시 포인트를 드립니다!'.tr(),
                   style: text.bodySmall?.copyWith(
                     color: color.primary,
@@ -298,6 +305,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                 color: color.onSurfaceVariant),
             const SizedBox(width: 8),
             Text(
+              // "Add Photo"
               '사진 추가'.tr(),
               style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
             ),
@@ -407,6 +415,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
                   ),
                   const SizedBox(width: 8),
                   Text(
+                    // "Uploading..."
                     '업로드 중...'.tr(),
                     style: text.labelMedium?.copyWith(
                       color: color.primary,
@@ -478,6 +487,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
             ),
             const SizedBox(height: 8),
             Text(
+              // "Uploading..."
               '업로드 중...'.tr(),
               style: text.labelSmall?.copyWith(
                 color: color.primary,
@@ -516,6 +526,7 @@ class _CompanyVisitReviewScreenState extends State<CompanyVisitReviewScreen> {
           ),
           const SizedBox(height: 8),
           Text(
+            // "Add Photo"
             '사진 추가'.tr(),
             style: text.labelSmall?.copyWith(
               color: color.primary,

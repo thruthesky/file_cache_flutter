@@ -73,6 +73,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
+                      // "More"
                       '더보기'.tr(),
                       style: text.labelMedium?.copyWith(
                         color: color.primary,
@@ -125,6 +126,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
             ),
             const SizedBox(width: 4),
             Text(
+              // "Search"
               '검색'.tr(),
               style: text.labelMedium?.copyWith(
                 color: color.onSurfaceVariant,

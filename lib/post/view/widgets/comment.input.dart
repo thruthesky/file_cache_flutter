@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -50,7 +51,8 @@ class _CommentInputState extends State<CommentInput> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('댓글 작성 실패: $e')));
+      // "Failed to create comment"
+      ).showSnackBar(SnackBar(content: Text('${'댓글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSending = false);
     }

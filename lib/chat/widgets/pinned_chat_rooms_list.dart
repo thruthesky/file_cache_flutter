@@ -76,6 +76,7 @@ class PinnedChatRoomsList extends StatelessWidget {
                         ),
                         SizedBox(width: pinnedSectionIconSpacing),
                         Text(
+                          // "Pinned Chats"
                           '고정된 채팅'.tr(),
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colorScheme.primary,
@@ -191,6 +192,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: unpinTitlePadding,
                 child: Text(
+                  // "Unpin Chat Room"
                   '채팅방 고정 해제'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -203,6 +205,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
               Padding(
                 padding: unpinBodyPadding,
                 child: Text(
+                  // "Are you sure you want to unpin this chat room?"
                   '이 채팅방의 고정을 해제하시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -249,6 +252,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Cancel"
                       child: Text('취소'.tr()),
                     ),
                     SizedBox(width: unpinButtonSpacing),
@@ -285,6 +289,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Unpin"
                       child: Text('고정 해제'.tr()),
                     ),
                   ],
@@ -317,6 +322,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 성공 메시지 표시 (선택적)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            // "Chat room unpinned"
             content: Text('채팅방 고정이 해제되었습니다'.tr()),
             duration: const Duration(seconds: 2),
           ),
@@ -327,6 +333,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         // 에러 메시지 표시
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            // "Error: {}"
             content: Text('오류: {}'.tr(args: [e.toString()])),
             duration: const Duration(seconds: 3),
           ),
@@ -360,6 +367,7 @@ class _PinnedChatRoomItem extends StatelessWidget {
         } else if (isSingle) {
           name = join.userDisplayName.isNotEmpty
               ? join.userDisplayName
+              // "No name"
               : '이름없음'.tr();
         } else {
           name = join.roomName.isNotEmpty ? join.roomName : 'No name';
