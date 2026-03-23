@@ -66,6 +66,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // "Info"
       appBar: AppBar(title: Text(widget.title ?? _info?.name ?? '정보'.tr())),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -90,6 +91,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
               color: color.error,
             ),
             const SizedBox(height: 16),
+            // "Unable to load information"
             Text('정보를 불러올 수 없습니다'.tr(), style: text.titleMedium),
             const SizedBox(height: 8),
             Text(
@@ -105,6 +107,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
                 });
                 _loadInfo(forceRefresh: true);
               },
+              // "Try Again"
               child: Text('다시 시도'.tr()),
             ),
           ],

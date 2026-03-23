@@ -58,12 +58,14 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
         }
 
         return Scaffold(
+          // "Invalid Chat Room ID"
           appBar: AppBar(title: Text('잘못된 채팅방 ID'.tr())),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 16,
             children: [
+              // "Invalid Chat Room ID"
               Center(child: Text('잘못된 채팅방 ID'.tr())),
               ElevatedButton(
                 onPressed: () {
@@ -74,6 +76,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                     context.go(AppScreen.routeName);
                   }
                 },
+                // "Go Back to Home"
                 child: Text('홈으로 돌아가기'.tr()),
               ),
             ],
@@ -84,7 +87,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
+        // "Login required"
         appBar: AppBar(title: Text('로그인이 필요합니다'.tr())),
+        // "Please log in to continue"
         body: Center(child: Text('로그인 후 이용해 주세요'.tr())),
       ),
     );

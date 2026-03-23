@@ -43,28 +43,35 @@ class CompanyContactInfoForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // "Location"
           _sectionTitle(context, FontAwesomeIcons.locationDot, '위치'.tr()),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "Area"
             label: '지역'.tr(),
             child: TextFormField(
               controller: locationController,
+              // "e.g. Manila, Cebu, Davao"
               decoration: formInputDecoration('예: 마닐라, 세부, 다바오'.tr()),
             ),
           ),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "Address"
             label: '주소'.tr(),
             child: TextFormField(
               controller: addressController,
+              // "Enter detailed address"
               decoration: formInputDecoration('상세 주소를 입력하세요'.tr()),
               maxLines: 2,
             ),
           ),
           const SizedBox(height: 28),
+          // "Contact"
           _sectionTitle(context, FontAwesomeIcons.addressBook, '연락처'.tr()),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "Phone"
             label: '전화번호'.tr(),
             child: TextFormField(
               controller: phoneController,
@@ -74,20 +81,25 @@ class CompanyContactInfoForm extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "Mobile Number"
             label: '휴대폰 번호'.tr(),
             child: TextFormField(
               controller: mobileController,
+              // "e.g. +63-917-123-4567"
               decoration: formInputDecoration('예: +63-917-123-4567'.tr()),
               keyboardType: TextInputType.phone,
             ),
           ),
           const SizedBox(height: 28),
+          // "Messenger"
           _sectionTitle(context, FontAwesomeIcons.commentDots, '메신저'.tr()),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "KakaoTalk ID"
             label: '카카오톡 ID'.tr(),
             child: TextFormField(
               controller: kakaoController,
+              // "Open chat ID or link"
               decoration: formInputDecoration('오픈채팅 ID 또는 링크'.tr()),
             ),
           ),
@@ -103,7 +115,9 @@ class CompanyContactInfoForm extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "KakaoTalk Channel URL"
             label: '카카오톡 채널 URL'.tr(),
+            // "Auto-filled when QR image is uploaded"
             hint: 'QR 이미지 업로드 시 자동 입력됩니다'.tr(),
             child: TextFormField(
               controller: kakaoChannelUrlController,
@@ -112,9 +126,11 @@ class CompanyContactInfoForm extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           FormFieldLabel(
+            // "Telegram ID"
             label: '텔레그램 ID'.tr(),
             child: TextFormField(
               controller: telegramController,
+              // "Username or link"
               decoration: formInputDecoration('사용자명 또는 링크'.tr()),
             ),
           ),
@@ -193,7 +209,9 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
     final hasImage = _url != null && _url!.isNotEmpty;
 
     return FormFieldLabel(
+      // "KakaoTalk QR Code", "Optional"
       label: '${'카카오톡 QR 코드'.tr()} (${'선택'.tr()})',
+      // "Channel URL will be auto-filled when QR image is uploaded"
       hint: 'QR 이미지를 업로드하면 채널 URL이 자동 입력됩니다'.tr(),
       child: Stack(
         children: [
@@ -225,6 +243,7 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
+                    // "Upload failed: {}"
                     '업로드 실패: {}'.tr(
                       args: [e.toString().replaceFirst('Exception: ', '')],
                     ),
@@ -264,6 +283,7 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
                               const FaIcon(FontAwesomeIcons.penToSquare,
                                   size: 11, color: Colors.white),
                               const SizedBox(width: 4),
+                              // "Change"
                               Text('변경'.tr(),
                                   style: const TextStyle(
                                       color: Colors.white, fontSize: 12)),
@@ -278,11 +298,13 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
                         FaIcon(FontAwesomeIcons.lightQrcode,
                             size: 28, color: scheme.onSurfaceVariant),
                         const SizedBox(height: 8),
+                        // "Upload KakaoTalk QR Image"
                         Text('카카오톡 QR 이미지 업로드'.tr(),
                             style: TextStyle(
                                 fontSize: 12,
                                 color: scheme.onSurfaceVariant)),
                         const SizedBox(height: 2),
+                        // "Tap to select"
                         Text('탭하여 선택'.tr(),
                             style: TextStyle(
                                 fontSize: 11, color: scheme.outlineVariant)),

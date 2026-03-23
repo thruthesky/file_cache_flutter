@@ -47,6 +47,7 @@ class CompanyReviewPointResultScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        // "Review Point Result"
         title: Text('후기 포인트 결과'.tr()),
         elevation: 0,
       ),
@@ -121,6 +122,7 @@ class CompanyReviewPointResultScreen extends StatelessWidget {
                   );
                 },
                 icon: const FaIcon(FontAwesomeIcons.lightBuilding, size: 18),
+                // "View Business Info"
                 label: Text('업소 정보 보기'.tr()),
               ),
             ),

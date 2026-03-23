@@ -84,15 +84,18 @@ final router = GoRouter(
     return null;
   },
   errorBuilder: (context, state) => Scaffold(
+    // "[NO TRANSLATION: 페이지를 찾을 수 없습니다]"
     appBar: AppBar(title: Text('페이지를 찾을 수 없습니다'.tr())),
     body: Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // "[NO TRANSLATION: 요청한 페이지를 찾을 수 없습니다]"
           Text('요청한 페이지를 찾을 수 없습니다'.tr()),
           const SizedBox(height: 16),
           TextButton(
             onPressed: () => context.go(AppScreen.routeName),
+            // "[NO TRANSLATION: 홈으로]"
             child: Text('홈으로'.tr()),
           ),
         ],

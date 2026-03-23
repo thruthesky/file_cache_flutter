@@ -235,6 +235,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
+                        // "Failed to load business info."
                         '업소 정보를 불러오지 못했습니다.'.tr(),
                         style: theme.textTheme.titleMedium,
                         textAlign: TextAlign.center,
@@ -246,6 +247,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           FontAwesomeIcons.arrowRotateRight,
                           size: 16,
                         ),
+                        // "Try Again"
                         label: Text('다시 시도'.tr()),
                       ),
                     ],
@@ -264,6 +266,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                     // 1. 기본 정보
                     _buildSection(
+                      // "Business Info"
                       title: '업소 정보'.tr(),
                       icon: FontAwesomeIcons.building,
                       child: _buildCompanyInfoContent(),
@@ -273,6 +276,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 2. 연락처
                     if (_hasContactInfo()) ...[
                       _buildSection(
+                        // "Contact"
                         title: '연락처'.tr(),
                         icon: FontAwesomeIcons.addressBook,
                         child: _buildContactContent(),
@@ -283,6 +287,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 3. 설명
                     if (_company.description.isNotEmpty) ...[
                       _buildSection(
+                        // "Description"
                         title: '상세 설명'.tr(),
                         icon: FontAwesomeIcons.alignLeft,
                         child: _buildDescriptionContent(),
@@ -292,6 +297,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                     // 4. 방문 후기
                     _buildSection(
+                      // "Visit Review"
                       title: '방문 후기'.tr(),
                       icon: FontAwesomeIcons.lightCommentDots,
                       child: _buildReviewsContent(),
@@ -455,6 +461,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           const SizedBox(height: 16),
           _buildInfoRow(
             icon: FontAwesomeIcons.locationDot,
+            // "Location"
             label: '위치'.tr(),
             value: _getValidLocation(),
           ),
@@ -501,6 +508,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.phoneNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.phone,
+            // "Phone"
             label: '전화번호'.tr(),
             value: _company.phoneNumber,
             onTap: () => _launchUrl('tel:${_company.phoneNumber}'),
@@ -508,6 +516,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.mobileNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.mobileScreen,
+            // "Mobile"
             label: '휴대폰'.tr(),
             value: _company.mobileNumber,
             onTap: () => _launchUrl('tel:${_company.mobileNumber}'),
@@ -515,6 +524,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.kakaotalkId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.comment,
+            // "KakaoTalk"
             label: '카카오톡'.tr(),
             value: _company.kakaotalkId,
             onTap: () =>
@@ -523,6 +533,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.telegramId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.telegram,
+            // "Telegram"
             label: '텔레그램'.tr(),
             value: _company.telegramId,
             onTap: () => _launchUrl('https://t.me/${_company.telegramId}'),
@@ -653,6 +664,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               ),
               const SizedBox(height: 12),
               Text(
+                // "No reviews yet"
                 '아직 후기가 없습니다'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,

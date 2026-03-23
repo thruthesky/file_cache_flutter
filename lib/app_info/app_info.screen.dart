@@ -50,6 +50,7 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // "App Info"
       appBar: AppBar(title: Text('앱 정보'.tr()), centerTitle: true),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -59,12 +60,16 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
             /// 앱 정보 섹션
             _buildSectionHeader(
               icon: FontAwesomeIcons.mobileScreen,
+              // "App Info"
               title: '앱 정보'.tr(),
             ),
             _buildInfoCard(
               children: [
+                // "[NO TRANSLATION: 앱 이름]"
                 _buildInfoRow('앱 이름'.tr(), _packageInfo?.appName ?? '-'),
+                // "[NO TRANSLATION: 버전]"
                 _buildInfoRow('버전'.tr(), _packageInfo?.version ?? '-'),
+                // "[NO TRANSLATION: 빌드 번호]"
                 _buildInfoRow('빌드 번호'.tr(), _packageInfo?.buildNumber ?? '-'),
               ],
             ),
@@ -74,11 +79,14 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
             if (_isAdmin) ...[
               _buildSectionHeader(
                 icon: FontAwesomeIcons.server,
+                // "[NO TRANSLATION: API 서버 정보]"
                 title: 'API 서버 정보'.tr(),
               ),
               _buildInfoCard(
                 children: [
+                  // "[NO TRANSLATION: API 서버 주소]"
                   _buildInfoRow('API 서버 주소'.tr(), Config.v7ApiEndpoint),
+                  // "[NO TRANSLATION: 서버 베이스 URL]"
                   _buildInfoRow('서버 베이스 URL'.tr(), Config.v7BaseUrl),
                 ],
               ),
@@ -87,11 +95,13 @@ class _AppInfoScreenState extends State<AppInfoScreen> {
               /// 환경 정보 (관리자만)
               _buildSectionHeader(
                 icon: FontAwesomeIcons.gear,
+                // "[NO TRANSLATION: 환경 정보]"
                 title: '환경 정보'.tr(),
               ),
               _buildInfoCard(
                 children: [
                   _buildInfoRow(
+                    // "[NO TRANSLATION: 환경 모드]"
                     '환경 모드'.tr(),
                     Config.v7ApiEndpoint.contains('local')
                         ? 'Development'

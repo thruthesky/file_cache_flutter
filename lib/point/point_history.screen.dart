@@ -85,15 +85,25 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
   String _getLogDescription(String module, String action, String etc) {
     if (etc.isNotEmpty) return etc;
     return switch ((module, action)) {
+      // "Post created"
       ('post', 'create') => '글 작성'.tr(),
+      // "Post deleted"
       ('post', 'delete') => '글 삭제'.tr(),
+      // "Comment created"
       ('comment', 'create') => '댓글 작성'.tr(),
+      // "Comment deleted"
       ('comment', 'delete') => '댓글 삭제'.tr(),
+      // "Like"
       ('vote', 'like') => '좋아요'.tr(),
+      // "Spin wheel"
       ('event', 'spin') || ('point_event', 'spin') => '스피닝 휠'.tr(),
+      // "Admin"
       ('admin', _) => '관리자'.tr(),
+      // "Point Ad"
       ('adv', _) => '포인트 광고'.tr(),
+      // "Revisit point"
       ('company', 'revisit') => '재방문 포인트'.tr(),
+      // "Review point"
       ('company', 'review') => '후기 포인트'.tr(),
       _ => '$module/$action',
     };
@@ -109,6 +119,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     final scheme = theme.colorScheme;
 
     return Scaffold(
+      // "Point History"
       appBar: AppBar(title: Text('포인트 내역'.tr()), elevation: 0),
       body: Column(
         children: [
@@ -207,6 +218,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
       child: Column(
         children: [
           Text(
+            // "Current Points"
             '보유 포인트'.tr(),
             style: Theme.of(
               context,
@@ -258,6 +270,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
             ),
             const SizedBox(height: 16),
             Text(
+              // "No point history"
               '포인트 내역이 없습니다'.tr(),
               textAlign: TextAlign.center,
               style: Theme.of(

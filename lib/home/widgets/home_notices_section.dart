@@ -66,6 +66,7 @@ class _HomeNoticesSectionState extends State<HomeNoticesSection> {
                 ),
                 const SizedBox(width: 6),
                 Text(
+                  // "Notices"
                   '공지사항'.tr(),
                   style: text.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,

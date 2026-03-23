@@ -130,6 +130,7 @@ class PostListTile extends StatelessWidget {
                               child: ConstrainedBox(
                                 constraints: const BoxConstraints(maxWidth: 80),
                                 child: Text(
+                                  // "No name"
                                   post.userName.isNotEmpty ? post.userName : '이름없음'.tr(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -247,17 +248,21 @@ class PostListTile extends StatelessWidget {
             final confirm = await showDialog<bool>(
               context: context,
               builder: (ctx) => AlertDialog(
+                // "Unblock User"
                 title: Text('차단 해제'.tr()),
                 content: Text(
+                  // "This user is blocked. Do you want to unblock them to view the post?"
                   '차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'.tr(),
                 ),
                 actions: [
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, false),
+                    // "Cancel"
                     child: Text('취소'.tr()),
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(ctx, true),
+                    // "Unblock User"
                     child: Text('차단 해제'.tr()),
                   ),
                 ],
@@ -267,6 +272,7 @@ class PostListTile extends StatelessWidget {
             try {
               await toggleBlockUserByIdx(post.idxMember);
               if (context.mounted) {
+                // "User has been unblocked"
                 showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
               }
             } catch (e) {
@@ -288,6 +294,7 @@ class PostListTile extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
+                      // "Post from a blocked user"
                       '차단된 사용자의 글입니다'.tr(),
                       style: text.bodyMedium?.copyWith(
                         color: color.outline,

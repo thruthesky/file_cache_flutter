@@ -161,6 +161,7 @@ class PostListMasonryView extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
+                  // "Post from a blocked user"
                   '차단된 사용자의 글입니다'.tr(),
                   style: textTheme.bodySmall?.copyWith(color: scheme.outline),
                 ),

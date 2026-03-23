@@ -70,6 +70,7 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                   child: Text(
+                    // "Bookmark"
                     '북마크'.tr(),
                     style: text.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -87,6 +88,7 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
                       color: color.error,
                     ),
                     title: Text(
+                      // "Remove Bookmark"
                       '북마크 해제'.tr(),
                       style: text.bodyMedium?.copyWith(color: color.error),
                     ),
@@ -162,6 +164,7 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
                     color: color.primary,
                   ),
                   title: Text(
+                    // "Create Group"
                     '그룹 생성'.tr(),
                     style: text.bodyMedium?.copyWith(color: color.primary),
                   ),
@@ -181,11 +184,13 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
       builder: (ctx) {
         final controller = TextEditingController();
         return AlertDialog(
+          // "Create Group"
           title: Text('그룹 생성'.tr()),
           content: TextField(
             controller: controller,
             autofocus: true,
             decoration: InputDecoration(
+              // "Group Name"
               hintText: '그룹 이름'.tr(),
               border: const OutlineInputBorder(),
             ),
@@ -193,6 +198,7 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
+              // "Cancel"
               child: Text('취소'.tr()),
             ),
             FilledButton(
@@ -201,6 +207,7 @@ class _BookmarkGroupPickerSheet extends StatelessWidget {
                 if (text.isEmpty) return;
                 Navigator.pop(ctx, text);
               },
+              // "Create"
               child: Text('생성'.tr()),
             ),
           ],

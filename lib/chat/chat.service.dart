@@ -219,6 +219,7 @@ class ChatService {
           .get();
 
       if (snapshot.exists) {
+        // "You already have reported this."
         throw ('이미 신고하셨습니다.'.tr());
       }
 
@@ -369,6 +370,7 @@ class ChatService {
                     ),
                     const SizedBox(width: 12),
                     Text(
+                      // "Block & Leave"
                       '차단 및 나가기'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
@@ -385,6 +387,7 @@ class ChatService {
                   vertical: 8,
                 ),
                 child: Text(
+                  // "Are you sure you want to block this user and leave the chat?"
                   '이 사용자를 차단하고 채팅방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -427,6 +430,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Cancel"
                       child: Text('취소'.tr()),
                     ),
                     const SizedBox(width: 8),
@@ -460,6 +464,7 @@ class ChatService {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Block & Leave"
                       child: Text('차단 및 나가기'.tr()),
                     ),
                   ],

@@ -117,6 +117,7 @@ class _PostCategoryBottomSheet extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 16, right: 16, bottom: 8),
               child: Text(
+                // "[NO TRANSLATION: 게시판을 선택해주세요]"
                 '게시판을 선택해주세요'.tr(),
                 style: text.titleMedium?.copyWith(
                   color: color.onSurfaceVariant,

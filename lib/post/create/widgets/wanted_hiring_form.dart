@@ -266,8 +266,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 1. 제목
           _buildTextField(
             controller: _subjectController,
+            // "Title"
             label: '제목'.tr(),
+            // "Enter job posting title"
             hint: '구인 글 제목을 입력하세요'.tr(),
+            // "Please enter a title"
             validationMessage: '제목을 입력해주세요'.tr(),
             icon: FontAwesomeIcons.lightPenLine,
           ),
@@ -276,8 +279,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 2. 회사 이름
           _buildTextField(
             controller: _companyNameController,
+            // "Company Name"
             label: '회사 이름'.tr(),
+            // "Enter company name"
             hint: '채용 회사명을 입력하세요'.tr(),
+            // "Please enter company name"
             validationMessage: '회사 이름을 입력해주세요'.tr(),
             icon: FontAwesomeIcons.lightBuilding,
           ),
@@ -286,8 +292,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 3. 회사 소개
           _buildTextField(
             controller: _companyIntroController,
+            // "Company Introduction"
             label: '회사 소개'.tr(),
+            // "Enter company introduction"
             hint: '회사 소개를 입력하세요'.tr(),
+            // "Please enter company introduction"
             validationMessage: '회사 소개를 입력해주세요'.tr(),
             maxLines: 4,
             minLines: 3,
@@ -298,8 +307,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 4. 업무 범위
           _buildTextField(
             controller: _workRangeController,
+            // "Job Scope"
             label: '업무 범위'.tr(),
+            // "e.g. IT, Marketing, Sales"
             hint: '예: IT, 마케팅, 영업'.tr(),
+            // "Please enter job scope"
             validationMessage: '업무 범위를 입력해주세요'.tr(),
             icon: FontAwesomeIcons.lightBriefcase,
           ),
@@ -308,8 +320,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 5. 주소
           _buildTextField(
             controller: _addressController,
+            // "Philippines Full Address"
             label: '필리핀 전체 주소'.tr(),
+            // "e.g. 123 Sample St., Makati City"
             hint: '예: 123 Sample St., Makati City'.tr(),
+            // "Please enter address"
             validationMessage: '주소를 입력해주세요'.tr(),
             icon: FontAwesomeIcons.lightLocationDot,
           ),
@@ -318,8 +333,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 6. 전화번호
           _buildTextField(
             controller: _phoneController,
+            // "Philippines Phone Number"
             label: '필리핀 전화번호'.tr(),
+            // "e.g. 09171234567"
             hint: '예: 09171234567'.tr(),
+            // "Please enter phone number"
             validationMessage: '전화번호를 입력해주세요'.tr(),
             keyboardType: TextInputType.phone,
             icon: FontAwesomeIcons.lightPhone,
@@ -329,8 +347,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 7. 이메일
           _buildTextField(
             controller: _emailController,
+            // "Email Address"
             label: '이메일 주소'.tr(),
+            // "e.g. hr@company.com"
             hint: '예: hr@company.com'.tr(),
+            // "Please enter email"
             validationMessage: '이메일을 입력해주세요'.tr(),
             keyboardType: TextInputType.emailAddress,
             icon: FontAwesomeIcons.lightEnvelope,
@@ -340,8 +361,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 8. 급여
           _buildTextField(
             controller: _salaryController,
+            // "Salary (Peso)"
             label: '급여 (페소)'.tr(),
+            // "e.g. 50000"
             hint: '예: 50000'.tr(),
+            // "Please enter salary"
             validationMessage: '급여를 입력해주세요'.tr(),
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -352,8 +376,11 @@ class WantedHiringFormState extends State<WantedHiringForm> {
           // 9. 근무제
           _buildTextField(
             controller: _workTypeController,
+            // "Work Schedule"
             label: '근무제'.tr(),
+            // "e.g. 5 days/week, Mon-Fri"
             hint: '예: 주 5일, 월-금'.tr(),
+            // "Please enter work schedule"
             validationMessage: '근무제를 입력해주세요'.tr(),
             icon: FontAwesomeIcons.lightClock,
           ),
@@ -378,6 +405,7 @@ class WantedHiringFormState extends State<WantedHiringForm> {
                 },
                 onError: (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
+                    // "Upload failed"
                     SnackBar(content: Text('${'업로드 실패'.tr()}: $e')),
                   );
                 },

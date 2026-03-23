@@ -60,10 +60,15 @@ class ChatProtocol {
 /// Available report reasons
 /// Keys are DB values, values are Korean translation keys for display
 Map<String, String> get reportReasons => {
+  // "Spam"
   'spam': '스팸'.tr(),
+  // "Abusive"
   'abusive': '욕설'.tr(),
+  // "Violence"
   'violence': '폭력'.tr(),
+  // "Hate Speech"
   'hate_speech': '혐오 발언'.tr(),
+  // "Inappropriate Content"
   'inappropriate_content': '부적절한 콘텐츠'.tr(),
 };
 

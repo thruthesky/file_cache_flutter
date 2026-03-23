@@ -54,11 +54,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       builder: (ctx) {
         final controller = TextEditingController();
         return AlertDialog(
+          // "Create Group"
           title: Text('그룹 생성'.tr()),
           content: TextField(
             controller: controller,
             autofocus: true,
             decoration: InputDecoration(
+              // "Group Name"
               hintText: '그룹 이름'.tr(),
               border: const OutlineInputBorder(),
             ),
@@ -66,6 +68,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
+              // "Cancel"
               child: Text('취소'.tr()),
             ),
             FilledButton(
@@ -74,6 +77,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 if (text.isEmpty) return;
                 Navigator.pop(ctx, text);
               },
+              // "Create"
               child: Text('생성'.tr()),
             ),
           ],
@@ -88,16 +92,20 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Delete Group"
         title: Text('그룹 삭제'.tr()),
+        // "All bookmarks in this group will also be deleted"
         content: Text('그룹의 모든 북마크도 함께 삭제됩니다'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: color.error),
+            // "Delete"
             child: Text('삭제'.tr()),
           ),
         ],
@@ -154,6 +162,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "Bookmark"
         title: Text(_selectedGroup != null ? _selectedGroup!.name : '북마크'.tr()),
         backgroundColor: color.surface,
         foregroundColor: color.onSurface,
@@ -186,6 +195,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       valueListenable: BookmarkService.instance.bookmarkGroups,
       builder: (context, groups, _) {
         if (groups.isEmpty) {
+          // "No groups"
           return _buildEmpty(FontAwesomeIcons.lightFolderOpen, '그룹이 없습니다'.tr());
         }
         return ListView.separated(
@@ -251,6 +261,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
     }
 
     if (_bookmarks.isEmpty) {
+      // "No bookmarks"
       return _buildEmpty(FontAwesomeIcons.lightBookmark, '북마크가 없습니다'.tr());
     }
 
@@ -338,10 +349,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
   String _bookmarkTitle(BookmarkModel bookmark) {
     switch (bookmark.entityType) {
       case 'post':
+        // "No Title"
         return bookmark.subject ?? '제목 없음'.tr();
       case 'comment':
+        // "No Preview"
         return bookmark.contentPreview ?? '내용 미리보기 없음'.tr();
       case 'user':
+        // "No name"
         return bookmark.nickname ?? '이름없음'.tr();
       case 'chat_room':
         return bookmark.otherNickname ??
@@ -359,10 +373,13 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
       case 'post':
         return bookmark.postId ?? bookmark.entityType;
       case 'comment':
+        // "Comments"
         return '댓글'.tr();
       case 'user':
+        // "User"
         return '사용자'.tr();
       case 'chat_room':
+        // "Chat"
         return '채팅'.tr();
       default:
         return bookmark.entityType;

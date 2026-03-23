@@ -77,6 +77,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             FaIcon(FontAwesomeIcons.lightBullhorn,
                 size: 20, color: color.primary),
             const SizedBox(width: 8),
+            // "Notices"
             Text('공지사항'.tr()),
           ],
         ),
@@ -101,6 +102,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             children: [
               _buildSectionHeader(
                 icon: FontAwesomeIcons.lightPlane,
+                // "Travel Notices"
                 title: '해외 여행 공지'.tr(),
                 onRefreshTap: () => _loadMofaNotices(forceRefresh: true),
               ),
@@ -109,6 +111,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
               const SizedBox(height: 24),
               _buildSectionHeader(
                 icon: FontAwesomeIcons.lightMegaphone,
+                // "PhilGo Notices"
                 title: '필고 공지'.tr(),
               ),
               const SizedBox(height: 12),
@@ -155,6 +158,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
             ),
             padding: const EdgeInsets.all(8),
             constraints: const BoxConstraints(),
+            // "Refresh"
             tooltip: '새로고침'.tr(),
           ),
       ],
@@ -168,7 +172,9 @@ class _NoticeScreenState extends State<NoticeScreen> {
 
     if (_mofaResponse == null || !_mofaResponse!.isSuccess) {
       return _buildErrorCard(
+        // "Unable to load notices"
         '공지사항을 불러올 수 없습니다'.tr(),
+        // "Please tap refresh to try again"
         '새로고침 버튼을 눌러 다시 시도해주세요'.tr(),
       );
     }
@@ -176,7 +182,9 @@ class _NoticeScreenState extends State<NoticeScreen> {
     if (_mofaResponse!.notices.isEmpty) {
       return _buildEmptyCard(
         FontAwesomeIcons.lightPlaneUp,
+        // "No travel notices available"
         '해외 여행 관련 공지가 없습니다'.tr(),
+        // "MOFA notices will be displayed here"
         '외교부 공지사항이 여기에 표시됩니다'.tr(),
         color.primaryContainer,
         color.onPrimaryContainer,
@@ -286,6 +294,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
+                        // "Travel Notices"
                         '해외 여행 공지'.tr(),
                         style: text.titleMedium?.copyWith(
                           color: color.onPrimaryContainer,
@@ -351,6 +360,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
+                                // "Attachment available"
                                 '첨부파일이 있습니다'.tr(),
                                 style: text.bodyMedium?.copyWith(
                                   color: color.primary,
@@ -368,6 +378,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                 padding: const EdgeInsets.all(16),
                 child: FilledButton(
                   onPressed: () => Navigator.pop(context),
+                  // "Close"
                   child: Text('닫기'.tr()),
                 ),
               ),
@@ -386,7 +397,9 @@ class _NoticeScreenState extends State<NoticeScreen> {
     if (_philgoNotices.isEmpty) {
       return _buildEmptyCard(
         FontAwesomeIcons.lightCircleInfo,
+        // "No PhilGo notices"
         '필고 공지가 없습니다'.tr(),
+        // "PhilGo service notices will be displayed here"
         '필고 서비스 관련 공지사항이 여기에 표시됩니다'.tr(),
         color.tertiaryContainer,
         color.onTertiaryContainer,
@@ -497,6 +510,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
           ),
           const SizedBox(height: 12),
           Text(
+            // "Loading notices..."
             '공지사항을 불러오는 중...'.tr(),
             style: text.bodyMedium?.copyWith(
               color: color.onSurfaceVariant,

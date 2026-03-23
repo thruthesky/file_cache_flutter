@@ -16,6 +16,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
       builder: (uid) => buildChatRoomList(uid),
       notLoggedIn: Center(
         child: Text(
+          // "Login required"
           '로그인이 필요합니다'.tr(),
           style: Theme.of(context).textTheme.bodyMedium,
         ),
@@ -34,6 +35,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
+          // "Error: {}"
           return Center(child: Text('오류: {}'.tr(args: [snapshot.error.toString()])));
         }
 
@@ -49,6 +51,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
+                  // "Your friends list is empty"
                   '친구 목록이 비어있습니다'.tr(),
                   style: Theme.of(context).textTheme.bodyMedium!.copyWith(
                     color: Theme.of(context).colorScheme.outlineVariant,

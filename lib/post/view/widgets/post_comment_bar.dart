@@ -62,6 +62,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
+      // "Failed to create comment"
       ).showSnackBar(SnackBar(content: Text('${'댓글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSending = false);
@@ -74,6 +75,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
     final userState = Provider.of<UserState>(context, listen: false);
     final isLoggedIn = userState.isLoggedIn;
     final isReplying = widget.replyTo != null;
+    // "Write a reply", "Write a comment"
     final hintText = isReplying ? '답글을 입력하세요'.tr() : '댓글을 입력하세요'.tr();
 
     return Container(
@@ -170,6 +172,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                   vertical: 12,
                 ),
                 child: Text(
+                  // "Please login to write a comment."
                   '댓글을 작성하려면 로그인이 필요합니다.'.tr(),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
@@ -201,6 +204,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                       onError: (e) {
                         if (!mounted) return;
                         ScaffoldMessenger.of(context).showSnackBar(
+                          // "File upload failed"
                           SnackBar(content: Text('${'파일 업로드 실패'.tr()}: $e')),
                         );
                       },

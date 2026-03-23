@@ -47,6 +47,7 @@ class KakaoSignInButton extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
+                    // "Sign in with Kakao"
                     '카카오로 로그인'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -98,6 +99,7 @@ class KakaoSignInButton extends StatelessWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
+      // "[NO TRANSLATION: 카카오 로그인 성공!]"
       ).showSnackBar(SnackBar(content: Text('카카오 로그인 성공!'.tr())));
       context.pop();
     }

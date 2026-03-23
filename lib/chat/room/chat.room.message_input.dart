@@ -73,6 +73,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
     } catch (e) {
       debugPrint('Error sending message: $e');
       if (mounted) {
+        // "Failed to send message: {}"
         showErrorSnackBar(context, '메시지 전송 실패: {}'.tr(args: [e.toString()]));
       }
     } finally {
@@ -169,6 +170,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                               SnackBar(
                                 behavior: SnackBarBehavior.floating,
                                 content: Text(
+                                  // "You can select up to {} files."
                                   '최대 {}개 파일을 선택할 수 있습니다.'.tr(
                                     args: ['${widget.maxFiles}'],
                                   ),
@@ -186,6 +188,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             setState(() => _uploadedFiles.add(model)),
                         onError: (e) => showErrorSnackBar(
                           context,
+                          // "Upload failed: {}"
                           '업로드 실패: {}'.tr(args: [e.toString()]),
                         ),
                         child: busy
@@ -234,6 +237,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                                       ),
                                   ],
                                 ),
+                                // "Attach files"
                                 tooltip: '파일 첨부'.tr(),
                               ),
                       ),
@@ -248,6 +252,7 @@ class _MessageInputState extends State<ChatRoomMessageInput> {
                             autofocus: false,
                             controller: _messageController,
                             decoration: InputDecoration(
+                              // "Type a message..."
                               hintText: '메시지를 입력하세요...'.tr(),
                               hintStyle: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface.withValues(

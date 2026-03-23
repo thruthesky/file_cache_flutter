@@ -41,6 +41,7 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      // "Edit Comment"
       title: Text('댓글 수정'.tr()),
       content: TextField(
         controller: _controller,
@@ -48,6 +49,7 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
         minLines: 2,
         maxLines: 8,
         decoration: InputDecoration(
+          // "Please enter comment content"
           hintText: '댓글 내용을 입력하세요'.tr(),
           border: const OutlineInputBorder(),
         ),
@@ -55,6 +57,7 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          // "Cancel"
           child: Text('취소'.tr()),
         ),
         FilledButton(
@@ -63,6 +66,7 @@ class _CommentEditDialogState extends State<CommentEditDialog> {
             if (content.isEmpty) return;
             Navigator.pop(context, content);
           },
+          // "Edit"
           child: Text('수정'.tr()),
         ),
       ],

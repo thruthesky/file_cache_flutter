@@ -60,6 +60,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // "Event Coupons"
       appBar: AppBar(title: Text('이벤트 쿠폰'.tr()), elevation: 0),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -83,6 +84,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
             ),
             const SizedBox(height: 16),
             Text(
+              // "[NO TRANSLATION: 당첨된 쿠폰이 없습니다]"
               '당첨된 쿠폰이 없습니다'.tr(),
               textAlign: TextAlign.center,
               style: text.bodyLarge?.copyWith(color: color.onSurfaceVariant),
@@ -105,7 +107,9 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
+        // "[NO TRANSLATION: 쿠폰 사용]"
         title: Text('쿠폰 사용'.tr()),
+        // "[NO TRANSLATION: 쿠폰을 사용하시겠습니까?]"
         content: Text('쿠폰을 사용하시겠습니까?'.tr()),
         actions: [
           TextButton(
@@ -114,6 +118,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
+            // "[NO TRANSLATION: 예, 사용하겠습니다]"
             child: Text('예, 사용하겠습니다'.tr()),
           ),
         ],
@@ -236,8 +241,11 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
 
   Widget _buildCouponNotice() {
     final notices = [
+      // "[NO TRANSLATION: 이미 결제 완료된 쿠폰은 재발행이 불가합니다.]"
       '이미 결제 완료된 쿠폰은 재발행이 불가합니다.'.tr(),
+      // "[NO TRANSLATION: QR코드 쿠폰은 타인에게 전송 가능합니다.]"
       'QR코드 쿠폰은 타인에게 전송 가능합니다.'.tr(),
+      // "[NO TRANSLATION: 쿠폰 사용에 대한 책임은 당첨자에게 있습니다.]"
       '쿠폰 사용에 대한 책임은 당첨자에게 있습니다.'.tr(),
     ];
 
@@ -374,6 +382,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
                               if (coupon.isViewed && viewedDate.isNotEmpty) ...[
                                 const SizedBox(height: 4),
                                 Text(
+                                  // "[NO TRANSLATION: 확인 날짜: {}]"
                                   '확인 날짜: {}'.tr(args: [viewedDate]),
                                   style: text.bodySmall?.copyWith(
                                     color: color.tertiary,
@@ -445,6 +454,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
     final icon = isSent
         ? FontAwesomeIcons.circleCheck
         : FontAwesomeIcons.trophy;
+    // "[NO TRANSLATION: 전송완료]", "[NO TRANSLATION: 당첨]"
     final label = isSent ? '전송완료'.tr() : '당첨'.tr();
 
     return Container(

@@ -79,6 +79,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
   /// Handle report submission
   Future<void> _handleReportSubmit() async {
     if (_reportReason.isEmpty) {
+      // "Select report reason."
       showErrorSnackBar(context, '신고 사유를 선택하세요.'.tr());
       return;
     }
@@ -91,6 +92,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
       reportee: widget.reportee,
       success: () {
         if (mounted) {
+          // "Report submitted successfully."
           showSuccessSnackBar(context, '신고가 접수되었습니다.'.tr());
           widget.onClose();
           setState(() => _isSubmitting = false);
@@ -103,11 +105,14 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
             showErrorSnackBar(
               context,
               reportType == MESSAGE
+                  // "You have already reported this message."
                   ? '이미 이 메시지를 신고하셨습니다.'.tr()
+                  // "You have already reported this room."
                   : '이미 이 채팅방을 신고하셨습니다.'.tr(),
             );
             widget.onClose();
           } else {
+            // "Failed to submit report."
             showErrorSnackBar(context, '신고 접수에 실패했습니다.'.tr());
           }
         }
@@ -153,7 +158,9 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                   Expanded(
                     child: Text(
                       reportType == ROOM
+                          // "Report Chat Room"
                           ? '채팅방 신고'.tr()
+                          // "Report Chat Message"
                           : '채팅 메시지 신고'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
@@ -205,6 +212,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                 children: [
                   // Report Reason Selection label
                   Text(
+                    // "Select Report Reason"
                     '신고 사유 선택'.tr(),
                     style: theme.textTheme.labelLarge?.copyWith(
                       color: colorScheme.onSurface,
@@ -309,6 +317,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                         theme.textTheme.bodySmall,
                       ),
                     ),
+                    // "Cancel"
                     child: Text('취소'.tr()),
                   ),
                   SizedBox(width: dialogItemSpacing),
@@ -362,6 +371,7 @@ class _ReportChatDialogState extends State<ReportChatDialog> {
                               color: colorScheme.onSurface,
                             ),
                           )
+                        // "Submit"
                         : Text('제출'.tr()),
                   ),
                 ],

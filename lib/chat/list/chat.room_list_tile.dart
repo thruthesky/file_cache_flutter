@@ -39,6 +39,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
 
     if (join.userDisplayName.isNotEmpty) return join.userDisplayName;
 
+    // "No name"
     return '이름없음'.tr();
   }
 
@@ -83,6 +84,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         return chatRoomTile(
           blocked: true,
           subTitleWidget: Text(
+            // "Message from blocked user"
             '차단된 사용자의 메시지'.tr(),
             style: TextStyle(
               color: Colors.grey[500],
@@ -369,6 +371,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             SizedBox(width: menuItemSpacing),
             Text(
+              // "Unpin", "Pin"
               isPinned ? '고정 해제'.tr() : '고정'.tr(),
               style: theme.textTheme.bodyMedium,
             ),
@@ -392,6 +395,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 color: colorScheme.error,
               ),
               SizedBox(width: menuItemSpacing),
+              // "Report"
               Text('신고'.tr(), style: theme.textTheme.bodyMedium),
             ],
           ),
@@ -417,6 +421,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                 ),
                 SizedBox(width: menuItemSpacing),
                 Text(
+                  // "Unblock User"
                   '차단 해제'.tr(),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: Colors.green,
@@ -438,6 +443,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                   color: colorScheme.error,
                 ),
                 SizedBox(width: menuItemSpacing),
+                // "Block User"
                 Text('사용자 차단'.tr(), style: theme.textTheme.bodyMedium),
               ],
             ),
@@ -459,6 +465,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
             ),
             SizedBox(width: menuItemSpacing),
             Text(
+              // "Leave Room"
               '방 나가기'.tr(),
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.error,
@@ -483,6 +490,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               ),
               SizedBox(width: menuItemSpacing),
               Text(
+                // "Block & Leave"
                 '차단 및 나가기'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.error,
@@ -567,6 +575,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               Padding(
                 padding: dialogTitlePadding,
                 child: Text(
+                  // "Leave Room"
                   '방 나가기'.tr(),
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -578,6 +587,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
               Padding(
                 padding: dialogBodyPadding,
                 child: Text(
+                  // "Are you sure you want to leave this room?"
                   '이 방을 나가시겠습니까?'.tr(),
                   style: theme.textTheme.bodyLarge?.copyWith(
                     color: colorScheme.onSurface,
@@ -619,6 +629,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                             theme.textTheme.bodyMedium,
                           ),
                         ),
+                        // "Block & Leave"
                         child: Text('차단 및 나가기'.tr()),
                       ),
                       SizedBox(height: dialogButtonSpacing),
@@ -650,6 +661,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Leave"
                       child: Text('나가기'.tr()),
                     ),
                     SizedBox(height: dialogButtonSpacing),
@@ -680,6 +692,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Cancel"
                       child: Text('취소'.tr()),
                     ),
                   ],
@@ -705,6 +718,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
+            // "Left the room successfully"
             showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },
@@ -715,6 +729,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
+            // "Left the room successfully"
             showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },
@@ -736,6 +751,7 @@ class _ChatRoomListTileState extends State<ChatRoomListTile> {
         roomId: roomId,
         success: () {
           if (mounted) {
+            // "Left the room successfully"
             showSuccessSnackBar(context, '방을 나갔습니다'.tr());
           }
         },

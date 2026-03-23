@@ -68,6 +68,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
               const SizedBox(width: 4),
               Expanded(
                 child: Text(
+                  // "Popular Posts"
                   '인기글'.tr(),
                   style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
@@ -77,6 +78,7 @@ class _HomePopularPostSectionState extends State<HomePopularPostSection> {
                   AppNavigationState.of(context).openForumScreen();
                 },
                 child: Text(
+                  // "More"
                   '더보기'.tr(),
                   style: text.labelSmall?.copyWith(color: color.primary),
                 ),

@@ -37,6 +37,7 @@ class Login extends StatelessWidget {
         }
 
         if (snapshot.hasError) {
+          // "Something went wrong"
           return Center(child: Text('오류가 발생했습니다'.tr()));
         }
 

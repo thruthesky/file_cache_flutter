@@ -84,6 +84,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
               color: scheme.primary,
             ),
             const SizedBox(width: 8),
+            // "My Posts"
             Text('내 글 목록'.tr(), style: theme.textTheme.titleMedium),
           ],
         ),
