@@ -9,6 +9,9 @@ class Translations {
   static const Map<String, dynamic> ko = {
     // 공통
     '검색': '검색',
+    '알림': '알림',
+    '알림 설정': '알림 설정',
+    '접기': '접기',
     '돌아가기': '돌아가기',
     '이름없음': '이름없음',
     '로그인': '로그인',
@@ -658,6 +661,9 @@ class Translations {
   static const Map<String, dynamic> en = {
     // 공통
     '검색': 'Search',
+    '알림': 'Notifications',
+    '알림 설정': 'Notification Settings',
+    '접기': 'Less',
     '돌아가기': 'Back',
     '이름없음': 'No name',
     '로그인': 'Login',

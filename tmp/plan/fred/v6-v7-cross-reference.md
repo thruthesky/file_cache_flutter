@@ -193,8 +193,8 @@
 - [x] Post view: blocked user info overlay (tap to unblock) — `lib/post/list/forum.screen.dart` (dialog on blocked user post with unblock option) (2026-03-23)
 - [x] Post view: earned point badge — `lib/point/widgets/earned_point_badge.dart` (2026-03-20)
 - [ ] Chat: unread message badge on nav bar
-- [ ] Forum header: notification icons
-- [ ] Forum header: subcategory filter tabs
+- [x] Forum header: notification icons — `lib/post/list/widgets/forum_notification_dialog.dart` (bell icon in category header, opens per-category FCM subscription dialog via Firebase RTDB) (2026-03-23)
+- [x] Forum header: subcategory filter tabs — `lib/post/list/widgets/post_list_header_categories.dart` (expandable Wrap with 12 default + "더보기/접기" toggle, chip background styling, search + notification as first items) (2026-03-23)
 - [x] Menu: point ad item in ad section — `lib/point/widgets/point_advertisements.dart` integrated in forum screen (2026-03-23)
 - [x] Menu: life info onTap handlers — Weather, Currency, Essential Info all have working onTap (2026-03-23)
 - [x] Home: helper menu onTap handlers — `lib/home/widgets/home_helper_menu_section.dart` (내 정보, 업소이벤트, 이벤트응모, 필수정보, 환율, etc.) (2026-03-23)
@@ -220,6 +220,6 @@
 | Infrastructure          | 4      | 0       | 3         |
 | Profile / User          | 4      | 0       | 2         |
 | Static Content          | 6      | 0       | 43        |
-| Partial Implementations | 9      | 0       | 5         |
+| Partial Implementations | 11     | 0       | 3         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **49** | **2**   | **59**    |
+| **Total**               | **51** | **2**   | **57**    |
