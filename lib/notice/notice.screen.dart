@@ -52,12 +52,17 @@ class _NoticeScreenState extends State<NoticeScreen> {
   }
 
   Future<void> _loadPhilgoNotices() async {
-    final result = await PostService.list(postId: 'caution', limit: 10);
-    if (mounted) {
-      setState(() {
-        _philgoNotices = result.posts;
-        _isPhilgoLoading = false;
-      });
+    try {
+      final result = await PostService.list(postId: 'caution', limit: 10);
+      if (mounted) {
+        setState(() {
+          _philgoNotices = result.posts;
+          _isPhilgoLoading = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('PhilGo 공지 로드 실패: $e');
+      if (mounted) setState(() => _isPhilgoLoading = false);
     }
   }
 
