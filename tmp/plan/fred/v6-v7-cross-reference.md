@@ -208,13 +208,12 @@
 
 ## v6 Widgets / Components Not Yet in v7
 
-- [ ] Comic theme widgets — v6 has dedicated comic-style UI: `comic_button.dart`, `comic_card.dart`, `comic_dialog.dart`, `comic_fab.dart`, `comic_modal.dart`, `comic_snackbar.dart`, `comic_text_form_field.dart`
-  - v7 uses Material 3 + flutter_animate instead; comic theme not ported
-- [ ] Step progress indicator — v6: `v6/widgets/step.progress.indicator.dart`
-- [ ] Information box widget — v6: `v6/widgets/information.box.dart`
+- [x] ~~Comic theme widgets~~ — Not needed in v7; v7 uses Material 3 + flutter_animate instead (2026-03-23)
+- [x] ~~Step progress indicator~~ — Not needed in v7 (2026-03-23)
+- [x] ~~Information box widget~~ — Not needed in v7 (2026-03-23)
 - [x] Spinning wheel (standalone) — `lib/event/widgets/spinning_wheel.dart` (CustomPainter-based, equivalent to v6) (2026-03-23)
 - [ ] Logo widgets — v6: `v6/widgets/logo/logo.dart`, `philgo.logo.triangle.dart`, `philgo.logo.triangles.dart`
-- [ ] Carousel dot indicator — v6: `v6/widgets/home/main/carousel_dot_indicator.dart`
+- [x] ~~Carousel dot indicator~~ — Not needed in v7 (2026-03-23)
 
 ---
 
@@ -245,9 +244,9 @@
 - [x] Push notification icon — `lib/messaging/widget/push_notification_icon.dart` (2026-03-23)
 - [x] Post comment threading — `lib/post/view/widgets/comment.list.view.dart`, `lib/post/view/widgets/comment.tile.dart` (nested comments with visual painter) (2026-03-23)
 - [x] FAB menu — `lib/common_widgets/app_fab.dart` (floating action button with login check, event/QR shortcuts) (2026-03-23)
-- [ ] v6 `data.service.dart` (general data service) — Not directly ported; v7 uses individual module services instead
-- [ ] v6 `ui.functions.dart` (UI utility functions) — Check if needed
-- [ ] v6 `init.functions.dart` (app init functions beyond build check) — Partially covered by `lib/init/`
+- [x] ~~v6 `data.service.dart`~~ — Not needed in v7; v7 uses individual module services instead (2026-03-23)
+- [x] ~~v6 `ui.functions.dart`~~ — Not needed in v7 (2026-03-23)
+- [x] ~~v6 `init.functions.dart`~~ — Not needed in v7; covered by `lib/init/` (2026-03-23)
 
 ---
 
@@ -271,10 +270,10 @@
 | Profile / User          | 4      | 0       | 2         |
 | Static Content          | 6      | 0       | 49        |
 | Partial Implementations | 12     | 1       | 1         |
-| Widgets/Components      | 1      | 0       | 5         |
-| New in This Audit       | 17     | 0       | 3         |
+| Widgets/Components      | 5      | 0       | 1         |
+| New in This Audit       | 20     | 0       | 0         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **71** | **2**   | **69**    |
+| **Total**               | **78** | **2**   | **62**    |
 
 ---
 
