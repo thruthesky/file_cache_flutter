@@ -277,7 +277,55 @@ resetToPhoneInput() {
 
 ---
 
-## 7. 테스트
+## 7. 2025-03-22 이전 병합 복구 (구 로직)
+
+2025-03-22 이전의 아이디 합치기 로직은 복잡성 문제로 2025-03-23부터 변경 예정이다.
+현재 `v7/user/merge-account.php`는 공사 중으로 표시되어 있으며, 새 로직이 적용될 때까지 사용자는 아이디 합치기를 할 수 없다.
+
+2025-03-22 이전에 병합된 계정을 복구해야 하는 경우 아래 스크립트를 사용한다.
+
+### 7.1 병합된 계정 목록 확인
+
+```bash
+php data/porting/list-merged-accounts.php
+```
+
+`varchar_1`에 `v7-id-merge-into:` 또는 `v7-id-merge-from:` 접두사가 있는 계정 목록을 출력한다.
+
+### 7.2 병합 복구 (unmerge-account.php)
+
+**파일**: `data/porting/unmerge-account.php`
+
+```bash
+# dry-run (미리보기 — DB 변경 없음)
+php data/porting/unmerge-account.php --v7-idx=199739
+
+# 실제 실행
+php data/porting/unmerge-account.php --v7-idx=199739 --execute
+
+# 글/댓글 소유자도 v6→v7로 복원 (주의: v6가 원래 작성한 글도 이동됨)
+php data/porting/unmerge-account.php --v7-idx=199739 --execute --revert-posts
+```
+
+### 7.3 복구 시 수행되는 작업
+
+| 순서 | 대상 | 작업 |
+|:---:|------|------|
+| 1 | v6 계정 | `firebase_uid` → `varchar_2`에 저장된 원래 Phone Auth UID로 복원, `login_provider`/`varchar_1`/`varchar_2` 초기화 |
+| 2 | v7 계정 | `firebase_uid`/`id`에서 `merged_` 접두사 제거, `login_provider` 복원 (v6에 저장된 값), `varchar_1` 초기화 |
+| 3 | 글/댓글 | `--revert-posts` 옵션 시에만 `sf_post_data.idx_member`를 v6→v7로 복원 (위험: v6 원래 글도 이동됨) |
+
+UNIQUE 충돌 검사를 자동으로 수행하며, 충돌 시 수동 처리를 안내한다.
+
+### 7.4 주의사항
+
+- `--revert-posts`는 v6가 원래 작성한 글까지 v7으로 옮기므로 신중히 사용할 것
+- 복구 전 반드시 `--dry-run`(기본값)으로 미리보기 확인
+- Firebase RTDB 채팅 데이터는 자동 복구되지 않음 (수동 처리 필요)
+
+---
+
+## 8. 테스트
 
 **테스트 파일**: `tests/Unit/MergeAccountTest.php` (11개 테스트)
 
