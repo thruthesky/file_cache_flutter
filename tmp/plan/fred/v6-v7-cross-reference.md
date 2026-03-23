@@ -68,11 +68,9 @@
 - [ ] Post content service — Server-stored content loader with file cache
   - v6: `v6/services/post_content/post_content.service.dart` (48-hour cache via `file_cache_flutter`)
 - [x] Post content viewer widget — `lib/post/view/widgets/post.view.content.dart` (supports HTML via flutter_html, Markdown, plain text) (2026-03-23)
-- [ ] Post content mapping data — Maps each info screen to server post idx
-  - v6: `v6/data/post_content_mapping.data.dart`
+- [x] Post content mapping data — `lib/api/constants/info_access_codes.dart` (17 access codes mapping info screens to server content via `info.getByAccessCode` API) (2026-03-23)
 - [ ] Memory cache service — LRU in-memory cache (maxEntries=200)
-- [ ] MOFA notice data service — Ministry of Foreign Affairs notice API
-  - v6: `v6/services/data/mofa_notice.model.dart`
+- [x] MOFA notice data service — `lib/notice/notice.service.dart` (MOFA API with 6-hour memory cache, `lib/notice/notice.model.dart`) (2026-03-23)
 - [ ] Travel API service — Travel data API service
   - v6: `v6/screens/guide/travel_spots.screen.dart`, `v6/screens/guide/travel_spot.view.screen.dart`
 - [x] Chat sound service — `lib/chat/chat_sound.service.dart` (send.mp3, beep_message.mp3 via audioplayers) (2026-03-23)
@@ -193,7 +191,7 @@
 - [x] Company view: visit review section (photo thumbnails, review CTA)
 - [x] Company form: KakaoTalk QR auto-parse
 - [x] Company form: extra image fields (business license, office photos)
-- [ ] Post view: blocked user info overlay (tap to unblock)
+- [x] Post view: blocked user info overlay (tap to unblock) — `lib/post/list/forum.screen.dart` (dialog on blocked user post with unblock option) (2026-03-23)
 - [x] Post view: earned point badge — `lib/point/widgets/earned_point_badge.dart` (2026-03-20)
 - [ ] Chat: unread message badge on nav bar
 - [ ] Forum header: notification icons
@@ -220,9 +218,9 @@
 | High Priority           | 7      | 0       | 3         |
 | QR / Event              | 8      | 0       | 0         |
 | Home / UI               | 6      | 0       | 2         |
-| Infrastructure          | 2      | 0       | 5         |
+| Infrastructure          | 4      | 0       | 3         |
 | Profile / User          | 4      | 0       | 2         |
 | Static Content          | 6      | 0       | 43        |
-| Partial Implementations | 8      | 0       | 6         |
+| Partial Implementations | 9      | 0       | 5         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **45** | **1**   | **64**    |
+| **Total**               | **48** | **1**   | **61**    |
