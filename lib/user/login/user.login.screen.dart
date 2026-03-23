@@ -1,5 +1,4 @@
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -103,34 +102,48 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               const SizedBox(height: 24),
 
               // 이용약관 & 개인정보처리방침
-              Text.rich(
-                TextSpan(
-                  style: text.bodySmall?.copyWith(
-                    color: color.onSurfaceVariant,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () => _openUrl('https://philgo.com/help/terms'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(FontAwesomeIcons.lightFileContract, size: 13, color: color.primary),
+                        const SizedBox(width: 4),
+                        Text(
+                          '이용약관'.tr(),
+                          style: text.bodySmall?.copyWith(
+                            color: color.primary,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  children: [
-                    TextSpan(
-                      text: '이용약관'.tr(),
-                      style: TextStyle(
-                        color: color.primary,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => _openUrl('https://philgo.com/help/terms'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('|', style: text.bodySmall?.copyWith(color: color.onSurfaceVariant)),
+                  ),
+                  GestureDetector(
+                    onTap: () => _openUrl('https://philgo.com/help/privacy'),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        FaIcon(FontAwesomeIcons.lightShieldHalved, size: 13, color: color.primary),
+                        const SizedBox(width: 4),
+                        Text(
+                          '개인정보처리방침'.tr(),
+                          style: text.bodySmall?.copyWith(
+                            color: color.primary,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
                     ),
-                    const TextSpan(text: '  |  '),
-                    TextSpan(
-                      text: '개인정보처리방침'.tr(),
-                      style: TextStyle(
-                        color: color.primary,
-                        decoration: TextDecoration.underline,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () => _openUrl('https://philgo.com/help/privacy'),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
+                  ),
+                ],
               ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
 
               const SizedBox(height: 32),
