@@ -224,6 +224,9 @@ class Post {
     return result;
   }
 
+  factory Post.minimal({required int idx}) =>
+      Post.fromJson({'idx': idx});
+
   /// JSON에서 Post 객체 생성
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(

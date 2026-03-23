@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
-import 'package:philgo/deeplink/deeplink.service.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/messaging/messaging.service.dart';
 import 'package:philgo/post/create/post.create.screen.dart';

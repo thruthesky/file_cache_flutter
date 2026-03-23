@@ -9,7 +9,6 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
-import 'package:philgo/deeplink/deeplink.service.dart';
 import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
@@ -126,31 +125,11 @@ final router = GoRouter(
         if (state.extra is Post) {
           return PostViewScreen(post: state.extra as Post);
         }
-        // 2. query parameters fallback (딥링크 등)
+        // 2. query parameters (deeplink)
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        final postId = state.uri.queryParameters['post_id'] ?? '';
-        final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
         return PostViewScreen(
-          post: Post(
-            idx: idx,
-            idxMember: 0,
-            postId: postId,
-            subject: '',
-            content: '',
-            stamp: now,
-            stampUpdate: now,
-            depth: 0,
-            noOfComment: 0,
-            noOfView: 0,
-            good: 0,
-            category: '',
-            earnedPoint: 0,
-            secret: '',
-            checked: '',
-            blind: '',
-            hasImage: '',
-            hasVideo: '',
-          ),
+          key: ValueKey(idx),
+          post: Post.minimal(idx: idx),
         );
       },
     ),
@@ -199,7 +178,7 @@ final router = GoRouter(
         }
         // 2. query parameters fallback (딥링크)
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        return CompanyViewScreen(company: CompanyModel.minimal(idx: idx));
+        return CompanyViewScreen(key: ValueKey(idx), company: CompanyModel.minimal(idx: idx));
       },
     ),
     GoRoute(
