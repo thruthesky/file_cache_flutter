@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:philgo/app.config.dart';
+import 'package:philgo/common_widgets/philgo_logo.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/router.dart';
 import 'package:philgo/setting/setting.model.dart';
@@ -60,11 +61,12 @@ void _showUpgradeDialog() {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // 앱 아이콘
-              FaIcon(
-                FontAwesomeIcons.lightCircleUp,
-                size: 64,
-                color: color.primary,
+              // PhilGo 로고 (애니메이션 효과)
+              const PhilGoLogo(
+                size: 100,
+                animated: true,
+                rotating: true,
+                pulsing: true,
               ),
               const SizedBox(height: 16),
 
