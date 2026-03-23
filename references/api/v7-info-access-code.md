@@ -1,13 +1,15 @@
 # v7 Info access_code 기반 콘텐츠 관리 시스템
 
 > **구현 완료** — access_code(UNIQUE KEY)를 활용한 info 콘텐츠 식별, 동기화, 웹/앱 공유 시스템
+>
+> **정보 콘텐츠의 마크다운 작성/품질/그룹별 구조는 `philgo-content` 스킬(`.custom-skills/philgo-content/SKILL.md`)을 참조한다.**
 
 ## 목차
 
 1. [개요 및 설계 의도](#1-개요-및-설계-의도)
 2. [access_code 스키마](#2-access_code-스키마)
 3. [access_code 명명 규칙](#3-access_code-명명-규칙)
-4. [데이터 저장 전략 — text_1 JSON 중심](#4-데이터-저장-전략--text_1-json-중심)
+4. [데이터 저장 전략 — content 마크다운 중심](#4-데이터-저장-전략--content-마크다운-중심)
 5. [PostEntity / InfoPostEntity access_code 매핑](#5-postentity--infopostentity-access_code-매핑)
 6. [InfoService — access_code 기반 메서드](#6-infoservice--access_code-기반-메서드)
 7. [InfoController — API 엔드포인트](#7-infocontroller--api-엔드포인트)
@@ -45,7 +47,7 @@ idx가 달라도 access_code가 동일하면 같은 콘텐츠로 인식하여 UP
 [AI/관리자 — 로컬 개발]
     │
     ├── info.create / info.upsertByAccessCode API 호출
-    │   (access_code 포함, text_1에 JSON, content에 마크다운)
+    │   (access_code 포함, content에 마크다운)
     │
     ├── scripts/info-sync-export.php → JSON 내보내기
     │
@@ -146,61 +148,16 @@ WHERE access_code LIKE 'info:travel:cebu:beach:%'
 
 ---
 
-## 4. 데이터 저장 전략 — text_1 JSON 중심
+## 4. 데이터 저장 전략 — content 마크다운 중심
 
-### 왜 content가 아닌 text_1을 주 데이터로 사용하는가
-
-| 항목 | content (마크다운) | text_1 (JSON) |
-|------|-------------------|---------------|
-| **디자인 자유도** | 마크다운 렌더링 제한 | 커스텀 UI 컴포넌트로 자유 표현 |
-| **구조화** | 비정형 텍스트 | 아이콘, 색상, 뱃지 등 디자인 속성 |
-| **다중 플랫폼** | 웹/앱 디자인 차이 대응 어려움 | 웹/앱 각각 최적 렌더링 |
-
-### 필드 역할 분담
+### content가 유일한 메인 콘텐츠
 
 | 필드 | 역할 | 저장 내용 |
 |------|------|----------|
-| **text_1** | 주 데이터 — 웹/앱 렌더링용 JSON 배열 | 구조화 항목 배열 (디자인 속성 포함) |
-| **content** | 보조 — 게시판 표시 + SEO용 마크다운 | 사람이 읽을 수 있는 마크다운 요약 |
-| **text_2** | 메타데이터 JSON | 페이지 레벨 설정, 카테고리별 추가 속성 |
+| **content** | **메인 콘텐츠** — 웹/앱 모두에서 렌더링 | 마크다운 본문 |
+| **여유 필드** (varchar_8~20 등) | 메타데이터 | 전화, 주소, 운영시간, 좌표 (상단 메타 카드로 표시) |
+| **text_2** | 메타데이터 JSON | 카테고리별 추가 속성 |
 | **text_3** | 요약 설명 | 2~3문장 description |
-
-### text_1 JSON 구조 예시 — 경찰서 목록
-
-```json
-[
-  {
-    "name": "세부 시티 경찰서",
-    "english_name": "Cebu City Police Station",
-    "icon": "🚔",
-    "phone": "032-253-5636",
-    "address": "Osmeña Blvd, Cebu City",
-    "hours": "24시간",
-    "city": "세부",
-    "description": "세부 시내 중심부에 위치한 주요 경찰서",
-    "tags": ["영어 가능", "관광객 신고"],
-    "highlight": true,
-    "badge": "추천",
-    "badge_color": "#1E40AF",
-    "sort_order": 1
-  }
-]
-```
-
-### JSON 항목 공통 디자인 속성
-
-| 속성 | 타입 | 용도 |
-|------|------|------|
-| `name` | string | 항목 제목 (한글) |
-| `english_name` | string | 영문 이름 |
-| `icon` | string | 이모지 아이콘 |
-| `description` | string | 한 줄 설명 |
-| `highlight` | boolean | 강조 표시 (카드 테두리/배경 변경) |
-| `badge` | string | 뱃지 텍스트 ("대사관", "24시간") |
-| `badge_color` | string | 뱃지 색상 HEX (`#1E40AF`) |
-| `tags` | string[] | 태그 목록 (칩 UI) |
-| `sort_order` | number | 표시 순서 |
-| `image_url` | string | 항목별 이미지 |
 
 ---
 
@@ -249,27 +206,9 @@ $defaults = [
 ];
 ```
 
-### fillFromInput() — text_1 JSON 자동 디코딩
+### fillFromInput() — 입력 필드 매핑
 
-```php
-// InfoService::fillFromInput() — 525~558행
-
-// texts: 문자열(JSON)이면 디코딩, 배열이면 그대로 사용
-if (isset($input['texts'])) {
-    if (is_string($input['texts'])) {
-        $decoded = json_decode($input['texts'], true);
-        $entity->texts = is_array($decoded) ? $decoded : [];
-    } else {
-        $entity->texts = (array)$input['texts'];
-    }
-}
-// text_1 → texts 자동 변환 (curl 호출 시 text_1으로 전달되는 경우)
-if (!isset($input['texts']) && isset($input['text_1'])) {
-    if (is_string($input['text_1'])) {
-        $decoded = json_decode($input['text_1'], true);
-        $entity->texts = is_array($decoded) ? $decoded : [];
-    }
-}
+> **모든 콘텐츠는 `content` 필드에 마크다운으로 전달한다.**
 
 // access_code
 if (isset($input['access_code'])) $entity->access_code = (string)$input['access_code'];
@@ -553,7 +492,7 @@ $cebuContacts = InfoService::getRegistry('contact', 'cebu');
 // access_code로 데이터 로드
 $policeInfo = InfoService::getByAccessCode('info:contact:cebu:police');
 if ($policeInfo !== null) {
-    $items = $policeInfo->texts; // JSON 배열 — 경찰서 목록
+    $content = $policeInfo->content; // 마크다운 본문
 }
 ?>
 ```
@@ -569,7 +508,7 @@ final contactRegistry = await v7api('info.registry', {'module': 'contact'});
 final policeData = await v7api('info.getByAccessCode', {
   'access_code': 'info:contact:cebu:police',
 });
-// policeData['texts'] → JSON 배열 파싱하여 카드 리스트 렌더링
+// policeData['content'] → 마크다운 렌더링
 
 // 특정 지역의 모든 연락처
 final allCebuContacts = await v7api('info.listByPrefix', {
@@ -612,7 +551,7 @@ php scripts/info-sync-import.php --input=tmp/info-sync-export.json --verify     
 
 | 동기화 대상 (덮어쓰기) | 동기화 제외 (프로덕션 값 유지) |
 |----------------------|----------------------------|
-| subject, content, text_1~3 | idx, idx_member, stamp |
+| subject, content, text_2~3 | idx, idx_member, stamp |
 | varchar_1~20, int_1~4 | no_of_comment, no_of_view |
 | char_1~4, category, sub_category | good, bad, report, deleted |
 | region, link, access_code | |
@@ -647,20 +586,20 @@ php scripts/info-sync-import.php --input=tmp/info-sync-export.json --execute
 
 | 테스트 | 검증 내용 |
 |--------|----------|
-| info.create로 access_code 포함 게시글 생성 | access_code 저장, texts JSON 변환, 필드 매핑 |
+| info.create로 access_code 포함 게시글 생성 | access_code 저장, 필드 매핑 |
 | getByAccessCode로 조회 | access_code 기준 단건 조회 |
 | getByAccessCode — 존재하지 않는 코드 | null 반환 |
 | upsertByAccessCode — INSERT | 새 access_code → 새 글 생성 |
 | upsertByAccessCode — UPDATE | 기존 access_code → 동일 idx 유지, 값 변경 |
 | listByAccessCodePrefix | LIKE 쿼리로 접두사 매칭 |
 | getRegistry | 레지스트리 조회, 키/값 구조 |
-| text_1 JSON 문자열 → texts 배열 변환 | curl에서 JSON 문자열 전달 시 자동 디코딩 |
+| content 마크다운 저장 및 조회 | 마크다운 본문이 정상적으로 저장/조회되는지 |
 
 ---
 
 ## 11. curl 테스트 예시
 
-### info.create (access_code + text_1 JSON + content 마크다운)
+### info.create (access_code + content 마크다운)
 
 ```bash
 curl -sk -X POST 'https://v7-local.philgo.com/api.php' \
@@ -674,8 +613,16 @@ curl -sk -X POST 'https://v7-local.philgo.com/api.php' \
   --data-urlencode 'city=세부' \
   --data-urlencode 'region=비사야' \
   --data-urlencode 'content=## 🚔 세부 경찰서 목록
-세부 지역의 경찰서 정보를 안내합니다.' \
-  --data-urlencode 'text_1=[{"name":"세부 시티 경찰서","icon":"🚔","phone":"032-253-5636","highlight":true}]'
+
+세부 지역의 경찰서 정보를 안내합니다.
+
+### 🏛️ 세부 시티 경찰서
+
+| 항목 | 정보 |
+|------|------|
+| 📞 전화 | **032-253-5636** |
+| 📍 주소 | Osmena Blvd, Cebu City |
+| ⏰ 운영 | 24시간 |'
 ```
 
 ### info.getByAccessCode

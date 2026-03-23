@@ -18,6 +18,7 @@
 8. [CSS 클래스 체계](#8-css-클래스-체계)
 9. [주요 기능 목록](#9-주요-기능-목록)
 10. [Cloud Functions 연동](#10-cloud-functions-연동)
+   - 10.4 [전체 새 메시지 수 초기화 (onResetAllUnread)](#104-전체-새-메시지-수-초기화-onresetallunread)
 11. [사운드 시스템](#11-사운드-시스템)
 12. [이미지/파일 업로드 및 뷰어](#12-이미지파일-업로드-및-뷰어)
 13. [layout.php 연동 — CSS/JS 조건부 로딩](#13-layoutphp-연동--cssjs-조건부-로딩)
@@ -1390,18 +1391,19 @@ Firebase Cloud Functions v2(Gen2)를 사용하는 **독립적인 TypeScript 프�
 | `config.ts` | 1개 | 설정 파일 |
 | `index.ts` | 1개 | 진입점 — 모든 함수 export |
 
-**배포 대상 Cloud Functions** (8개):
+**배포 대상 Cloud Functions** (9개):
 
 | 함수명 | 트리거 유형 | 기능 |
 |--------|-------------|------|
 | `onChatMessageCreated` | RTDB 트리거 | 메시지 생성 시 후처리 (읽지 않은 메시지 카운트, Join 업데이트) |
-| `onResetChatJoin` | RTDB 트리거 | 채팅 조인 초기화 (읽음 표시) |
+| `onResetChatJoin` | HTTP 요청 | 채팅 조인 초기화 (읽음 표시) — 채팅방 진입 시 호출 |
+| `onResetAllUnread` | HTTP 요청 | **전체 새 메시지 수 초기화** — 모든 채팅방의 unread를 0으로 리셋 |
 | `onCustomNameUpdated` | RTDB 트리거 | 사용자 정의 이름 업데이트 반영 |
-| `onFavorite` | RTDB 트리거 | ~~즐겨찾기 추가/제거~~ -- **v7 API(`bookmark.*`)로 마이그레이션됨**. 웹에서는 더 이상 호출하지 않음 (앱 호환용으로 유지) |
+| `onFavorite` | HTTP 요청 | ~~즐겨찾기 추가/제거~~ -- **v7 API(`bookmark.*`)로 마이그레이션됨**. 웹에서는 더 이상 호출하지 않음 (앱 호환용으로 유지) |
 | `onPushMessageCreated` | RTDB 트리거 | 푸시 메시지 생성 → FCM 전송 |
 | `onCreateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 생성 |
-| `onUpdateGroupChatRoom` | RTDB 트리거 | 그룹 채팅방 정보 업데이트 |
-| `onUpdateGroupChatRoomImage` | RTDB 트리거 | 그룹 채팅방 이미지 업데이트 |
+| `onUpdateGroupChatRoom` | HTTP 요청 | 그룹 채팅방 정보 업데이트 |
+| `onUpdateGroupChatRoomImage` | HTTP 요청 | 그룹 채팅방 이미지 업데이트 |
 
 **배포 명령어**:
 
@@ -1435,7 +1437,8 @@ callCloudFn: function(url, data) {
 
 | API 키 | 기능 | 호출 시점 | 전달 데이터 |
 |---------|------|-----------|-------------|
-| `resetJoin` | 읽음 표시 초기화 | 채팅방 진입 시, 새 메시지 수신 시 | `{ roomId }` |
+| `resetJoin` | 읽음 표시 초기화 | 채팅방 진입 시, 새 메시지 수신 시 | `{ myUid, otherUid }` |
+| `resetAllUnread` | **전체 새 메시지 수 초기화** | 채팅방 목록 설정 메뉴에서 수동 클릭 시 | `{ myUid }` |
 | ~~`favorite`~~ | ~~즐겨찾기 추가~~ | **v7 API로 마이그레이션됨** -- `v7api('bookmark.add')` 사용 | - |
 | `leaveChatRoom` | 채팅방 나가기 | 나가기 confirm 후 | `{ roomId }` |
 
@@ -1447,12 +1450,43 @@ window.v7chat = {
     api: {
         resetJoin: '<?= Config::chatResetJoinUrl() ?>',
         // favorite: 삭제됨 — v7api('bookmark.add')로 마이그레이션
-        leaveChatRoom: '<?= Config::chatRoomLeaveUrl() ?>'
+        leaveChatRoom: '<?= Config::chatRoomLeaveUrl() ?>',
+        resetAllUnread: '<?= Config::chatResetAllUnreadUrl() ?>'
     }
 };
 ```
 
 이 URL들은 `V7\Utils\Config` 클래스의 정적 메서드를 통해 반환된다.
+
+### 10.4 전체 새 메시지 수 초기화 (`onResetAllUnread`)
+
+채팅 배지(99+)가 실제 읽지 않은 메시지와 불일치할 때, 사용자가 수동으로 전체 새 메시지 수를 초기화하는 기능.
+
+**문제 배경**: `chatUnreadCount`는 Cloud Functions가 `chat/join-props/{uid}/unread/` 경로의 합계로 계산하므로, 클라이언트에서 `chat/joins`만 초기화하면 다음 메시지 수신 시 이전 값이 복원됨. 또한 클라이언트는 `chat/join-props/` 경로에 대한 읽기/쓰기 권한이 없음.
+
+**초기화 대상 (3곳)**:
+
+| 경로 | 용도 | 초기화 값 |
+|------|------|-----------|
+| `chat/joins/{uid}/{roomId}/unread` | 채팅방 목록 UI 배지 | 0 |
+| `chat/join-props/{uid}/unread/{roomId}` | Cloud Functions 합산 소스 | 0 |
+| `users/{uid}/chatUnreadCount` | 전역 배지 (99+) | 0 |
+
+**소스 파일**:
+- Cloud Function: `firebase/chat-v2/functions/src/chat/onResetAllUnread.ts`
+- 클라이언트 호출: `v7/js/chat/chat-room-list.js` → `resetAllUnread()` 메서드
+- URL 설정: `v7/utils/Config.php` → `Config::chatResetAllUnreadUrl()`
+- JS 전달: `v7/chat/index.php` → `window.v7chat.api.resetAllUnread`
+
+**UI 위치**: 채팅방 목록 헤더 → ⚙️(설정) 아이콘 → 드롭다운 → "새 메시지 수 초기화" 버튼
+
+**호출 흐름**:
+1. 사용자가 설정 아이콘 클릭 → 드롭다운 메뉴 표시
+2. "새 메시지 수 초기화" 클릭
+3. `firebase.auth().currentUser.getIdToken()` 으로 인증 토큰 획득
+4. `fetch(resetAllUnread URL, { method: 'POST', body: { myUid } })` 호출
+5. Cloud Function이 Admin SDK로 3곳 원자적 초기화
+6. 성공 시 로컬 Vue 상태도 업데이트
 
 ---
 
