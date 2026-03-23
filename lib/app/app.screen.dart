@@ -154,7 +154,7 @@ class _AppScreenState extends State<AppScreen> {
       isExpanded: _isFabExpanded,
       onToggle: _toggleFab,
       onClose: _closeFab,
-      showEventButton: eventEnabled,
+      showEventButton: eventEnabled && UserService.isLoggedIn,
       onEventTap: () => EventEntryScreen.push(context),
     );
   }
