@@ -1,6 +1,7 @@
 # V6 → V7 Migration Checklist
 
 > Generated: 2026-03-20
+> Last audited: 2026-03-23 (Ralph Loop iteration 1 — full v6/v7 file audit)
 > Sources: `tmp/plans/new-version-plan.md` + `tmp/plan/fred/v6-missing-features.md` + v6 code audit
 
 ---
@@ -28,9 +29,10 @@
   - v7: `lib/post/create/widgets/wanted_hiring_form.dart`
 - [ ] Settings screen — UI screen (service/state exist but no screen)
   - v6: `v6/v7_api/models/v7_settings.dart`, `v6/v7_api/state/v7_settings_state.dart`
+  - v7 has: `lib/setting/setting.service.dart`, `lib/setting/setting.state.dart`, `lib/setting/setting.model.dart` — NO `.screen.dart`
 - [x] Notice dedicated screen — `lib/notice/notice.screen.dart`, `lib/notice/notice.service.dart`, `lib/notice/notice.model.dart` (MOFA + PhilGo notices, wired to home helper menu + menu screen) (2026-03-23)
 - [~] User activity screen — `lib/post/my/my.posts.screen.dart` (own posts with infinite scroll), but NO "my comments" history screen yet
-  - v6: `v6/screens/user/user.activity.screen.dart`
+  - v6: `v6/screens/user/user.activity.screen.dart` (has both posts + comments tabs)
 - [x] Advertisement view screen — `lib/advertisement/advertisement.view.screen.dart` (post content + contact cards + YouTube, wired from banner tap via idx detection, contact card labels localized with .tr()) (2026-03-23)
 
 ---
@@ -53,7 +55,8 @@
 - [x] Exchange rate widget on home — `lib/currency/currency.screen.dart`, `lib/currency/currency.service.dart`, linked from home helper menu (2026-03-23)
 - [x] Weather widget on home — `lib/weather/weather.screen.dart`, `lib/weather/weather.service.dart`, 5 cities + 6-day forecast, linked from home helper menu (2026-03-23)
 - [ ] Homepage stats (member/post count)
-- [x] Latest comments section on home — `lib/home/widgets/home_latest_comments_section.dart` (2026-03-20)
+- [ ] Latest comments section on home — ⚠️ CORRECTION: `home_latest_comments_section.dart` does NOT exist in v7 (previously marked [x] in error)
+  - v6: `v6/widgets/home/home_notice_section.dart` (shows latest comments)
 - [x] User avatar + settings in AppBar — `lib/home/home.screen.dart` SliverAppBar (2026-03-20)
 - [x] Collapsible header on scroll — `lib/company/view/company.view.screen.dart` and `lib/post/view/post.view.screen.dart` (SliverAppBar pinned + collapse detection) (2026-03-23)
 - [x] Sequential animation on company list — `lib/company/list/company.list.screen.dart` flutter_animate stagger (2026-03-20)
@@ -69,9 +72,10 @@
 - [x] Post content viewer widget — `lib/post/view/widgets/post.view.content.dart` (supports HTML via flutter_html, Markdown, plain text) (2026-03-23)
 - [x] Post content mapping data — `lib/api/constants/info_access_codes.dart` (17 access codes mapping info screens to server content via `info.getByAccessCode` API) (2026-03-23)
 - [ ] Memory cache service — LRU in-memory cache (maxEntries=200)
+  - v6: `v6/services/memory_cache/memory_cache.service.dart`
 - [x] MOFA notice data service — `lib/notice/notice.service.dart` (MOFA API with 6-hour memory cache, `lib/notice/notice.model.dart`) (2026-03-23)
 - [ ] Travel API service — Travel data API service
-  - v6: `v6/screens/guide/travel_spots.screen.dart`, `v6/screens/guide/travel_spot.view.screen.dart`
+  - v6: `v6/services/travel/travel_spot.service.dart`, `v6/screens/guide/travel_spots.screen.dart`, `v6/screens/guide/travel_spot.view.screen.dart`
 - [x] Chat sound service — `lib/chat/chat_sound.service.dart` (send.mp3, beep_message.mp3 via audioplayers) (2026-03-23)
 
 ---
@@ -93,7 +97,7 @@
 
 **Prerequisite:** Post content system (service + viewer + mapping) must be built first.
 
-**v6 data files:** `v6/data/philippine_life_info.data.dart`, `v6/data/emergency_menu.data.dart`, `v6/data/entertainment_menu.data.dart`, `v6/data/housing_menu.data.dart`, `v6/data/immigration_menu.data.dart`, `v6/data/residence_menu.data.dart`, `v6/data/transportation_menu.data.dart`, `v6/data/travel_destination_menu.data.dart`
+**v6 data files:** `v6/data/philippine_life_info.data.dart`, `v6/data/emergency_menu.data.dart`, `v6/data/entertainment_menu.data.dart`, `v6/data/housing_menu.data.dart`, `v6/data/immigration_menu.data.dart`, `v6/data/residence_menu.data.dart`, `v6/data/transportation_menu.data.dart`, `v6/data/travel_destination_menu.data.dart`, `v6/data/car_menu.data.dart`, `v6/data/helper_menu.data.dart`
 
 ### Essential Info
 
@@ -116,9 +120,9 @@
 ### Vehicles
 
 - [ ] Car insurance info — v6: `v6/screens/info/car/car_insurance.screen.dart`
-- [ ] Car purchase info — _Not found in v6_
-- [ ] Car rental info — _Not found in v6_
-- [ ] OR renewal info — _Not found in v6_
+- [ ] Car purchase info — v6: `v6/screens/info/car/car_purchase.screen.dart`
+- [ ] Car rental info — v6: `v6/screens/info/car/car_rental.screen.dart`
+- [ ] OR renewal info — v6: `v6/screens/info/car/or_renewal.screen.dart`
 
 ### Accommodation
 
@@ -135,8 +139,8 @@
 
 ### Delivery
 
-- [ ] Food delivery info — _Not found in v6_
-- [ ] Baedal K info — _Not found in v6_
+- [ ] Food delivery info — v6: `v6/screens/info/delivery/food_delivery.screen.dart`
+- [ ] Baedal K info — v6: `v6/screens/info/delivery/baedal_k.screen.dart`
 
 ### Travel / Entertainment
 
@@ -144,13 +148,13 @@
 - [ ] Travel spot detail view — v6: `v6/screens/guide/travel_spot.view.screen.dart`
 - [ ] Festival info — v6: `v6/screens/info/entertainment/festival.screen.dart`
 - [ ] Golf info — v6: `v6/screens/info/entertainment/golf.screen.dart`
-- [ ] Island tour info — _Not found in v6_
-- [ ] Market tour info — _Not found in v6_
+- [ ] Island tour info — v6: `v6/screens/info/entertainment/island_tour.screen.dart`
+- [ ] Market tour info — v6: `v6/screens/info/entertainment/market_tour.screen.dart`
 - [ ] Massage info — v6: `v6/screens/info/entertainment/massage.screen.dart`
 - [ ] Nightlife info — v6: `v6/screens/info/entertainment/nightlife.screen.dart`
 - [ ] Restaurant info — v6: `v6/screens/info/entertainment/restaurant.screen.dart`
-- [ ] Seafood info — _Not found in v6_
-- [ ] Water sports info — _Not found in v6_
+- [ ] Seafood info — v6: `v6/screens/info/entertainment/seafood.screen.dart`
+- [ ] Water sports info — v6: `v6/screens/info/entertainment/water_sports.screen.dart`
 
 ### Travel Destinations (7 city/area guides)
 
@@ -165,8 +169,8 @@
 ### Helper Services
 
 - [ ] Driver helper info — v6: `v6/screens/info/helper/driver.screen.dart`
-- [ ] House helper info — _Not found in v6_
-- [ ] Tutor info — _Not found in v6_
+- [ ] House helper info — v6: `v6/screens/info/helper/house_helper.screen.dart`
+- [ ] Tutor info — v6: `v6/screens/info/helper/tutor.screen.dart`
 
 ### Residential Areas
 
@@ -176,8 +180,8 @@
 
 ### Others
 
-- [ ] Holiday info — _Not found in v6_
-- [ ] Monthly living info — _Not found in v6_
+- [ ] Holiday info — v6: `v6/screens/info/holiday/holiday.screen.dart`
+- [ ] Monthly living info — v6: `v6/screens/info/monthly/monthly_living.screen.dart`
 - [ ] Travel info — v6: `v6/screens/info/travel/travel_info.screen.dart`
 
 ---
@@ -186,18 +190,49 @@
 
 - [x] Home: quick menu carousel
 - [ ] Home: photo grid section
-- [ ] Home: shimmer loading effect
+  - v6: `v6/widgets/home/home_photo_grid_section.dart`
+- [~] Home: shimmer loading effect — flutter_animate `.shimmer()` used on accent elements (FAB, QR scan) but NOT on home loading state
+  - v6: `v6/widgets/home/home_post_section_shimmer.dart` (dedicated loading placeholders)
 - [x] Company view: visit review section (photo thumbnails, review CTA)
 - [x] Company form: KakaoTalk QR auto-parse
 - [x] Company form: extra image fields (business license, office photos)
 - [x] Post view: blocked user info overlay (tap to unblock) — `lib/post/list/forum.screen.dart` (dialog on blocked user post with unblock option) (2026-03-23)
 - [x] Post view: earned point badge — `lib/point/widgets/earned_point_badge.dart` (2026-03-20)
-- [ ] Chat: unread message badge on nav bar
+- [x] Chat: unread message badge on nav bar — `lib/app/app.screen.dart` (ChatService.instance.unreadCountStream with Badge widget) (2026-03-23 audit confirmed)
 - [x] Forum header: notification icons — `lib/post/list/widgets/forum_notification_dialog.dart` (bell icon in category header, opens per-category FCM subscription dialog via Firebase RTDB) (2026-03-23)
 - [x] Forum header: subcategory filter tabs — `lib/post/list/widgets/post_list_header_categories.dart` (expandable Wrap with 12 default + "더보기/접기" toggle, chip background styling, search + notification as first items) (2026-03-23)
 - [x] Menu: point ad item in ad section — `lib/point/widgets/point_advertisements.dart` integrated in forum screen (2026-03-23)
 - [x] Menu: life info onTap handlers — Weather, Currency, Essential Info all have working onTap (2026-03-23)
 - [x] Home: helper menu onTap handlers — `lib/home/widgets/home_helper_menu_section.dart` (내 정보, 업소이벤트, 이벤트응모, 필수정보, 환율, etc.) (2026-03-23)
+
+---
+
+## v6 Widgets / Components Not Yet in v7
+
+- [ ] Comic theme widgets — v6 has dedicated comic-style UI: `comic_button.dart`, `comic_card.dart`, `comic_dialog.dart`, `comic_fab.dart`, `comic_modal.dart`, `comic_snackbar.dart`, `comic_text_form_field.dart`
+  - v7 uses Material 3 + flutter_animate instead; comic theme not ported
+- [ ] Step progress indicator — v6: `v6/widgets/step.progress.indicator.dart`
+- [ ] Information box widget — v6: `v6/widgets/information.box.dart`
+- [ ] Spinning wheel (standalone) — v6: `v6/widgets/spinning_wheel.dart` (v7 has `lib/event/widgets/spinning_wheel.dart` — likely equivalent)
+- [ ] Logo widgets — v6: `v6/widgets/logo/logo.dart`, `philgo.logo.triangle.dart`, `philgo.logo.triangles.dart`
+- [ ] Carousel dot indicator — v6: `v6/widgets/home/main/carousel_dot_indicator.dart`
+
+---
+
+## v6 Features Not Previously Tracked (NEW in this audit)
+
+- [ ] Company event screen — ✅ EXISTS in v7: `lib/event/company_event.screen.dart` (QR-based point event)
+- [x] App info screen — `lib/app_info/app_info.screen.dart` (version display + admin features)
+- [x] Bookmark system — `lib/bookmark/bookmark.service.dart`, `lib/bookmark/bookmark.screen.dart` (groups, CRUD, multi-type)
+- [x] AI answer service — `lib/ai/ai.service.dart` (SSE streaming AI answers, new in v7)
+- [x] Deep link service — `lib/deeplink/deeplink.service.dart` (v4/v6/v7 URL backward compatibility)
+- [x] Receive share service — `lib/receive_share/` (share target support)
+- [x] Point history screen — `lib/point/point_history.screen.dart`
+- [x] Company review point result — `lib/company/review/company.review_point_result.screen.dart`
+- [x] Company revisit point result — `lib/company/review/company.revisit_point_result.screen.dart`
+- [ ] v6 `data.service.dart` (general data service) — Not directly ported; v7 uses individual module services instead
+- [ ] v6 `ui.functions.dart` (UI utility functions) — Check if needed
+- [ ] v6 `init.functions.dart` (app init functions beyond build check) — Partially covered by `lib/init/`
 
 ---
 
@@ -216,10 +251,24 @@
 | Critical                | 3      | 1       | 2         |
 | High Priority           | 8      | 1       | 1         |
 | QR / Event              | 8      | 0       | 0         |
-| Home / UI               | 6      | 0       | 2         |
+| Home / UI               | 5      | 0       | 3         |
 | Infrastructure          | 4      | 0       | 3         |
 | Profile / User          | 4      | 0       | 2         |
-| Static Content          | 6      | 0       | 43        |
-| Partial Implementations | 11     | 0       | 3         |
+| Static Content          | 6      | 0       | 49        |
+| Partial Implementations | 12     | 1       | 1         |
+| Widgets/Components      | 0      | 0       | 6         |
 | System-Level            | 1      | 0       | 1         |
-| **Total**               | **51** | **2**   | **57**    |
+| **Total**               | **51** | **3**   | **68**    |
+
+---
+
+## Audit Log
+
+- **2026-03-23 (Ralph Loop iteration 1):** Full file-by-file audit of v6 (218 files) vs v7 (203 files). Corrections:
+  - FIXED: `home_latest_comments_section.dart` marked [x] but file does NOT exist → changed to [ ]
+  - FIXED: `Chat: unread message badge on nav bar` marked [ ] but IS implemented in `app.screen.dart` → changed to [x]
+  - FIXED: Several static content items marked "Not found in v6" but DO exist (delivery, holiday, monthly living, car purchase/rental/OR renewal, house helper, tutor, island tour, market tour, seafood, water sports)
+  - ADDED: v6 Widgets/Components section (comic theme, step indicator, info box, logo, carousel dots)
+  - ADDED: v6 Features Not Previously Tracked section (app info, bookmark, AI, deep link, etc.)
+  - ADDED: v6 data file references (`car_menu.data.dart`, `helper_menu.data.dart`)
+  - Updated summary counts
