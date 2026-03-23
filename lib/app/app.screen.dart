@@ -19,6 +19,7 @@ import 'package:philgo/post/post_category_bottom_sheet.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
+import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:provider/provider.dart';
@@ -130,7 +131,21 @@ class _AppScreenState extends State<AppScreen> {
                 label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.lightCommentDots),
+                icon: ValueListenableBuilder<int>(
+                  valueListenable:
+                      ChatService.instance.unreadCountStream,
+                  builder: (context, count, child) {
+                    return Badge(
+                      isLabelVisible: count > 0,
+                      label: Text(
+                        count > 99 ? '99+' : count.toString(),
+                      ),
+                      child: const FaIcon(
+                        FontAwesomeIcons.lightCommentDots,
+                      ),
+                    );
+                  },
+                ),
                 label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
