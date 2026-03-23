@@ -15,8 +15,11 @@ import 'package:url_launcher/url_launcher.dart';
 class InfoViewScreen extends StatefulWidget {
   static const String routeName = '/info/view';
 
-  static void push(BuildContext ctx,
-      {required String accessCode, String? title}) {
+  static void push(
+    BuildContext ctx, {
+    required String accessCode,
+    String? title,
+  }) {
     ctx.push('$routeName?access_code=$accessCode', extra: title);
   }
 
@@ -63,16 +66,14 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title ?? _info?.name ?? '정보'.tr()),
-      ),
+      appBar: AppBar(title: Text(widget.title ?? _info?.name ?? '정보'.tr())),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? _buildError()
-              : _info != null
-                  ? _buildContent()
-                  : const SizedBox.shrink(),
+          ? _buildError()
+          : _info != null
+          ? _buildContent()
+          : const SizedBox.shrink(),
     );
   }
 
@@ -83,14 +84,18 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            FaIcon(FontAwesomeIcons.lightCircleExclamation,
-                size: 48, color: color.error),
+            FaIcon(
+              FontAwesomeIcons.lightCircleExclamation,
+              size: 48,
+              color: color.error,
+            ),
             const SizedBox(height: 16),
             Text('정보를 불러올 수 없습니다'.tr(), style: text.titleMedium),
             const SizedBox(height: 8),
-            Text(_error!,
-                style:
-                    text.bodySmall?.copyWith(color: color.onSurfaceVariant)),
+            Text(
+              _error!,
+              style: text.bodySmall?.copyWith(color: color.onSurfaceVariant),
+            ),
             const SizedBox(height: 16),
             FilledButton.tonal(
               onPressed: () {
@@ -117,14 +122,16 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
         children: [
           // 이름 + 영문명
           if (info.name.isNotEmpty)
-            Text(info.name,
-                style: text.headlineSmall
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              info.name,
+              style: text.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+            ),
           if (info.englishName.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(info.englishName,
-                style: text.bodyMedium
-                    ?.copyWith(color: color.onSurfaceVariant)),
+            Text(
+              info.englishName,
+              style: text.bodyMedium?.copyWith(color: color.onSurfaceVariant),
+            ),
           ],
           // 한줄 소개
           if (info.title.isNotEmpty) ...[
@@ -141,8 +148,10 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
                 color: color.primaryContainer.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text(info.description,
-                  style: text.bodyMedium?.copyWith(height: 1.5)),
+              child: Text(
+                info.description,
+                style: text.bodyMedium?.copyWith(height: 1.5),
+              ),
             ),
           ],
           // 메타 정보 카드 (주소, 전화, 이메일, 웹사이트 등)
@@ -185,24 +194,36 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
           if (info.address.isNotEmpty)
             _metaRow(FontAwesomeIcons.lightLocationDot, info.address),
           if (info.phone.isNotEmpty)
-            _metaRow(FontAwesomeIcons.lightPhone, info.phone,
-                onTap: () => launchUrl(Uri.parse('tel:${info.phone}'))),
+            _metaRow(
+              FontAwesomeIcons.lightPhone,
+              info.phone,
+              onTap: () => launchUrl(Uri.parse('tel:${info.phone}')),
+            ),
           if (info.phone2.isNotEmpty)
-            _metaRow(FontAwesomeIcons.lightPhone, info.phone2,
-                onTap: () => launchUrl(Uri.parse('tel:${info.phone2}'))),
+            _metaRow(
+              FontAwesomeIcons.lightPhone,
+              info.phone2,
+              onTap: () => launchUrl(Uri.parse('tel:${info.phone2}')),
+            ),
           if (info.email.isNotEmpty)
-            _metaRow(FontAwesomeIcons.lightEnvelope, info.email,
-                onTap: () => launchUrl(Uri.parse('mailto:${info.email}'))),
+            _metaRow(
+              FontAwesomeIcons.lightEnvelope,
+              info.email,
+              onTap: () => launchUrl(Uri.parse('mailto:${info.email}')),
+            ),
           if (info.hours.isNotEmpty)
             _metaRow(FontAwesomeIcons.lightClock, info.hours),
           if (info.websiteUrl.isNotEmpty)
-            _metaRow(FontAwesomeIcons.lightGlobe, info.websiteUrl,
-                onTap: () {
-              final uri = Uri.tryParse(info.websiteUrl);
-              if (uri != null) {
-                launchUrl(uri, mode: LaunchMode.externalApplication);
-              }
-            }),
+            _metaRow(
+              FontAwesomeIcons.lightGlobe,
+              info.websiteUrl,
+              onTap: () {
+                final uri = Uri.tryParse(info.websiteUrl);
+                if (uri != null) {
+                  launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
         ],
       ),
     );
@@ -216,8 +237,7 @@ class _InfoViewScreenState extends State<InfoViewScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.only(top: 2),
-            child:
-                FaIcon(icon, size: 14, color: color.onSurfaceVariant),
+            child: FaIcon(icon, size: 14, color: color.onSurfaceVariant),
           ),
           const SizedBox(width: 10),
           Expanded(

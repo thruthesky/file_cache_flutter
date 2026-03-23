@@ -164,9 +164,7 @@ class UserService {
   ///
   /// 서버 응답이 List이면 파싱하고, Map이면 (차단 목록 비어있음) 빈 리스트를 반환한다.
   static Future<List<BlockedUserModel>> getBlockedList() async {
-    final response = await ApiService.instance.v7api(
-      'user.blockedList',
-    );
+    final response = await ApiService.instance.v7api('user.blockedList');
     if (response is List) {
       return response
           .whereType<Map<String, dynamic>>()
@@ -184,8 +182,6 @@ class UserService {
       data: {'idx_blockee': idxBlockee},
     );
   }
-
-
 
   /// Firebase UID로 사용자를 조회한다. (user.getByFirebaseUid)
   ///

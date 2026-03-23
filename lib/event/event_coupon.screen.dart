@@ -15,8 +15,7 @@ import 'package:share_plus/share_plus.dart';
 /// 포인트 응모 스피닝 휠에서 당첨된 쿠폰 목록을 표시한다.
 class EventCouponScreen extends StatefulWidget {
   static const String routeName = '/event-coupon';
-  static Future<dynamic> push(BuildContext context) =>
-      context.push(routeName);
+  static Future<dynamic> push(BuildContext context) => context.push(routeName);
 
   const EventCouponScreen({super.key});
 
@@ -65,8 +64,8 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _coupons.isEmpty
-              ? _buildEmptyState()
-              : _buildCouponList(),
+          ? _buildEmptyState()
+          : _buildCouponList(),
     );
   }
 
@@ -139,11 +138,13 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
 
   /// 쿠폰 공유
   Future<void> _shareCoupon(EventCoupon coupon, String imageUrl) async {
-    final couponName =
-        coupon.title.isNotEmpty ? coupon.title : coupon.couponType;
+    final couponName = coupon.title.isNotEmpty
+        ? coupon.title
+        : coupon.couponType;
     final box = context.findRenderObject() as RenderBox?;
-    final origin =
-        box != null ? box.localToGlobal(Offset.zero) & box.size : null;
+    final origin = box != null
+        ? box.localToGlobal(Offset.zero) & box.size
+        : null;
     await SharePlus.instance.share(
       ShareParams(
         text: '필고 이벤트 쿠폰: $couponName\n$imageUrl',
@@ -296,8 +297,9 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
               final imageUrl = _getCouponImageUrl(coupon);
               final date = _formatDate(coupon.wonAt);
               final couponId = '${coupon.idx}';
-              final viewedDate =
-                  coupon.isViewed ? _formatDate(coupon.viewedAt) : '';
+              final viewedDate = coupon.isViewed
+                  ? _formatDate(coupon.viewedAt)
+                  : '';
 
               return InkWell(
                 onTap: imageUrl.isNotEmpty
@@ -369,8 +371,7 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
                               ),
                               const SizedBox(height: 8),
                               _buildStatusBadge(coupon.isSent),
-                              if (coupon.isViewed &&
-                                  viewedDate.isNotEmpty) ...[
+                              if (coupon.isViewed && viewedDate.isNotEmpty) ...[
                                 const SizedBox(height: 4),
                                 Text(
                                   '확인 날짜: {}'.tr(args: [viewedDate]),
@@ -387,8 +388,9 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
                           FaIcon(
                             FontAwesomeIcons.chevronRight,
                             size: 14,
-                            color:
-                                color.onSurfaceVariant.withValues(alpha: 0.5),
+                            color: color.onSurfaceVariant.withValues(
+                              alpha: 0.5,
+                            ),
                           ),
                       ],
                     ),
@@ -436,12 +438,13 @@ class _EventCouponScreenState extends State<EventCouponScreen> {
   }
 
   Widget _buildStatusBadge(bool isSent) {
-    final bgColor =
-        isSent ? color.tertiaryContainer : color.secondaryContainer;
-    final fgColor =
-        isSent ? color.onTertiaryContainer : color.onSecondaryContainer;
-    final icon =
-        isSent ? FontAwesomeIcons.circleCheck : FontAwesomeIcons.trophy;
+    final bgColor = isSent ? color.tertiaryContainer : color.secondaryContainer;
+    final fgColor = isSent
+        ? color.onTertiaryContainer
+        : color.onSecondaryContainer;
+    final icon = isSent
+        ? FontAwesomeIcons.circleCheck
+        : FontAwesomeIcons.trophy;
     final label = isSent ? '전송완료'.tr() : '당첨'.tr();
 
     return Container(
