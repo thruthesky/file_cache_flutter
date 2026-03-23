@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/room/single.chat_room.dart';
 import 'package:philgo/chat/room/single.chat_room.message_list.dart';
@@ -22,12 +23,7 @@ class ChatRoomScreen extends StatefulWidget {
 
   final String id; // This can be roomId or uid for single chat
 
-  const ChatRoomScreen({
-    super.key,
-    required this.id,
-    required this.homeRouteName,
-  });
-  final String homeRouteName;
+  const ChatRoomScreen({super.key, required this.id});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
@@ -36,15 +32,13 @@ class ChatRoomScreen extends StatefulWidget {
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   SingleChatRoomMessageListController messageListController =
       SingleChatRoomMessageListController();
+
   @override
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) {
         if (isSingleChatRoom(widget.id) || isFirebaseUid(widget.id)) {
-          return SingleChatRoom(
-            id: widget.id,
-            homeRouteName: widget.homeRouteName,
-          );
+          return SingleChatRoom(id: widget.id);
         }
 
         return Scaffold(
@@ -57,7 +51,7 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
               Center(child: Text('잘못된 채팅방 ID'.tr())),
               ElevatedButton(
                 onPressed: () {
-                  context.go(widget.homeRouteName);
+                  context.go(AppScreen.routeName);
                 },
                 child: Text('홈으로 돌아가기'.tr()),
               ),

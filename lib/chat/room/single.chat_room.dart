@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/chat/chat.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/room/chat.room.message_input.dart';
@@ -13,14 +14,9 @@ import 'package:philgo/util/util.functions.dart';
 /// Single Chat Room Screen
 /// Displays a 1:1 chat room with another user following Comic design theme
 class SingleChatRoom extends StatefulWidget {
-  const SingleChatRoom({
-    super.key,
-    required this.id,
-    required this.homeRouteName,
-  });
+  const SingleChatRoom({super.key, required this.id});
 
   final String id;
-  final String homeRouteName;
 
   @override
   State<SingleChatRoom> createState() => _SingleChatRoomState();
@@ -59,10 +55,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   roomId: init.join.id,
                   success: () {
                     if (mounted) {
-                      showSuccessSnackBar(
-                        context,
-                        '방을 나갔습니다'.tr(),
-                      );
+                      showSuccessSnackBar(context, '방을 나갔습니다'.tr());
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
                       }
@@ -81,7 +74,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                 if (Navigator.canPop(context)) {
                   Navigator.of(context).pop();
                 } else {
-                  context.go(widget.homeRouteName);
+                  context.go(AppScreen.routeName);
                 }
               },
             ),

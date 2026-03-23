@@ -65,10 +65,10 @@ final router = GoRouter(
       return AppScreen.routeName;
     }
 
-    // 채팅방: /chat/index.php?id=xxx
-    if (result.isChatRoom && result.chatRoomId != null) {
-      return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
-    }
+    // // 채팅방: /chat/index.php?id=xxx
+    // if (result.isChatRoom && result.chatRoomId != null) {
+    //   return ChatRoomScreen.routeName.replaceFirst(':id', result.chatRoomId!);
+    // }
 
     // 업소록 보기: /company/view?idx=5422 또는 /company/view.php?idx=1025
     if (result.isCompanyView && result.idx != null) {
@@ -207,11 +207,15 @@ final router = GoRouter(
       path: ChatRoomScreen.routeName,
       name: ChatRoomScreen.routeName,
       builder: (context, state) {
-        final id = state.pathParameters['id']!;
+        String id = state.pathParameters['id']!;
+        if (id == '') {
+          id = state.uri.queryParameters['uid'] ?? '';
+        }
+
         return ChatRoomScreen(
           key: UniqueKey(),
           id: id,
-          homeRouteName: AppScreen.routeName,
+          // homeRouteName: AppScreen.routeName,
         );
       },
     ),
@@ -275,8 +279,7 @@ final router = GoRouter(
       path: CompanyQrCodeScreen.routeName,
       name: CompanyQrCodeScreen.routeName,
       builder: (context, state) {
-        final idx =
-            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         return CompanyQrCodeScreen(companyIdx: idx);
       },
     ),
@@ -289,8 +292,7 @@ final router = GoRouter(
       path: CompanyQrCodeScannedScreen.routeName,
       name: CompanyQrCodeScannedScreen.routeName,
       builder: (context, state) {
-        final idx =
-            int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
+        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
         final code = state.uri.queryParameters['code'] ?? '';
         return CompanyQrCodeScannedScreen(idx: idx, code: code);
       },
