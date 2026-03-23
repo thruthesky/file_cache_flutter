@@ -107,10 +107,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 TextSpan(
                   style: text.bodySmall?.copyWith(
                     color: color.onSurfaceVariant,
-                    height: 1.5,
                   ),
                   children: [
-                    TextSpan(text: '로그인 시 필고의 '.tr()),
                     TextSpan(
                       text: '이용약관'.tr(),
                       style: TextStyle(
@@ -120,7 +118,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => _openUrl('https://philgo.com/help/terms'),
                     ),
-                    TextSpan(text: ' ${'및'.tr()} '),
+                    const TextSpan(text: '  |  '),
                     TextSpan(
                       text: '개인정보처리방침'.tr(),
                       style: TextStyle(
@@ -130,7 +128,6 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       recognizer: TapGestureRecognizer()
                         ..onTap = () => _openUrl('https://philgo.com/help/privacy'),
                     ),
-                    TextSpan(text: '에 동의하게 됩니다.'.tr()),
                   ],
                 ),
                 textAlign: TextAlign.center,

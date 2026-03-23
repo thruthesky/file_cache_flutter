@@ -82,6 +82,8 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': '소셜 계정으로 간편하게 로그인하세요',
     '카카오로 로그인': '카카오로 로그인',
     'Google로 로그인': 'Google로 로그인',
+    '이용약관': '이용약관',
+    '개인정보처리방침': '개인정보처리방침',
 
     // 홈 섹션
     '필고': '필고',
@@ -734,6 +736,8 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': 'Sign in with your social account',
     '카카오로 로그인': 'Sign in with Kakao',
     'Google로 로그인': 'Sign in with Google',
+    '이용약관': 'Terms of Service',
+    '개인정보처리방침': 'Privacy Policy',
 
     // 홈 섹션
     '필고': 'PhilGo',
