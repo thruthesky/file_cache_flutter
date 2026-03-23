@@ -32,7 +32,7 @@ class ChatRoomScreen extends StatefulWidget {
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
   String get id {
-    String id = widget.state.pathParameters['id']!;
+    String id = widget.state.pathParameters['id'] ?? '';
     if (id == '') {
       id = widget.state.uri.queryParameters['uid'] ?? '';
     }
