@@ -25,13 +25,12 @@ class DisplayThumbnail extends StatelessWidget {
     final absoluteUrl = toAbsoluteUrl(url);
     final type = getMediaType(absoluteUrl);
 
+    final content = _build(type, absoluteUrl, scheme);
     Widget preview = ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: _build(type, absoluteUrl, scheme),
-      ),
+      child: size.isFinite
+          ? SizedBox(width: size, height: size, child: content)
+          : content,
     );
 
     if (onDelete == null) return preview;
@@ -66,6 +65,7 @@ class DisplayThumbnail extends StatelessWidget {
   }
 
   Widget _build(MediaType type, String absoluteUrl, ColorScheme scheme) {
+    final iconSize = size.isFinite ? size : 72.0;
     switch (type) {
       case MediaType.image:
         return Image.network(
@@ -79,7 +79,7 @@ class DisplayThumbnail extends StatelessWidget {
         );
 
       case MediaType.video:
-        return VideoThumbnail(url: absoluteUrl, size: size, borderRadius: 0);
+        return VideoThumbnail(url: absoluteUrl, size: iconSize, borderRadius: 0);
 
       case MediaType.file:
         final ext = getFileExtension(absoluteUrl).toUpperCase();
@@ -92,7 +92,7 @@ class DisplayThumbnail extends StatelessWidget {
               children: [
                 FaIcon(
                   FontAwesomeIcons.lightFile,
-                  size: size * 0.4,
+                  size: iconSize * 0.4,
                   color: scheme.primary,
                 ),
                 if (ext.isNotEmpty)
