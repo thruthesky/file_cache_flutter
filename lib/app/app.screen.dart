@@ -18,6 +18,7 @@ import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post_category_bottom_sheet.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/setting/setting.state.dart';
+import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.service.dart';
 import 'package:philgo/user/widgets/login_required_dialog.dart';
 import 'package:provider/provider.dart';
@@ -161,6 +162,16 @@ class _AppScreenState extends State<AppScreen> {
 
   /// 탭별 팝업 메뉴 아이템 목록
   List<AppFabMenuItem> _getMenuItems(BuildContext context, int currentIndex) {
+    if (!UserService.isLoggedIn) {
+      return [
+        AppFabMenuItem(
+          icon: FontAwesomeIcons.lightRightToBracket,
+          label: '로그인'.tr(),
+          onTap: () => UserLoginScreen.push(context),
+        ),
+      ];
+    }
+
     switch (currentIndex) {
       case 0: // 홈
       case 4: // 메뉴
