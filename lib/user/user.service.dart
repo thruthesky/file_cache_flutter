@@ -216,6 +216,7 @@ class UserService {
           final user = await UserService.loadCurrentUser();
 
           ChatService.instance.initPinnedChatRooms(firebaseUser.uid);
+          ChatService.instance.initCountUnreadMessage(firebaseUser.uid);
           listenBlockedUsers(firebaseUser.uid);
           initUserPresence(firebaseUser.uid);
 

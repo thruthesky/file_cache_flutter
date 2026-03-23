@@ -306,7 +306,6 @@ class Translations {
     '뉴스': '뉴스',
     '골프': '골프',
     '렌트카': '렌트카',
-    '정보': '정보',
     '코필커플': '코필커플',
     '코피노': '코피노',
     '이민': '이민',
@@ -456,7 +455,6 @@ class Translations {
 
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': '업소 정보를 불러오지 못했습니다.',
-    '다시 시도': '다시 시도',
     '업소 정보': '업소 정보',
     '아직 후기가 없습니다': '아직 후기가 없습니다',
 
@@ -792,7 +790,8 @@ class Translations {
     '해외 여행 관련 공지가 없습니다': 'No travel notices available',
     '외교부 공지사항이 여기에 표시됩니다': 'MOFA notices will be displayed here',
     '필고 공지가 없습니다': 'No PhilGo notices',
-    '필고 서비스 관련 공지사항이 여기에 표시됩니다': 'PhilGo service notices will be displayed here',
+    '필고 서비스 관련 공지사항이 여기에 표시됩니다':
+        'PhilGo service notices will be displayed here',
     '공지사항을 불러오는 중...': 'Loading notices...',
     '공지사항을 불러올 수 없습니다': 'Unable to load notices',
     '새로고침 버튼을 눌러 다시 시도해주세요': 'Please tap refresh to try again',
@@ -978,7 +977,6 @@ class Translations {
     '뉴스': 'News',
     '골프': 'Golf',
     '렌트카': 'Rent a Car',
-    '정보': 'Info',
     '코필커플': 'KoFil Couple',
     '코피노': 'Kopino',
     '이민': 'Immigration',
@@ -1130,7 +1128,6 @@ class Translations {
 
     // 업소 상세
     '업소 정보를 불러오지 못했습니다.': 'Failed to load business info.',
-    '다시 시도': 'Try Again',
     '업소 정보': 'Business Info',
     '아직 후기가 없습니다': 'No reviews yet',
 
