@@ -92,7 +92,16 @@ class _AppScreenState extends State<AppScreen> {
       bottomNavigationBar: Selector<AppNavigationState, int>(
         selector: (_, state) => state.currentIndex,
         builder: (context, currentIndex, child) {
-          return BottomNavigationBar(
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: color.outlineVariant,
+                  width: 1,
+                ),
+              ),
+            ),
+            child: BottomNavigationBar(
             type: BottomNavigationBarType.fixed,
             currentIndex: currentIndex,
             onTap: (index) {
@@ -117,17 +126,26 @@ class _AppScreenState extends State<AppScreen> {
             },
             items: [
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.lightHouse),
+                icon: const Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 4),
+                  child: FaIcon(FontAwesomeIcons.lightHouse),
+                ),
                 // "Home"
                 label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.lightClipboard),
+                icon: const Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 4),
+                  child: FaIcon(FontAwesomeIcons.lightClipboard),
+                ),
                 // "Forum"
                 label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.lightBuilding),
+                icon: const Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 4),
+                  child: FaIcon(FontAwesomeIcons.lightBuilding),
+                ),
                 // "Company"
                 label: '업소록'.tr(),
               ),
@@ -135,10 +153,13 @@ class _AppScreenState extends State<AppScreen> {
                 icon: ValueListenableBuilder<int>(
                   valueListenable: ChatService.instance.unreadCountStream,
                   builder: (context, count, child) {
-                    return Badge(
-                      isLabelVisible: count > 0,
-                      label: Text(count > 99 ? '99+' : count.toString()),
-                      child: const FaIcon(FontAwesomeIcons.lightCommentDots),
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 8, bottom: 4),
+                      child: Badge(
+                        isLabelVisible: count > 0,
+                        label: Text(count > 99 ? '99+' : count.toString()),
+                        child: const FaIcon(FontAwesomeIcons.lightCommentDots),
+                      ),
                     );
                   },
                 ),
@@ -146,11 +167,15 @@ class _AppScreenState extends State<AppScreen> {
                 label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
-                icon: const FaIcon(FontAwesomeIcons.lightBars),
+                icon: const Padding(
+                  padding: EdgeInsets.only(top: 8, bottom: 4),
+                  child: FaIcon(FontAwesomeIcons.lightBars),
+                ),
                 // "Menu"
                 label: '메뉴'.tr(),
               ),
             ],
+            ),
           );
         },
       ),
