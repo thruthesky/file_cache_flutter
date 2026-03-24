@@ -27,24 +27,31 @@ class HomeProfileMenuItem extends StatelessWidget {
         loggedIn: state.user != null,
       ),
       builder: (context, data, _) {
-        return GestureDetector(
-          onTap: () => data.loggedIn
-              ? UserEditScreen.push(context)
-              : UserLoginScreen.push(context),
-          onLongPress: () => _toggleDevBanner(context),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildAvatar(data.photoUrl),
-              const SizedBox(height: 3),
-              Text(
-                data.loggedIn ? '내 정보'.tr() : '로그인'.tr(),
-                style: text.labelSmall,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => data.loggedIn
+                ? UserEditScreen.push(context)
+                : UserLoginScreen.push(context),
+            onLongPress: () => _toggleDevBanner(context),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildAvatar(data.photoUrl),
+                  const SizedBox(height: 4),
+                  Text(
+                    data.loggedIn ? '내 정보'.tr() : '로그인'.tr(),
+                    style: text.labelSmall,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         );
       },
@@ -61,8 +68,8 @@ class HomeProfileMenuItem extends StatelessWidget {
   }
 
   Widget _buildAvatar(String photoUrl) {
-    const double size = 44;
-    const double iconSize = 18;
+    const double size = 48;
+    const double iconSize = 20;
     const iconColor = Color(0xFF5C6BC0);
 
     final isValid = photoUrl.isNotEmpty &&

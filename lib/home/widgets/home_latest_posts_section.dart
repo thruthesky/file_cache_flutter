@@ -116,7 +116,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
       return const Padding(
         padding: EdgeInsets.all(16),
         child: SizedBox(
-          height: 150,
+          height: 170,
           child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
         ),
       );
@@ -132,7 +132,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
         Listener(
           onPointerDown: (_) => _stopAutoSlideTimer(),
           child: SizedBox(
-            height: 150,
+            height: 170,
             child: CarouselView(
               enableSplash: false,
               controller: _controller,
@@ -232,10 +232,21 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
                   context,
                 ).openForumScreen(postId: postId, category: category);
               },
-              child: Text(
-                // "More"
-                '더보기'.tr(),
-                style: text.labelSmall?.copyWith(color: color.primary),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    // "More"
+                    '더보기'.tr(),
+                    style: text.labelSmall?.copyWith(color: color.primary),
+                  ),
+                  const SizedBox(width: 2),
+                  FaIcon(
+                    FontAwesomeIcons.chevronRight,
+                    size: 10,
+                    color: color.primary,
+                  ),
+                ],
               ),
             ),
           ],
@@ -256,7 +267,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
             Expanded(
               child: Text(
                 post.subject,
-                style: text.bodySmall,
+                style: text.bodyMedium,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

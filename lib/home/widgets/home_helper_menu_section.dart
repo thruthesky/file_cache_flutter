@@ -122,7 +122,7 @@ class HomeHelperMenuSection extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: Column(spacing: 8, children: rows),
     );
   }
@@ -136,40 +136,47 @@ class HomeHelperMenuSection extends StatelessWidget {
     String? url, {
     VoidCallback? onTap,
   }) {
-    return GestureDetector(
-      onTap: () {
-        if (onTap != null) {
-          onTap();
-        } else if (url != null) {
-          final uri = Uri.tryParse(url);
-          if (uri != null) {
-            launchUrl(uri, mode: LaunchMode.externalApplication);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          if (onTap != null) {
+            onTap();
+          } else if (url != null) {
+            final uri = Uri.tryParse(url);
+            if (uri != null) {
+              launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
           }
-        }
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: FaIcon(icon, size: 18, color: iconColor),
-            ),
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: iconColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: FaIcon(icon, size: 20, color: iconColor),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label.tr(),
+                style: text.labelSmall,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(height: 3),
-          Text(
-            label.tr(),
-            style: text.labelSmall,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -183,31 +190,38 @@ class HomeHelperMenuSection extends StatelessWidget {
     Color fgColor,
     VoidCallback onTap,
   ) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: bgColor,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Center(
-              child: FaIcon(icon, size: 18, color: fgColor),
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: FaIcon(icon, size: 20, color: fgColor),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                label.tr(),
+                style: text.labelSmall,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
-          const SizedBox(height: 3),
-          Text(
-            label.tr(),
-            style: text.labelSmall,
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+        ),
       ),
     );
   }

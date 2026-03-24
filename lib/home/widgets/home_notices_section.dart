@@ -49,22 +49,23 @@ class _HomeNoticesSectionState extends State<HomeNoticesSection> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: color.primaryContainer.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 12,
           children: [
             Row(
               children: [
                 FaIcon(
                   FontAwesomeIcons.bullhorn,
-                  size: 13,
+                  size: 16,
                   color: color.primary,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 8),
                 Text(
                   // "Notices"
                   '공지사항'.tr(),
@@ -75,7 +76,6 @@ class _HomeNoticesSectionState extends State<HomeNoticesSection> {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
             ..._notices.map(_buildNoticeTile),
           ],
         ),
@@ -84,27 +84,36 @@ class _HomeNoticesSectionState extends State<HomeNoticesSection> {
   }
 
   Widget _buildNoticeTile(Post post) {
-    return InkWell(
-      onTap: () => PostViewScreen.push(context, post),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
-        child: Row(
-          children: [
-            FaIcon(
-              FontAwesomeIcons.circleExclamation,
-              size: 10,
-              color: color.primary,
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                post.subject,
-                style: text.bodySmall?.copyWith(color: color.onSurface),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => PostViewScreen.push(context, post),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+          child: Row(
+            children: [
+              FaIcon(
+                FontAwesomeIcons.lightCircleExclamation,
+                size: 14,
+                color: color.primary,
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  post.subject,
+                  style: text.bodyMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              FaIcon(
+                FontAwesomeIcons.chevronRight,
+                size: 10,
+                color: color.outline.withValues(alpha: 0.5),
+              ),
+            ],
+          ),
         ),
       ),
     );
