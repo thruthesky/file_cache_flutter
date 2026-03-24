@@ -10,6 +10,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/user/login/widgets/apple_signin.button.dart';
 import 'package:philgo/user/login/widgets/google_signin.button.dart';
 import 'package:philgo/user/login/widgets/kakao_signin.button.dart';
+import 'package:philgo/user/login/widgets/naver_signin.button.dart';
 
 class UserLoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -94,6 +95,14 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               KakaoSignInButton(loading: isLoading)
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 200.ms)
+                  .slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 12),
+
+              // 네이버 로그인 버튼
+              NaverSignInButton(loading: isLoading)
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 225.ms)
                   .slideY(begin: 0.2, end: 0),
 
               const SizedBox(height: 12),

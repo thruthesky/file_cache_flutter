@@ -9,6 +9,15 @@ class Config {
   static const String kakaoNativeAppKey =
       'cf75184c7c72f507d6bb5e39627925d3';
 
+  /// 네이버 클라이언트 ID (네이버 디벨로퍼 콘솔에서 발급)
+  static const String naverClientId = 'fWJ9mE2JUBZonuvuFKrV';
+
+  /// 네이버 클라이언트 시크릿
+  static const String naverClientSecret = 'uxQmhExQ8z';
+
+  /// 네이버 앱 이름 (네이버 로그인 시 표시)
+  static const String naverAppName = '필고';
+
   /// 채팅 관리자 UID (fallback)
   static const String chatAdminUid = 'RaHIcr45pvPzYdcDIv6JoW8DnSH2';
 
