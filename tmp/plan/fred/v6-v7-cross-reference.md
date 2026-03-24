@@ -13,8 +13,7 @@
 - [x] Emergency contact screen — `lib/info/essential_info.screen.dart` (integrated into Essential Info with InfoAccessCodes) (2026-03-23)
 - [x] Policy acceptance links — Terms/Privacy links on login screen (`lib/user/login/user.login.screen.dart`) with FA icons + url_launcher, plus menu WebView items (2026-03-23)
 - [ ] Phone sign-in (OTP) — Phone number login. _Note: v7 uses Google + Kakao instead — clarify if still needed_
-- [ ] Build number check / forced update — Force app update when min build number changes
-  - v6: `v6/functions/init/build_number_check.dart` (5s first check, 5min interval, calls `settings.get` API)
+- [x] Build number check / forced update — `lib/setting/build_number_check.dart` (checks on every settings.get refresh, non-dismissible upgrade dialog with store links) (2026-03-23)
 
 ---
 
@@ -27,9 +26,7 @@
 - [x] Quick post screen — `lib/home/widgets/home_quick_post_box.dart` (widget on home, opens category sheet → PostCreateScreen) (2026-03-23)
 - [x] Wanted/hiring special form — Job posting dedicated fields (company, salary, scope, etc.) (2026-03-20)
   - v7: `lib/post/create/widgets/wanted_hiring_form.dart`
-- [ ] Settings screen — UI screen (service/state exist but no screen)
-  - v6: `v6/v7_api/models/v7_settings.dart`, `v6/v7_api/state/v7_settings_state.dart`
-  - v7 has: `lib/setting/setting.service.dart`, `lib/setting/setting.state.dart`, `lib/setting/setting.model.dart` — NO `.screen.dart`
+- [x] ~~Settings screen~~ — REMOVED: v6 has no user-facing settings screen either (only app-level config model/state). v7 has equivalent `setting.service.dart` + `setting.state.dart` + `setting.model.dart`. No screen needed. (2026-03-23)
 - [x] Notice dedicated screen — `lib/notice/notice.screen.dart`, `lib/notice/notice.service.dart`, `lib/notice/notice.model.dart` (MOFA + PhilGo notices, wired to home helper menu + menu screen) (2026-03-23)
 - [~] User activity screen — `lib/post/my/my.posts.screen.dart` (own posts with infinite scroll), but NO "my comments" history screen yet
   - v6: `v6/screens/user/user.activity.screen.dart` (has both posts + comments tabs)
@@ -54,14 +51,13 @@
 
 - [x] Exchange rate widget on home — `lib/currency/currency.screen.dart`, `lib/currency/currency.service.dart`, linked from home helper menu (2026-03-23)
 - [x] Weather widget on home — `lib/weather/weather.screen.dart`, `lib/weather/weather.service.dart`, 5 cities + 6-day forecast, linked from home helper menu (2026-03-23)
-- [ ] Homepage stats (member/post count)
+- [x] ~~Homepage stats (member/post count)~~ — REMOVED: v6 has no global homepage stats either; only per-user stats on profile/menu, which v7 already has in `menu.screen.dart` (2026-03-23)
 - [ ] Latest comments section on home — ⚠️ CORRECTION: `home_latest_comments_section.dart` does NOT exist in v7 (previously marked [x] in error)
   - v6: `v6/widgets/home/home_notice_section.dart` (shows latest comments)
 - [x] User avatar + settings in AppBar — `lib/home/home.screen.dart` SliverAppBar (2026-03-20)
 - [x] Collapsible header on scroll — `lib/company/view/company.view.screen.dart` and `lib/post/view/post.view.screen.dart` (SliverAppBar pinned + collapse detection) (2026-03-23)
 - [x] Sequential animation on company list — `lib/company/list/company.list.screen.dart` flutter_animate stagger (2026-03-20)
-- [ ] Content container (max-width)
-  - v6: `v6/widgets/layout/content_container.dart` (ConstrainedBox max 800px)
+- [x] ~~Content container (max-width)~~ — REMOVED per user request. v7 uses ad-hoc BoxConstraints where needed (2026-03-23)
 
 ---
 
@@ -70,8 +66,7 @@
 - [x] Post content service — `lib/post/post_content.service.dart` (memory + file dual cache, 48-hour TTL, loads Post by idx and InfoPost by access_code; InfoViewScreen wired to use cache) (2026-03-23)
 - [x] Post content viewer widget — `lib/post/view/widgets/post.view.content.dart` (supports HTML via flutter_html, Markdown, plain text) (2026-03-23)
 - [x] Post content mapping data — `lib/api/constants/info_access_codes.dart` (17 access codes mapping info screens to server content via `info.getByAccessCode` API) (2026-03-23)
-- [ ] Memory cache service — LRU in-memory cache (maxEntries=200)
-  - v6: `v6/services/memory_cache/memory_cache.service.dart`
+- [x] ~~Memory cache service~~ — REMOVED: v6's MemoryCache class is unused legacy code (all v6 caching uses FileCache with `useMemoryCache: true`). v7 has equivalent caching in CurrencyService (TTL) and PostContentService (dual cache) (2026-03-23)
 - [x] MOFA notice data service — `lib/notice/notice.service.dart` (MOFA API with 6-hour memory cache, `lib/notice/notice.model.dart`) (2026-03-23)
 - [ ] Travel API service — Travel data API service
   - v6: `v6/services/travel/travel_spot.service.dart`, `v6/screens/guide/travel_spots.screen.dart`, `v6/screens/guide/travel_spot.view.screen.dart`
@@ -81,8 +76,7 @@
 
 ## Profile / User
 
-- [ ] Birth date picker
-  - v6: `v6/screens/user/profile.edit.screen.dart` (birthDate int field)
+- [x] ~~Birth date picker~~ — REMOVED per user request: app will be rejected if birthday is collected (2026-03-23)
 - [ ] Hero animation for profile photo
   - v6: `v6/screens/guide/travel_spot.view.screen.dart` (Hero widget pattern)
 - [x] Profile stats (posts, comments, points) — `lib/menu/menu.screen.dart` (noOfPost, noOfComment from UserModel) (2026-03-23)
@@ -212,7 +206,7 @@
 - [x] ~~Step progress indicator~~ — Not needed in v7 (2026-03-23)
 - [x] ~~Information box widget~~ — Not needed in v7 (2026-03-23)
 - [x] Spinning wheel (standalone) — `lib/event/widgets/spinning_wheel.dart` (CustomPainter-based, equivalent to v6) (2026-03-23)
-- [ ] Logo widgets — v6: `v6/widgets/logo/logo.dart`, `philgo.logo.triangle.dart`, `philgo.logo.triangles.dart`
+- [x] Logo widgets — `lib/common_widgets/philgo_logo.dart`, `lib/common_widgets/philgo_logo_triangle.dart` (3-triangle animated composition, CustomPainter-based, used in upgrade dialog) (2026-03-23)
 - [x] ~~Carousel dot indicator~~ — Not needed in v7 (2026-03-23)
 
 ---
@@ -253,8 +247,7 @@
 ## System-Level
 
 - [x] Shorebird code push — `shorebird_code_push: ^2.0.5` in pubspec.yaml + shorebird.yaml asset (2026-03-23)
-- [ ] Build number forced update — Min build number check with upgrade dialog
-  - v6: `v6/functions/init/build_number_check.dart`
+- [x] Build number forced update — `lib/setting/build_number_check.dart` (2026-03-23)
 
 ---
 
@@ -262,18 +255,18 @@
 
 | Category                | Done   | Partial | Remaining |
 | ----------------------- | ------ | ------- | --------- |
-| Critical                | 4      | 0       | 2         |
-| High Priority           | 8      | 1       | 1         |
+| Critical                | 5      | 0       | 1         |
+| High Priority           | 9      | 1       | 0         |
 | QR / Event              | 8      | 0       | 0         |
-| Home / UI               | 5      | 0       | 3         |
-| Infrastructure          | 5      | 0       | 2         |
-| Profile / User          | 4      | 0       | 2         |
-| Static Content          | 6      | 0       | 49        |
+| Home / UI               | 7      | 0       | 1         |
+| Infrastructure          | 6      | 0       | 1         |
+| Profile / User          | 5      | 0       | 1         |
+| Static Content          | 6      | 0       | 43        |
 | Partial Implementations | 12     | 1       | 1         |
-| Widgets/Components      | 5      | 0       | 1         |
+| Widgets/Components      | 6      | 0       | 0         |
 | New in This Audit       | 20     | 0       | 0         |
-| System-Level            | 1      | 0       | 1         |
-| **Total**               | **78** | **2**   | **62**    |
+| System-Level            | 2      | 0       | 0         |
+| **Total**               | **86** | **2**   | **48**    |
 
 ---
 
@@ -296,5 +289,33 @@
   - FIXED: `Company event screen` marked [ ] with "EXISTS" note → changed to [x] (fully wired from home helper menu + FAB)
   - FIXED: `Spinning wheel (standalone)` marked [ ] → changed to [x] (v7 has `lib/event/widgets/spinning_wheel.dart`)
   - ADDED 16 previously untracked v6 features now confirmed in v7: Version screen, Search screen, WebView screen, App guide screen, Other user profile, Chat pinned rooms, Chat bookmarked dialog, Chat search friends, Chat report user, YouTube player, Full screen media viewer, Masonry grid, Blocked users management, Push notification icon, Post comment threading, FAB menu
-  - CONFIRMED STILL MISSING: Settings screen (no .screen.dart), Travel API service, Post content service, Memory cache service, Build number check, Content container, Birth date picker, Hero animation, Photo grid section, Latest comments section, all 49 static info content screens
-  - Updated summary counts (70 done / 2 partial / 70 remaining)
+  - CONFIRMED STILL MISSING: Settings screen (no .screen.dart), Travel API service, Post content service, Memory cache service, Build number check, Content container, Birth date picker, Hero animation, Photo grid section, Latest comments section, all 43 remaining static info content screens
+  - Updated summary counts (78 done / 2 partial / 62 remaining — note: Static Content remaining was miscounted as 49 but correct is 43)
+- **2026-03-23 (iteration 4):** Full re-verification of all unchecked items via parallel agent-based code searches.
+  - FIXED: Static Content remaining count 49 → 43 (section has 49 total items: 6 done + 43 remaining; previous count incorrectly used total as remaining)
+  - FIXED: Total remaining 62 → 56
+  - CONFIRMED ALL REMAINING ITEMS STILL MISSING:
+    - Settings screen: service/state/model exist but NO .screen.dart, no navigation route
+    - Build number check: version fields exist in SettingsModel but no comparison logic or forced update dialog
+    - Phone sign-in (OTP): only Google + Kakao OAuth; phoneNumber field exists in UserModel but only for storage
+    - Latest comments on home: translation key '최근 댓글' defined but unused; no widget exists
+    - Homepage stats: no global member/post count on home (only per-user stats on profile)
+    - Content container: no reusable max-width wrapper; ad-hoc BoxConstraints used in dialogs
+    - Memory cache service: no standalone LRU cache; CurrencyService has TTL cache, PostContentService has dual cache, but no generic shared service
+    - Travel API service: 'travel' exists as forum category but no dedicated TravelSpot API service/model
+    - Birth date picker: UserModel has no birthdate fields; commented-out birthdate code in user.firebase_model.dart
+    - Hero animation: no Hero widget usage for profile/avatar photos
+    - Logo widgets: assets exist (philgo_wide_logo.png etc.) but no reusable LogoWidget class
+    - Photo grid on home: masonry grid exists for forums (11 categories) but not wired to home screen
+    - Shimmer loading on home: all home sections use CircularProgressIndicator; .shimmer() only on FAB accent
+    - My comments screen: only MyPostsScreen exists; no comment history screen
+    - All 43 static info content screens (transportation, vehicles, accommodation, visa, delivery, entertainment, destinations, helpers, residential, others)
+  - NO STATUS CHANGES from iteration 3 — all done/partial/remaining items verified accurate
+- **2026-03-23 (iteration 5):** Deep v6 source analysis + user-directed removals.
+  - REMOVED: `Birth date picker` — per user: app will be rejected if birthday is collected
+  - REMOVED: `Content container (max-width)` — per user request; v7 uses ad-hoc BoxConstraints
+  - REMOVED: `Homepage stats (member/post count)` — v6 audit confirmed no global homepage stats exist in v6 either; only per-user stats on profile/menu, which v7 already has
+  - REMOVED: `Settings screen` — v6 audit confirmed no user-facing settings screen exists in v6; only app-level config model/state, which v7 already has
+  - REMOVED: `Memory cache service` — v6 audit confirmed MemoryCache class is unused legacy code; all v6 caching uses FileCache with `useMemoryCache: true`; v7 has equivalent caching in CurrencyService and PostContentService
+  - CONFIRMED: Build number forced update still needed — v6 has full implementation (5s initial + 5min periodic check, non-dismissible dialog, store links); v7 has version fields in SettingsModel but no comparison logic or dialog
+  - Updated summary counts: 83 done / 2 partial / 51 remaining (was 78/2/56)
