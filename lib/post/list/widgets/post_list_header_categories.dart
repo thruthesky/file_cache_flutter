@@ -48,7 +48,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Wrap(
-        spacing: 0,
+        spacing: 4,
         runSpacing: 0,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
@@ -76,7 +76,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                     Text(
                       // "More"
                       '더보기'.tr(),
-                      style: text.labelMedium?.copyWith(
+                      style: text.labelLarge?.copyWith(
                         color: color.primary,
                         fontWeight: FontWeight.bold,
                       ),
@@ -116,7 +116,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
     return GestureDetector(
       onTap: widget.onSearchTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -129,7 +129,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
             Text(
               // "Search"
               '검색'.tr(),
-              style: text.labelMedium?.copyWith(
+              style: text.labelLarge?.copyWith(
                 color: color.onSurfaceVariant,
               ),
             ),
