@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/user/merge/merge_account.service.dart';
 import 'package:philgo/user/user.model.dart';
 
 class GoogleSignInButton extends StatelessWidget {
@@ -77,14 +78,23 @@ class GoogleSignInButton extends StatelessWidget {
       data: {'login_provider': 'google'},
     );
     log('Google 로그인 성공: v7 API 응답 수신');
-    log('Google 로그인 성공: ${json.toString()}');
+
+    // 아이디 합치기 감지: Custom Token으로 v6 계정 전환
+    final merged = await MergeAccountService.handleMergedLogin(
+      json,
+      loginProvider: 'google',
+    );
+
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      // "[NO TRANSLATION: Google 로그인 성공!]"
       ).showSnackBar(SnackBar(content: Text('Google 로그인 성공!'.tr())));
 
       context.pop();
+    }
+    if (merged) {
+      final meJson = await ApiService.instance.v7api('user.me');
+      return UserModel.fromJson(meJson);
     }
     return UserModel.fromJson(json);
   }

@@ -37,6 +37,7 @@ import 'package:philgo/company/review/company.visit_review.screen.dart';
 import 'package:philgo/company/review/company.revisit_point_result.screen.dart';
 import 'package:philgo/company/review/company.review_point_result.screen.dart';
 import 'package:philgo/event/qr_scanner.screen.dart';
+import 'package:philgo/user/merge/merge_account.screen.dart';
 
 final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey();
 BuildContext get globalContext => globalNavigatorKey.currentContext!;
@@ -296,6 +297,11 @@ final router = GoRouter(
           idxCompany: extra['idxCompany'] as int,
         );
       },
+    ),
+    GoRoute(
+      path: MergeAccountScreen.routeName,
+      name: MergeAccountScreen.routeName,
+      builder: (context, state) => const MergeAccountScreen(),
     ),
     GoRoute(
       path: AccountWithdrawalScreen.routeName,

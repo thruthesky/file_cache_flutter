@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart'
     as kakao_sdk;
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/user/merge/merge_account.service.dart';
 import 'package:philgo/user/user.model.dart';
 
 /// 카카오 로그인 버튼 (공식 디자인 가이드: 배경 #FEE500, 텍스트 #191919)
@@ -96,12 +97,23 @@ class KakaoSignInButton extends StatelessWidget {
       'user.socialLogin',
       data: {'login_provider': 'kakao'},
     );
+
+    // 아이디 합치기 감지: Custom Token으로 v6 계정 전환
+    final merged = await MergeAccountService.handleMergedLogin(
+      json,
+      loginProvider: 'kakao',
+    );
+
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
-      // "[NO TRANSLATION: 카카오 로그인 성공!]"
       ).showSnackBar(SnackBar(content: Text('카카오 로그인 성공!'.tr())));
       context.pop();
+    }
+    if (merged) {
+      // merged 처리 후 재로그인된 상태이므로 user.me로 사용자 정보 로드
+      final meJson = await ApiService.instance.v7api('user.me');
+      return UserModel.fromJson(meJson);
     }
     return UserModel.fromJson(json);
   }

@@ -20,6 +20,7 @@ import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
 import 'package:philgo/user/account_withdrawal.screen.dart';
+import 'package:philgo/user/merge/merge_account.screen.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.model.dart';
@@ -589,6 +590,12 @@ class _MenuScreenState extends State<MenuScreen> {
         // "Bookmark"
         '북마크'.tr(),
         onTap: _requireLogin(() => BookmarkScreen.push(context)),
+      ),
+      _MenuItemData(
+        FontAwesomeIcons.lightUserGroup,
+        // "Merge Account"
+        '아이디 합치기'.tr(),
+        onTap: _requireLogin(() => MergeAccountScreen.push(context)),
       ),
     ];
 
