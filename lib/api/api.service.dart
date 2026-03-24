@@ -93,11 +93,14 @@ class ApiService {
     String method, {
     Map<String, dynamic>? data,
     bool debug = false,
+    bool skipPatchToken = false,
   }) async {
     data = data ?? {};
     data['method'] = method;
 
-    await _patchToken(data);
+    if (!skipPatchToken) {
+      await _patchToken(data);
+    }
 
     if (debug) {
       // data를 쿼리 파라미터로 빌드하여 완전한 GET URL 생성

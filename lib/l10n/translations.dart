@@ -303,7 +303,7 @@ class Translations {
     '전화번호 인증 토큰을 가져올 수 없습니다.': '전화번호 인증 토큰을 가져올 수 없습니다.',
     '인증 코드 재전송': '인증 코드 재전송',
     '아이디 합치기가 완료되었습니다!': '아이디 합치기가 완료되었습니다!',
-    '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.': '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.',
+    '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.': '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.',
     '게시글 보기': '게시글 보기',
 
     // 다른 사용자 프로필
@@ -1077,7 +1077,7 @@ class Translations {
     '전화번호 인증 토큰을 가져올 수 없습니다.': 'Failed to get phone verification token.',
     '인증 코드 재전송': 'Resend Code',
     '아이디 합치기가 완료되었습니다!': 'Account merge completed!',
-    '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.': 'You will be logged out shortly. Log in again to use your existing account.',
+    '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.': 'Auto-logged in to your existing account. Redirecting to home shortly.',
     '게시글 보기': 'View Post',
 
     // 다른 사용자 프로필

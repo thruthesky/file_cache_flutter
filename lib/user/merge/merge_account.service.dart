@@ -24,14 +24,57 @@ class MergeAccountService {
 
   /// 아이디 합치기 실행 (user.mergeAccount)
   ///
+  /// 전화번호 인증 후 Firebase 사용자가 전화번호 계정으로 바뀌므로,
+  /// 미리 저장한 소셜 ID Token을 직접 전달한다 (_patchToken 건너뛰기).
+  ///
   /// [phoneIdToken] Firebase Phone Auth로 받은 ID Token
+  /// [socialIdToken] 소셜 계정의 Firebase ID Token (미리 저장)
   static Future<void> mergeAccount({
     required String phoneIdToken,
+    required String socialIdToken,
   }) async {
     await ApiService.instance.v7api(
       'user.mergeAccount',
-      data: {'phone_id_token': phoneIdToken},
+      data: {
+        'phone_id_token': phoneIdToken,
+        'id_token': socialIdToken,
+      },
+      skipPatchToken: true,
     );
+  }
+
+  /// 합치기 완료 후 v6 계정으로 바로 로그인
+  ///
+  /// 1. 소셜 ID Token으로 socialLogin 호출 → merged → custom_token
+  /// 2. Custom Token으로 v6 계정에 Firebase 로그인
+  /// 3. v6 계정으로 socialLogin 재호출 → 세션 생성
+  static Future<void> loginAsV6Account({
+    required String socialIdToken,
+  }) async {
+    // 소셜 ID Token으로 socialLogin → merged 감지 → custom_token
+    final mergedResult = await ApiService.instance.v7api(
+      'user.socialLogin',
+      data: {'id_token': socialIdToken},
+      skipPatchToken: true,
+    );
+
+    if (mergedResult['status'] != 'merged' ||
+        mergedResult['custom_token'] == null) {
+      log('loginAsV6Account: merged 상태가 아님');
+      return;
+    }
+
+    final customToken = mergedResult['custom_token'] as String;
+    log('loginAsV6Account: Custom Token 수신, v6 계정으로 전환');
+
+    // v6 계정으로 Firebase 로그인
+    await FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signInWithCustomToken(customToken);
+
+    // v6 계정으로 socialLogin 재호출 (이제 _patchToken이 v6 토큰을 넣음)
+    await ApiService.instance.v7api('user.socialLogin');
+
+    log('loginAsV6Account: v6 계정 로그인 완료');
   }
 
   /// 소셜 로그인 후 merged 상태 처리
