@@ -16,70 +16,75 @@ class HomeMenuCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // +1 for the search item at the end
+    final totalCount = Config.homeTopCategories.length + 1;
+
     return SizedBox(
       height: 36,
-      child: Row(
-        children: [
-          Expanded(
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: Config.homeTopCategories.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 0),
-              itemBuilder: (context, index) {
-                final (postId, category, label) =
-                    Config.homeTopCategories[index];
-                return GestureDetector(
-                  onTap: () {
-                    AppNavigationState.of(
-                      context,
-                    ).openForumScreen(postId: postId, category: category);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        itemCount: totalCount,
+        separatorBuilder: (_, _) => const SizedBox(width: 0),
+        itemBuilder: (context, index) {
+          // 마지막 아이템: 검색 버튼
+          if (index == totalCount - 1) {
+            return GestureDetector(
+              onTap: () async {
+                final searchTerm = await SearchDialog.show(context);
+                if (searchTerm != null && context.mounted) {
+                  SearchScreen.push(context, searchTerm);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.lightMagnifyingGlass,
+                      size: 14,
+                      color: color.onSurfaceVariant,
                     ),
-                    child: Text(
-                      label.tr(),
+                    const SizedBox(width: 4),
+                    Text(
+                      '검색'.tr(),
                       style: text.labelMedium?.copyWith(
                         color: color.onSurfaceVariant,
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-          GestureDetector(
-            onTap: () async {
-              final searchTerm = await SearchDialog.show(context);
-              if (searchTerm != null && context.mounted) {
-                SearchScreen.push(context, searchTerm);
-              }
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // 카테고리 아이템
+          final (postId, category, label) =
+              Config.homeTopCategories[index];
+          return GestureDetector(
+            onTap: () {
+              AppNavigationState.of(
+                context,
+              ).openForumScreen(postId: postId, category: category);
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FaIcon(
-                    FontAwesomeIcons.lightMagnifyingGlass,
-                    size: 14,
-                    color: color.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '검색'.tr(),
-                    style: text.labelMedium?.copyWith(
-                      color: color.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              child: Text(
+                label.tr(),
+                style: text.labelMedium?.copyWith(
+                  color: color.onSurfaceVariant,
+                ),
               ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
