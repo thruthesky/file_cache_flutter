@@ -317,7 +317,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
               _buildActionButton(FontAwesomeIcons.lightBan, '차단'.tr(), () {
                 ScaffoldMessenger.of(
                   context,
-                // "[NO TRANSLATION: 차단 기능은 준비 중입니다.]"
+                  // "[NO TRANSLATION: 차단 기능은 준비 중입니다.]"
                 ).showSnackBar(SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())));
               }),
             ],
@@ -346,9 +346,10 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
   Widget _buildPostItem(Post post) {
     return InkWell(
       onTap: () {
-        Navigator.of(
-          context,
-        ).push(MaterialPageRoute(builder: (_) => PostViewScreen(post: post)));
+        PostViewScreen.push(context, post);
+        // Navigator.of(
+        //   context,
+        // ).push(MaterialPageRoute(builder: (_) => PostViewScreen(post: post)));
       },
       borderRadius: BorderRadius.circular(8),
       child: Padding(
@@ -421,7 +422,11 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
     bool isDestructive = false,
     bool isActive = false,
   }) {
-    final c = isActive ? color.primary : isDestructive ? color.error : color.onSurfaceVariant;
+    final c = isActive
+        ? color.primary
+        : isDestructive
+        ? color.error
+        : color.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),

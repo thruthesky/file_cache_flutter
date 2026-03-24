@@ -196,9 +196,7 @@ class _ForumScreenState extends State<ForumScreen> {
     // 내부 글이면 PostViewScreen으로 이동
     PostService.get(ad.idx).then((post) {
       if (mounted) {
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
-        );
+        PostViewScreen.push(context, post);
       }
     });
   }
@@ -246,9 +244,10 @@ class _ForumScreenState extends State<ForumScreen> {
       return;
     }
 
-    final result = await Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
-    );
+    // final result = await Navigator.of(context).push<dynamic>(
+    //   MaterialPageRoute(builder: (_) => PostViewScreen(post: post)),
+    // );
+    final result = await PostViewScreen.push(context, post);
 
     if ((result == 'deleted' || result == 'blocked' || result is Post) &&
         mounted) {
