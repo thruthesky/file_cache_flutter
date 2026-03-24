@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/advertisement/advertisement.view.screen.dart';
-import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
@@ -178,7 +177,10 @@ final router = GoRouter(
         }
         // 2. query parameters fallback (딥링크)
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        return CompanyViewScreen(key: ValueKey(idx), company: CompanyModel.minimal(idx: idx));
+        return CompanyViewScreen(
+          key: ValueKey(idx),
+          company: CompanyModel.minimal(idx: idx),
+        );
       },
     ),
     GoRoute(
