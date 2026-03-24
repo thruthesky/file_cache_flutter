@@ -120,16 +120,7 @@ final router = GoRouter(
       path: PostViewScreen.routeName,
       name: PostViewScreen.routeName,
       builder: (context, state) {
-        // 1. extra에서 Post 가져오기 (일반 네비게이션)
-        if (state.extra is Post) {
-          return PostViewScreen(post: state.extra as Post);
-        }
-        // 2. query parameters (deeplink)
-        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        return PostViewScreen(
-          key: ValueKey(idx),
-          post: Post.minimal(idx: idx),
-        );
+        return PostViewScreen(key: UniqueKey(), state: state);
       },
     ),
     GoRoute(

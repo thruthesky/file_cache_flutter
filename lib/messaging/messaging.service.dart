@@ -103,7 +103,7 @@ class MessagingService {
   /// Get FCM token and save to database
   Future<void> saveToken() async {
     final token = await FirebaseMessaging.instance.getToken();
-    log("$token", name: 'FCM TOKEN::');
+    log("$token", name: '[FCM TOKEN]::');
     if (token == null || token.isEmpty) {
       debugPrint('FCM token is null or empty');
       return;

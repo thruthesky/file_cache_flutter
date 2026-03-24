@@ -37,9 +37,9 @@ class PostViewScreen extends StatefulWidget {
     return result;
   }
 
-  final Post post;
+  final GoRouterState state;
 
-  const PostViewScreen({super.key, required this.post});
+  const PostViewScreen({super.key, required this.state});
 
   @override
   State<PostViewScreen> createState() => _PostViewScreenState();
@@ -53,7 +53,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
 
   // 좋아요 상태
   bool _liked = false;
-  late int _goodCount;
+  int _goodCount = 0;
 
   // 댓글
   List<Post> _comments = [];
@@ -69,8 +69,17 @@ class _PostViewScreenState extends State<PostViewScreen> {
   @override
   void initState() {
     super.initState();
-    _post = widget.post;
-    _goodCount = _post.good;
+    // 1. extra에서 Post 가져오기 (일반 네비게이션)
+    if (widget.state.extra is Post) {
+      _post = widget.state.extra as Post;
+      _goodCount = _post.good;
+    } else {
+      // 2. query parameters (deeplink)
+      final idx =
+          int.tryParse(widget.state.uri.queryParameters['idx'] ?? '') ?? 0;
+      _post = Post.minimal(idx: idx);
+    }
+
     _loadPost();
   }
 
@@ -492,7 +501,10 @@ class _PostViewScreenState extends State<PostViewScreen> {
                     leading: Navigator.of(context).canPop()
                         ? null
                         : IconButton(
-                            icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 18),
+                            icon: const FaIcon(
+                              FontAwesomeIcons.lightArrowLeft,
+                              size: 18,
+                            ),
                             onPressed: () => context.go(AppScreen.routeName),
                           ),
                     actions: [
