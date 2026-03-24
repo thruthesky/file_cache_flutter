@@ -82,14 +82,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                 userState.user,
                               ),
                             );
-                            if (userState.user == null) {
-                              return GestureDetector(
-                                onTap: () => UserLoginScreen.push(context),
-                                behavior: HitTestBehavior.opaque,
-                                child: section,
-                              );
-                            }
-                            return section;
+                            return GestureDetector(
+                              onTap: () => userState.user != null
+                                  ? UserEditScreen.push(context)
+                                  : UserLoginScreen.push(context),
+                              behavior: HitTestBehavior.opaque,
+                              child: section,
+                            );
                           },
                         )
                         .animate()
