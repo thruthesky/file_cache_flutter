@@ -21,9 +21,9 @@ class ForumNotificationDialog extends StatelessWidget {
   /// 카테고리의 구독 ID 생성 (postId 또는 postId-category)
   static String _subscriptionId(String postId, String? category) {
     if (category != null && category.isNotEmpty) {
-      return 'forum-$postId-$category';
+      return '-forum-$postId-$category';
     }
-    return 'forum-$postId';
+    return '-forum-$postId';
   }
 
   @override

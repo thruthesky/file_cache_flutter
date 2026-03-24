@@ -76,9 +76,9 @@ class MessagingService {
         sound: true,
       );
 
-      // debugPrint(
-      //   'Notification permission granted: ${settings.authorizationStatus}',
-      // );
+      debugPrint(
+        'Notification permission granted: ${settings.authorizationStatus}',
+      );
 
       if (settings.authorizationStatus == AuthorizationStatus.authorized) {
         // Setup message handlers
