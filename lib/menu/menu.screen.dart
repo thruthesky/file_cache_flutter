@@ -550,11 +550,7 @@ class _MenuScreenState extends State<MenuScreen> {
         // "Write"
         '글쓰기'.tr(),
         onTap: _requireLogin(
-          () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const PostCreateScreen(postId: 'freetalk'),
-            ),
-          ),
+          () => PostCreateScreen.push(context, postId: 'freetalk'),
         ),
       ),
       _MenuItemData(

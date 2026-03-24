@@ -84,14 +84,7 @@ class HomeQuickPostBox extends StatelessWidget {
     showPostCategoryBottomSheet(
       context,
       onSelected: (postId, category) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PostCreateScreen(
-              postId: postId,
-              category: category,
-            ),
-          ),
-        );
+        PostCreateScreen.push(context, postId: postId, category: category);
       },
     );
   }

@@ -266,12 +266,7 @@ class _AppScreenState extends State<AppScreen> {
     showPostCategoryBottomSheet(
       context,
       onSelected: (postId, category) {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) =>
-                PostCreateScreen(postId: postId, category: category),
-          ),
-        );
+        PostCreateScreen.push(context, postId: postId, category: category);
       },
     );
   }
@@ -283,13 +278,10 @@ class _AppScreenState extends State<AppScreen> {
       return;
     }
     final nav = AppNavigationState.of(context);
-    Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(
-        builder: (_) => PostCreateScreen(
-          postId: nav.selectedPostId,
-          category: nav.selectedCategory,
-        ),
-      ),
+    PostCreateScreen.push(
+      context,
+      postId: nav.selectedPostId,
+      category: nav.selectedCategory,
     );
   }
 }
