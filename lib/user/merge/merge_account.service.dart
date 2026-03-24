@@ -67,8 +67,9 @@ class MergeAccountService {
     final customToken = mergedResult['custom_token'] as String;
     log('loginAsV6Account: Custom Token 수신, v6 계정으로 전환');
 
-    // v6 계정으로 Firebase 로그인
-    await FirebaseAuth.instance.signOut();
+    // v6 계정으로 Firebase 로그인 (signOut 불필요 — signInWithCustomToken이 사용자를 교체함)
+    // signOut()을 명시적으로 호출하면 authStateChanges가 null을 emit하여
+    // 다른 서비스들(BookmarkService, CompanyService)에서 에러 발생
     await FirebaseAuth.instance.signInWithCustomToken(customToken);
 
     // v6 계정으로 socialLogin 재호출 (이제 _patchToken이 v6 토큰을 넣음)
@@ -97,8 +98,7 @@ class MergeAccountService {
     final customToken = loginResult['custom_token'] as String;
     log('아이디 합치기 감지: Custom Token으로 v6 계정 전환');
 
-    // v6 계정으로 전환
-    await FirebaseAuth.instance.signOut();
+    // v6 계정으로 전환 (signOut 불필요 — signInWithCustomToken이 사용자를 교체함)
     await FirebaseAuth.instance.signInWithCustomToken(customToken);
 
     // v6 계정으로 재로그인

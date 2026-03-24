@@ -149,7 +149,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               // 카카오 로그인 버튼
               KakaoSignInButton(
                 loading: isLoading,
-                onLoadingChanged: (v) => setState(() => isLoading = v),
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
               )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 200.ms)
@@ -160,7 +160,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               // 네이버 로그인 버튼
               NaverSignInButton(
                 loading: isLoading,
-                onLoadingChanged: (v) => setState(() => isLoading = v),
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
               )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 225.ms)
@@ -171,7 +171,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               // Google 로그인 버튼
               GoogleSignInButton(
                 loading: isLoading,
-                onLoadingChanged: (v) => setState(() => isLoading = v),
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
               )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 250.ms)
@@ -182,7 +182,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 const SizedBox(height: 12),
                 AppleSignInButton(
                   loading: isLoading,
-                  onLoadingChanged: (v) => setState(() => isLoading = v),
+                  onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
                 )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 300.ms)
