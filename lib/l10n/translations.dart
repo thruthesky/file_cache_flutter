@@ -23,6 +23,7 @@ class Translations {
     // 하단 네비게이션
     '홈': '홈',
     '게시판': '게시판',
+    '게시판을 선택해주세요': '게시판을 선택해주세요',
     '채팅': '채팅',
     '업소록': '업소록',
     '메뉴': '메뉴',
@@ -371,6 +372,7 @@ class Translations {
     '예: 필고 카페': '예: 필고 카페',
     '업소명을 입력하세요': '업소명을 입력하세요',
     '카테고리': '카테고리',
+    '카테고리를 선택해주세요': '카테고리를 선택해주세요',
     '한줄 소개': '한줄 소개',
     '예: 필리핀 최고의 한인 카페': '예: 필리핀 최고의 한인 카페',
     '상세 설명': '상세 설명',
@@ -765,6 +767,7 @@ class Translations {
     // 하단 네비게이션
     '홈': 'Home',
     '게시판': 'Forum',
+    '게시판을 선택해주세요': 'Please select a forum',
     '채팅': 'Chat',
     '업소록': 'Company',
     '메뉴': 'Menu',
@@ -1113,6 +1116,7 @@ class Translations {
     '예: 필고 카페': 'e.g. PhilGo Cafe',
     '업소명을 입력하세요': 'Please enter business name',
     '카테고리': 'Category',
+    '카테고리를 선택해주세요': 'Please select a category',
     '한줄 소개': 'Short Introduction',
     '예: 필리핀 최고의 한인 카페': 'e.g. Best Korean cafe in the Philippines',
     '상세 설명': 'Description',

@@ -140,10 +140,17 @@ class FileUploadModel {
 
   /// 상대 경로를 full URL로 변환
   ///
-  /// 이미 http로 시작하면 그대로 반환, 빈 문자열이면 빈 문자열 반환
+  /// 이미 http로 시작하면 philgo 도메인 여부를 확인하여 v7BaseUrl로 교체.
+  /// 빈 문자열이면 빈 문자열 반환.
   static String _toFullUrl(String path) {
     if (path.isEmpty) return '';
-    if (path.startsWith('http')) return path;
+    if (path.startsWith('http')) {
+      final uri = Uri.tryParse(path);
+      if (uri != null && uri.host.contains('philgo')) {
+        return '${Config.v7BaseUrl}${uri.path}';
+      }
+      return path;
+    }
     return '${Config.v7BaseUrl}$path';
   }
 

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:philgo/advertisement/advertisement.view.screen.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/app_info/app_info.screen.dart';
@@ -12,6 +13,7 @@ import 'package:philgo/event/company_event.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
 import 'package:philgo/event/event_entry.screen.dart';
 import 'package:philgo/guide/app_guide.screen.dart';
+import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/update/post.update.screen.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
@@ -115,6 +117,19 @@ final router = GoRouter(
       path: UserEditScreen.routeName,
       name: UserEditScreen.routeName,
       builder: (context, state) => const UserEditScreen(),
+    ),
+    GoRoute(
+      path: PostCreateScreen.routeName,
+      name: PostCreateScreen.routeName,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>? ?? {};
+        return PostCreateScreen(
+          postId: extra['postId'] as String? ?? 'freetalk',
+          category: extra['category'] as String?,
+          xFiles: extra['xFiles'] as List<XFile>?,
+          content: extra['content'] as String?,
+        );
+      },
     ),
     GoRoute(
       path: PostViewScreen.routeName,

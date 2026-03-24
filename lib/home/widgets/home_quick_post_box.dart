@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
-import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post_category_bottom_sheet.dart';
-import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -85,22 +83,8 @@ class HomeQuickPostBox extends StatelessWidget {
     /// 게시판 선택 바텀시트 표시
     showPostCategoryBottomSheet(
       context,
-      onSelected: (postId, category) async {
-        final result = await Navigator.of(context).push<dynamic>(
-          MaterialPageRoute(
-            builder: (_) => PostCreateScreen(
-              postId: postId,
-              category: category,
-            ),
-          ),
-        );
-
-        /// 글 작성 완료 시 글 보기 화면으로 이동
-        if (result is Post && context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => PostViewScreen(post: result)),
-          );
-        }
+      onSelected: (postId, category) {
+        PostCreateScreen.push(context, postId: postId, category: category);
       },
     );
   }
