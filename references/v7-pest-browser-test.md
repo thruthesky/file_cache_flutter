@@ -859,7 +859,7 @@ $aboutPage->assertSee('About Us');
 
 #### 로컬 관리자 세션 ID
 
-PEST 브라우저 테스트에서 관리자 권한이 필요한 경우 아래 session_id를 쿠키에 설정한다:
+PEST 브라우저 테스트에서 관리자 권한이 필요한 경우 아래 session_id_v7을 쿠키에 설정한다 (⛔ 쿠키 이름은 `session_id`가 아닌 `session_id_v7`임에 주의):
 
 | 항목 | 값 |
 |------|-----|
@@ -893,7 +893,7 @@ test('관리자 대시보드 접근 테스트', function () {
     $page = $this->visit(TEST_BASE_URL . '/user/login.php');
 
     // JavaScript로 세션 쿠키 설정 후 페이지 이동
-    $page->script("document.cookie = 'session_id=090e2895f9280a7d7d6ec11d3f0ce483-186619; path=/'")
+    $page->script("document.cookie = 'session_id_v7=090e2895f9280a7d7d6ec11d3f0ce483-186619; path=/'")
          ->navigate('/page/admin/dashboard.php')
          ->assertSee('관리자');
 })->group('browser', 'admin');
@@ -1167,7 +1167,7 @@ test('로그인 후 프로필 페이지 접근', function () {
 
 ### 26.8 v7 관리자 대시보드 인증 패턴 (2차 인증 쿠키)
 
-v7 관리자 페이지는 2단계 인증이 필요하다: (1) session_id 쿠키, (2) 대시보드 2차 인증 쿠키.
+v7 관리자 페이지는 2단계 인증이 필요하다: (1) session_id_v7 쿠키, (2) 대시보드 2차 인증 쿠키.
 
 ```php
 // 관리자 인증 상수 정의
@@ -1185,8 +1185,8 @@ browserTest('v7 관리자 대시보드에 접근할 수 있다', function () {
     /** @var \Pest\Browser\Api\PendingAwaitablePage $page */
     $page = $this->visit(V7_TEST_BASE_URL . '/admin');
 
-    // 1단계: session_id 쿠키 설정
-    $page->script("document.cookie = 'session_id=" . V7_ADMIN_SESSION_ID . "; path=/'");
+    // 1단계: session_id_v7 쿠키 설정
+    $page->script("document.cookie = 'session_id_v7=" . V7_ADMIN_SESSION_ID . "; path=/'");
 
     // 2단계: 2차 인증 쿠키 설정
     $page->script("document.cookie = '" . V7_ADMIN_COOKIE_KEY . "=" . V7_ADMIN_COOKIE_VALUE . "; path=/'");

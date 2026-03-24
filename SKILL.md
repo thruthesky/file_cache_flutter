@@ -1073,13 +1073,13 @@ Vue.js v-model 입력값 조작(nativeInputValueSetter), `script()`의 return �
 
 #### 🔴 필고 프로젝트 전용 테스트 계정 (브라우저 테스트 필수)
 
-| 계정 | session_id | 용도 |
+| 계정 | session_id_v7 | 용도 |
 |------|-----------|------|
 | **로컬 관리자** | `090e2895f9280a7d7d6ec11d3f0ce483-186619` | 관리자 권한 테스트 |
 | **Durian** (idx: 190076) | `2278018daa75e0ab879d8791fb0e2b2d-190076` | 일반 사용자 테스트 |
 | **Poster** (idx: 193824) | `d87e7374e22f1bf1aaebbbb97d280115-193824` | 글 쓰기 테스트 (`poster@philgo.com:12345a,*`) |
 
-> 세션 쿠키 설정: `$page->script("document.cookie = 'session_id=세션ID; path=/'")` 후 `->navigate()`
+> 세션 쿠키 설정: `$page->script("document.cookie = 'session_id_v7=세션ID; path=/'")` 후 `->navigate()`
 > 이메일 로그인: `$page->type('phone_number', 'banana@test.com:12345a,*')->click('SMS 코드 전송')`
 > 상세 정보: → [v7-accounts.md](references/v7-accounts.md) | 전체 가이드: → [v7-pest-browser-test.md](references/v7-pest-browser-test.md) 26.0절
 
