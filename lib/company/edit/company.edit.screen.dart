@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
@@ -8,6 +9,7 @@ import 'package:philgo/company/edit/widgets/form/form.contact.info.dart';
 import 'package:philgo/company/edit/widgets/form/form.image.upload.dart';
 import 'package:philgo/company/edit/widgets/form/form.review.dart';
 import 'package:philgo/company/edit/widgets/form_step_tracker.dart';
+import 'package:philgo/globals.dart';
 
 /// 업소 정보 수정 멀티 스텝 폼 화면
 ///
@@ -153,7 +155,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
       SnackBar(
         // "Business info saved. It will be reflected after admin review."
         content: Text('업소 정보가 저장되었습니다. 관리자 검토 후 반영됩니다.'.tr()),
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: color.primary,
       ),
     );
     Navigator.of(context).pop(true); // return true = updated
@@ -169,7 +171,7 @@ class _CompanyEditScreenState extends State<CompanyEditScreen> {
         // "Edit Business Info"
         title: Text('업소 정보 수정'.tr()),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: const FaIcon(FontAwesomeIcons.xmark),
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),

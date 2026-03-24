@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:philgo/company/qr/company.qr_code_scanned.screen.dart';
+import 'package:philgo/globals.dart';
 
 /// QR 코드 스캐너 화면
 ///
@@ -85,7 +86,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
       SnackBar(
         // "Invalid QR code."
         content: Text('유효하지 않은 QR 코드입니다.'.tr()),
-        backgroundColor: Theme.of(context).colorScheme.error,
+        backgroundColor: color.error,
         duration: const Duration(seconds: 2),
       ),
     );
@@ -93,8 +94,6 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -118,13 +117,13 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     FaIcon(
                       FontAwesomeIcons.cameraRotate,
                       size: 48,
-                      color: scheme.error,
+                      color: color.error,
                     ),
                     const SizedBox(height: 16),
                     Text(
                       // "Camera is unavailable."
                       '카메라를 사용할 수 없습니다.'.tr(),
-                      style: theme.textTheme.bodyLarge?.copyWith(
+                      style: text.bodyLarge?.copyWith(
                         color: Colors.white,
                       ),
                     ),
@@ -133,13 +132,13 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
               );
             },
           ),
-          _buildScanOverlay(scheme, theme),
+          _buildScanOverlay(),
         ],
       ),
     );
   }
 
-  Widget _buildScanOverlay(ColorScheme scheme, ThemeData theme) {
+  Widget _buildScanOverlay() {
     return Column(
       children: [
         const Spacer(flex: 2),
@@ -149,7 +148,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
             height: 250,
             decoration: BoxDecoration(
               border: Border.all(
-                color: scheme.primary.withValues(alpha: 0.8),
+                color: color.primary.withValues(alpha: 0.8),
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(16),
@@ -162,7 +161,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         Text(
           // "Align the business QR code within the frame"
           '업소의 QR 코드를 프레임 안에 맞춰주세요'.tr(),
-          style: theme.textTheme.bodyMedium?.copyWith(
+          style: text.bodyMedium?.copyWith(
             color: Colors.white.withValues(alpha: 0.9),
           ),
           textAlign: TextAlign.center,

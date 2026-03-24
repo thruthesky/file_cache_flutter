@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:philgo/globals.dart';
 
 /// 범용 Masonry 그리드 위젯
 ///
@@ -83,7 +84,7 @@ class AppMasonryGrid<T> extends StatelessWidget {
                         child: Text(
                           // "[NO TRANSLATION: 항목이 없습니다]"
                           '항목이 없습니다'.tr(),
-                          style: Theme.of(context).textTheme.bodyLarge,
+                          style: text.bodyLarge,
                         ),
                       ),
                     ),

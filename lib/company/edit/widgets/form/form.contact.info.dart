@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/globals.dart';
 import 'form_shared.dart';
 
 /// Step 2: 위치 및 연락처
@@ -139,22 +140,21 @@ class CompanyContactInfoForm extends StatelessWidget {
     );
   }
 
-  Widget _sectionTitle(BuildContext context, IconData icon, String text) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget _sectionTitle(BuildContext context, IconData icon, String labelText) {
     return Row(
       children: [
-        FaIcon(icon, size: 14, color: scheme.primary),
+        FaIcon(icon, size: 14, color: color.primary),
         const SizedBox(width: 8),
         Text(
-          text,
+          labelText,
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.bold,
-            color: scheme.primary,
+            color: color.primary,
           ),
         ),
         const SizedBox(width: 8),
-        Expanded(child: Divider(color: scheme.outlineVariant)),
+        Expanded(child: Divider(color: color.outlineVariant)),
       ],
     );
   }
@@ -205,7 +205,6 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final hasImage = _url != null && _url!.isNotEmpty;
 
     return FormFieldLabel(
@@ -256,10 +255,10 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: scheme.surfaceContainerHighest,
+                color: color.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
                 border:
-                    hasImage ? null : Border.all(color: scheme.outlineVariant),
+                    hasImage ? null : Border.all(color: color.outlineVariant),
                 image: hasImage
                     ? DecorationImage(
                         image: NetworkImage(_url!), fit: BoxFit.contain)
@@ -296,18 +295,18 @@ class _KakaoQrUploadFieldState extends State<_KakaoQrUploadField> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         FaIcon(FontAwesomeIcons.lightQrcode,
-                            size: 28, color: scheme.onSurfaceVariant),
+                            size: 28, color: color.onSurfaceVariant),
                         const SizedBox(height: 8),
                         // "Upload KakaoTalk QR Image"
                         Text('카카오톡 QR 이미지 업로드'.tr(),
                             style: TextStyle(
                                 fontSize: 12,
-                                color: scheme.onSurfaceVariant)),
+                                color: color.onSurfaceVariant)),
                         const SizedBox(height: 2),
                         // "Tap to select"
                         Text('탭하여 선택'.tr(),
                             style: TextStyle(
-                                fontSize: 11, color: scheme.outlineVariant)),
+                                fontSize: 11, color: color.outlineVariant)),
                       ],
                     ),
             ),

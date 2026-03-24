@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
+import 'package:philgo/globals.dart';
 import 'form_shared.dart';
 
 /// Step 3: 이미지 업로드 (로고, 대표 이미지, 추가 사진, 사업자등록증, 사무실 내부 사진)
@@ -152,7 +153,6 @@ class _UploadTileState extends State<_UploadTile> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final hasImage = _url != null && _url!.isNotEmpty;
 
     Widget tileContent;
@@ -194,28 +194,28 @@ class _UploadTileState extends State<_UploadTile> {
             width: 56,
             height: 56,
             decoration: BoxDecoration(
-              color: scheme.surface,
+              color: color.surface,
               shape: BoxShape.circle,
-              border: Border.all(color: scheme.outlineVariant),
+              border: Border.all(color: color.outlineVariant),
             ),
             child: Center(
               child: FaIcon(
                 widget.icon,
                 size: 22,
-                color: scheme.onSurfaceVariant,
+                color: color.onSurfaceVariant,
               ),
             ),
           ),
           const SizedBox(height: 10),
           Text(
             widget.hint,
-            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
+            style: TextStyle(fontSize: 13, color: color.onSurfaceVariant),
           ),
           const SizedBox(height: 4),
           Text(
             // "Tap to select"
             '탭하여 선택'.tr(),
-            style: TextStyle(fontSize: 11, color: scheme.outlineVariant),
+            style: TextStyle(fontSize: 11, color: color.outlineVariant),
           ),
         ],
       );
@@ -225,9 +225,9 @@ class _UploadTileState extends State<_UploadTile> {
       aspectRatio: widget.aspectRatio,
       child: Container(
         decoration: BoxDecoration(
-          color: scheme.surfaceContainerHighest,
+          color: color.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
-          border: hasImage ? null : Border.all(color: scheme.outlineVariant),
+          border: hasImage ? null : Border.all(color: color.outlineVariant),
           image: hasImage
               ? DecorationImage(image: NetworkImage(_url!), fit: BoxFit.cover)
               : null,

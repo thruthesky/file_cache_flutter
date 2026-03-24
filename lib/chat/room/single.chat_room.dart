@@ -9,6 +9,7 @@ import 'package:philgo/chat/room/single.chat_room.header.dart';
 import 'package:philgo/chat/room/single.chat_room.init.dart';
 import 'package:philgo/chat/room/single.chat_room.message_list.dart';
 import 'package:philgo/user/widgets/block.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// Single Chat Room Screen
@@ -31,12 +32,12 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
       id: widget.id,
       loading: Scaffold(
         // Comic design: Clean loading screen with theme-based colors
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: color.surface,
         body: Container(
           alignment: Alignment.center,
           child: CircularProgressIndicator(
             // Use theme primary color for loading indicator
-            color: Theme.of(context).colorScheme.primary,
+            color: color.primary,
             strokeWidth: msgListLoadingStrokeWidth,
           ),
         ),
@@ -44,7 +45,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
       onRoomReady: (init) {
         return Scaffold(
           // Comic design: Use theme background color
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: color.surface,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight + 8),
             child: SingleChatRoomHeader(
@@ -88,9 +89,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   /// Flat design - subtle border instead of shadow
                   border: Border(
                     top: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.outlineVariant.withValues(alpha: 0.3),
+                      color: color.outlineVariant.withValues(alpha: 0.3),
                       width: msgListTopBorderWidth,
                     ),
                   ),

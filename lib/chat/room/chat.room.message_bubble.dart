@@ -18,6 +18,7 @@ import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/util/util.functions.dart';
 import 'package:philgo/common_widgets/full_screen_media_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -122,7 +123,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       '나'.tr(),
                       style: TextStyle(
                         fontSize: senderNameFontSize,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: color.primary,
                         fontWeight: senderNameFontWeight,
                       ),
                     ),
@@ -148,17 +149,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
                         margin: const EdgeInsets.only(top: 2, right: 4),
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.08),
+                          color: color.onSurface.withValues(alpha: 0.08),
                           shape: BoxShape.circle,
                         ),
                         child: FaIcon(
                           FontAwesomeIcons.ellipsis,
                           size: 14,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                          color: color.onSurfaceVariant.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -183,10 +180,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             padding: textPadding,
                             decoration: BoxDecoration(
                               color: isCurrentUser
-                                  ? Theme.of(
-                                      context,
-                                    ).colorScheme.primary.withValues(alpha: 50)
-                                  : Theme.of(context).colorScheme.onSecondary,
+                                  ? color.primary.withValues(alpha: 50)
+                                  : color.onSecondary,
                               borderRadius:
                                   BorderRadius.circular(
                                     bubbleBorderRadius,
@@ -207,15 +202,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
                               text: message.text!,
                               style: TextStyle(
                                 color: isCurrentUser
-                                    ? Theme.of(context).colorScheme.onPrimary
-                                    : Theme.of(context).colorScheme.secondary,
+                                    ? color.onPrimary
+                                    : color.secondary,
                                 fontSize: messageFontSize,
                               ),
                               linkStyle: isCurrentUser
                                   ? TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onPrimary,
+                                      color: color.onPrimary,
                                     )
                                   : null,
                               options: LinkifyOptions(humanize: false),
@@ -306,7 +299,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                     // "Close"
                     tooltip: '닫기'.tr(),
                   ),
@@ -320,7 +313,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               ListTile(
                 leading: FaIcon(
                   FontAwesomeIcons.lightPenToSquare,
-                  color: Theme.of(parentContext).colorScheme.primary,
+                  color: color.primary,
                   size: 20,
                 ),
                 // "Edit"
@@ -360,8 +353,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
   /// Show edit dialog with text field
   void _showEditDialog(BuildContext parentContext) {
     final controller = TextEditingController(text: message.text ?? '');
-    final theme = Theme.of(parentContext);
-    final colorScheme = theme.colorScheme;
 
     showDialog(
       context: parentContext,
@@ -373,9 +364,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-            color: colorScheme.surface,
+            color: color.surface,
             border: Border.all(
-              color: colorScheme.outline,
+              color: color.outline,
               width: dialogBorderWidth,
             ),
             borderRadius: BorderRadius.circular(dialogBorderRadius),
@@ -391,15 +382,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   children: [
                     FaIcon(
                       FontAwesomeIcons.lightPenToSquare,
-                      color: colorScheme.primary,
+                      color: color.primary,
                       size: dialogHeaderIconSize,
                     ),
                     const SizedBox(width: 12),
                     Text(
                       // "[NO TRANSLATION: 메시지 수정]"
                       '메시지 수정'.tr(),
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onSurface,
+                      style: text.titleLarge?.copyWith(
+                        color: color.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -439,20 +430,20 @@ class ChatRoomMessageBubble extends StatelessWidget {
                               actionButtonBorderRadius,
                             ),
                             side: BorderSide(
-                              color: colorScheme.outline,
+                              color: color.outline,
                               width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.surface,
+                          color.surface,
                         ),
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onSurface,
+                          color.onSurface,
                         ),
                         padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Cancel"
@@ -493,20 +484,20 @@ class ChatRoomMessageBubble extends StatelessWidget {
                               actionButtonBorderRadius,
                             ),
                             side: BorderSide(
-                              color: colorScheme.primary,
+                              color: color.primary,
                               width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.primary,
+                          color.primary,
                         ),
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onPrimary,
+                          color.onPrimary,
                         ),
                         padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Save"
@@ -524,9 +515,6 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Show delete confirmation dialog
   void _showDeleteConfirmDialog(BuildContext parentContext) {
-    final theme = Theme.of(parentContext);
-    final colorScheme = theme.colorScheme;
-
     showDialog(
       context: parentContext,
       builder: (context) {
@@ -540,9 +528,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
             backgroundColor: Colors.transparent,
             child: Container(
               decoration: BoxDecoration(
-                color: colorScheme.surface,
+                color: color.surface,
                 border: Border.all(
-                  color: colorScheme.outline,
+                  color: color.outline,
                   width: dialogBorderWidth,
                 ),
                 borderRadius: BorderRadius.circular(dialogBorderRadius),
@@ -558,15 +546,15 @@ class ChatRoomMessageBubble extends StatelessWidget {
                       children: [
                         FaIcon(
                           FontAwesomeIcons.lightTrashCan,
-                          color: colorScheme.error,
+                          color: color.error,
                           size: dialogHeaderIconSize,
                         ),
                         const SizedBox(width: 12),
                         Text(
                           // "[NO TRANSLATION: 메시지 삭제]"
                           '메시지 삭제'.tr(),
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            color: colorScheme.onSurface,
+                          style: text.titleLarge?.copyWith(
+                            color: color.onSurface,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -579,8 +567,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     child: Text(
                       // "[NO TRANSLATION: 이 메시지를 삭제하시겠습니까?]"
                       '이 메시지를 삭제하시겠습니까?'.tr(),
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.onSurface,
+                      style: text.bodyLarge?.copyWith(
+                        color: color.onSurface,
                       ),
                     ),
                   ),
@@ -602,22 +590,22 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                   actionButtonBorderRadius,
                                 ),
                                 side: BorderSide(
-                                  color: colorScheme.outline,
+                                  color: color.outline,
                                   width: actionButtonBorderWidth,
                                 ),
                               ),
                             ),
                             backgroundColor: WidgetStateProperty.all(
-                              colorScheme.surface,
+                              color.surface,
                             ),
                             foregroundColor: WidgetStateProperty.all(
-                              colorScheme.onSurface,
+                              color.onSurface,
                             ),
                             padding: WidgetStateProperty.all(
                               actionButtonPadding,
                             ),
                             textStyle: WidgetStateProperty.all(
-                              theme.textTheme.bodyMedium,
+                              text.bodyMedium,
                             ),
                           ),
                           // "Cancel"
@@ -664,22 +652,22 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                   actionButtonBorderRadius,
                                 ),
                                 side: BorderSide(
-                                  color: colorScheme.error,
+                                  color: color.error,
                                   width: actionButtonBorderWidth,
                                 ),
                               ),
                             ),
                             backgroundColor: WidgetStateProperty.all(
-                              colorScheme.error,
+                              color.error,
                             ),
                             foregroundColor: WidgetStateProperty.all(
-                              colorScheme.onError,
+                              color.onError,
                             ),
                             padding: WidgetStateProperty.all(
                               actionButtonPadding,
                             ),
                             textStyle: WidgetStateProperty.all(
-                              theme.textTheme.bodyMedium,
+                              text.bodyMedium,
                             ),
                           ),
                           // "Delete"
@@ -689,7 +677,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                   height: 16,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: colorScheme.onError,
+                                    color: color.onError,
                                   ),
                                 )
                               : Text('삭제'.tr()),
@@ -1022,8 +1010,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                               Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
-                                    Icons.visibility_off,
+                                  FaIcon(
+                                    FontAwesomeIcons.eyeSlash,
                                     size: blockedIconSize,
                                     color: blockedTextColor,
                                   ),
@@ -1080,7 +1068,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.block, color: blockedTextColor, size: blockedIconSize),
+              FaIcon(FontAwesomeIcons.ban, color: blockedTextColor, size: blockedIconSize),
               SizedBox(width: avatarNameSpacing),
               Flexible(
                 child: Text(
@@ -1094,8 +1082,8 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(
-                Icons.touch_app,
+              FaIcon(
+                FontAwesomeIcons.handPointer,
                 color: timestampColor,
                 size: blockedTextFontSize,
               ),
@@ -1134,7 +1122,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                     // "Close"
                     tooltip: '닫기'.tr(),
                   ),
@@ -1155,7 +1143,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ),
             SizedBox(height: bottomSheetItemSpacing),
             ListTile(
-              leading: const Icon(Icons.post_add),
+              leading: const FaIcon(FontAwesomeIcons.lightPenToSquare),
               // "Recent Posts"
               title: Text('최근 글'.tr()),
               onTap: () {
@@ -1169,7 +1157,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             SizedBox(height: bottomSheetItemSpacing),
             // Report option
             ListTile(
-              leading: const Icon(Icons.report, color: Colors.red),
+              leading: const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.red),
               // "Report"
               title: Text('신고'.tr(), style: const TextStyle(color: Colors.red)),
               onTap: () {
@@ -1188,7 +1176,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               Blocked(
                 otherUserUid: sender!.firebaseUid,
                 yes: () => ListTile(
-                  leading: Icon(Icons.person_add, color: Colors.green),
+                  leading: FaIcon(FontAwesomeIcons.userPlus, color: Colors.green),
                   title: Text(
                     // "Unblock User"
                     '차단 해제'.tr(),
@@ -1200,7 +1188,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   },
                 ),
                 no: () => ListTile(
-                  leading: Icon(Icons.block, color: Colors.orange),
+                  leading: FaIcon(FontAwesomeIcons.ban, color: Colors.orange),
                   title: Text(
                     // "Block User"
                     '사용자 차단'.tr(),
@@ -1274,7 +1262,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                     // "Close"
                     tooltip: '닫기'.tr(),
                   ),
@@ -1297,7 +1285,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
             // Unblock option
             ListTile(
-              leading: const Icon(Icons.person_add, color: Colors.green),
+              leading: const FaIcon(FontAwesomeIcons.userPlus, color: Colors.green),
               title: Text(
                 // "Unblock User"
                 '차단 해제'.tr(),

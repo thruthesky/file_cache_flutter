@@ -16,6 +16,7 @@ import 'package:philgo/user/widgets/block.dart';
 import 'package:philgo/user/widgets/online.status.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/user/widgets/block_user_dialog.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/util/util.functions.dart';
 
 /// Header widget for chat room screen showing room info and options
@@ -38,7 +39,7 @@ class SingleChatRoomHeader extends StatelessWidget {
     return AppBar(
       leading: IconButton(
         onPressed: onBackPressed,
-        icon: const Icon(Icons.arrow_back),
+        icon: const FaIcon(FontAwesomeIcons.arrowLeft),
       ),
       title: buildRoomTitle(context),
       // Comic design: Transparent background, no shadow
@@ -51,7 +52,7 @@ class SingleChatRoomHeader extends StatelessWidget {
         // Gear Menu Button
         IconButton(
           onPressed: () => showMenuModal(context),
-          icon: const Icon(Icons.settings),
+          icon: const FaIcon(FontAwesomeIcons.gear),
           // "Menu"
           tooltip: '메뉴'.tr(),
         ),
@@ -70,12 +71,12 @@ class SingleChatRoomHeader extends StatelessWidget {
       builder: (context) => Container(
         /// Comic design: 2px border, rounded corners, no shadow
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: color.surface,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(dialogBorderRadius),
           ),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline,
+            color: color.outline,
             width: dialogBorderWidth,
           ),
         ),
@@ -94,13 +95,13 @@ class SingleChatRoomHeader extends StatelessWidget {
                     '메뉴'.tr(),
 
                     /// Comic design: Use theme text style
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: text.titleLarge?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                     // "Close"
                     tooltip: '닫기'.tr(),
                   ),
@@ -110,7 +111,7 @@ class SingleChatRoomHeader extends StatelessWidget {
 
             /// Comic design: 2px divider
             Divider(
-              color: Theme.of(context).colorScheme.outline,
+              color: color.outline,
               thickness: dialogDividerThickness,
               height: dialogDividerHeight,
             ),
@@ -130,24 +131,22 @@ class SingleChatRoomHeader extends StatelessWidget {
                         margin: const EdgeInsets.symmetric(vertical: 8),
                         decoration: BoxDecoration(
                           /// Comic design: Use theme primaryContainer for notice background
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                          color: color.primaryContainer.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(
                             dialogBorderRadius,
                           ),
 
                           /// Comic design: 2.0px border with primary color
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: color.primary,
                             width: dialogBorderWidth,
                           ),
                         ),
                         child: Row(
                           children: [
-                            Icon(
-                              Icons.info_outline,
-                              color: Theme.of(context).colorScheme.primary,
+                            FaIcon(
+                              FontAwesomeIcons.circleInfo,
+                              color: color.primary,
                               size: 24,
                             ),
                             SizedBox(width: dialogAvatarSpacing),
@@ -155,11 +154,9 @@ class SingleChatRoomHeader extends StatelessWidget {
                               child: Text(
                                 // "Admin Chat Notice"
                                 '관리자 채팅 안내'.tr(),
-                                style: Theme.of(context).textTheme.bodyMedium
+                                style: text.bodyMedium
                                     ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface,
+                                      color: color.onSurface,
                                       fontWeight: FontWeight.w500,
                                     ),
                               ),
@@ -174,7 +171,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                           context: context,
                           icon: FaIcon(
                             FontAwesomeIcons.lightUserPlus,
-                            color: Theme.of(context).colorScheme.primary,
+                            color: color.primary,
                           ),
                           // "Unblock User"
                           title: '차단 해제'.tr(),
@@ -197,9 +194,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                                     isPinned
                                         ? FontAwesomeIcons.lightThumbtack
                                         : FontAwesomeIcons.solidThumbtack,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.primary,
+                                    color: color.primary,
                                   ),
                                   title: isPinned
                                       // "Unpin Chat"
@@ -233,7 +228,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               context: context,
                               icon: FaIcon(
                                 FontAwesomeIcons.lightNewspaper,
-                                color: Theme.of(context).colorScheme.onSurface,
+                                color: color.onSurface,
                               ),
                               // "Recent Posts"
                               title: '최근 글'.tr(),
@@ -252,7 +247,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               context: context,
                               icon: FaIcon(
                                 FontAwesomeIcons.lightFlag,
-                                color: Theme.of(context).colorScheme.error,
+                                color: color.error,
                               ),
                               // "Report"
                               title: '신고'.tr(),
@@ -268,7 +263,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               context: context,
                               icon: FaIcon(
                                 FontAwesomeIcons.lightBan,
-                                color: Theme.of(context).colorScheme.error,
+                                color: color.error,
                               ),
                               // "Block User"
                               title: '사용자 차단'.tr(),
@@ -284,7 +279,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               context: context,
                               icon: FaIcon(
                                 FontAwesomeIcons.lightArrowRightFromBracket,
-                                color: Theme.of(context).colorScheme.error,
+                                color: color.error,
                               ),
                               // "Leave Room"
                               title: '방 나가기'.tr(),
@@ -300,7 +295,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                               context: context,
                               icon: FaIcon(
                                 FontAwesomeIcons.lightBan,
-                                color: Theme.of(context).colorScheme.error,
+                                color: color.error,
                               ),
                               // "Block & Leave"
                               title: '차단 및 나가기'.tr(),
@@ -340,8 +335,6 @@ class SingleChatRoomHeader extends StatelessWidget {
   /// Returns 'leave' or 'block_and_leave' as the user's choice.
   /// Comic design applied - 2.0px border, rounded corners, no shadow
   void showLeaveConfirmDialog(BuildContext parentContext) async {
-    final theme = Theme.of(parentContext);
-    final colorScheme = theme.colorScheme;
     // Returns null (dismissed), 'leave', or 'block_and_leave'
     final String? action = await showDialog<String>(
       context: parentContext,
@@ -357,10 +350,10 @@ class SingleChatRoomHeader extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             // Comic design: surface background color
-            color: colorScheme.surface,
+            color: color.surface,
             // Comic design: 2.0px outline border with rounded corners
             border: Border.all(
-              color: colorScheme.outline,
+              color: color.outline,
               width: dialogBorderWidth,
             ),
             borderRadius: BorderRadius.circular(dialogBorderRadius),
@@ -375,8 +368,8 @@ class SingleChatRoomHeader extends StatelessWidget {
                 child: Text(
                   // "Leave Room"
                   '방 나가기'.tr(),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: colorScheme.onSurface,
+                  style: text.titleLarge?.copyWith(
+                    color: color.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -388,8 +381,8 @@ class SingleChatRoomHeader extends StatelessWidget {
                 child: Text(
                   // "Are you sure you want to leave this room?"
                   '이 방을 나가시겠습니까?'.tr(),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface,
+                  style: text.bodyLarge?.copyWith(
+                    color: color.onSurface,
                   ),
                 ),
               ),
@@ -412,20 +405,20 @@ class SingleChatRoomHeader extends StatelessWidget {
                               actionButtonBorderRadius,
                             ),
                             side: BorderSide(
-                              color: colorScheme.error,
+                              color: color.error,
                               width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.error,
+                          color.error,
                         ),
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onError,
+                          color.onError,
                         ),
                         padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Block & Leave"
@@ -444,21 +437,21 @@ class SingleChatRoomHeader extends StatelessWidget {
                               actionButtonBorderRadius,
                             ),
                             side: BorderSide(
-                              color: colorScheme.error,
+                              color: color.error,
                               width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
                         // Outlined style: surface background, error text
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.surface,
+                          color.surface,
                         ),
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.error,
+                          color.error,
                         ),
                         padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Leave"
@@ -477,20 +470,20 @@ class SingleChatRoomHeader extends StatelessWidget {
                               actionButtonBorderRadius,
                             ),
                             side: BorderSide(
-                              color: colorScheme.outline,
+                              color: color.outline,
                               width: actionButtonBorderWidth,
                             ),
                           ),
                         ),
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.surface,
+                          color.surface,
                         ),
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onSurface,
+                          color.onSurface,
                         ),
                         padding: WidgetStateProperty.all(actionButtonPadding),
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Cancel"
@@ -616,7 +609,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                 Text(
                   getRoomName(),
                   // Comic design: Use theme text style instead of hardcoded
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  style: text.titleMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -626,7 +619,7 @@ class SingleChatRoomHeader extends StatelessWidget {
                   yes: Text(
                     // "Online"
                     '온라인'.tr(),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    style: text.bodySmall?.copyWith(
                       color: Colors.green,
                     ),
                   ),
@@ -647,8 +640,8 @@ class SingleChatRoomHeader extends StatelessWidget {
                     }
                     return Text(
                       '마지막 접속: {}'.tr(args: [timeText]),
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      style: text.bodySmall?.copyWith(
+                        color: color.onSurfaceVariant,
                       ),
                     );
                   },
@@ -699,12 +692,12 @@ class SingleChatRoomHeader extends StatelessWidget {
       child: Container(
         padding: dialogItemPadding,
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: color.surface,
           borderRadius: BorderRadius.circular(dialogItemBorderRadius),
 
           /// Comic design: 2.0px border with outline color
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline,
+            color: color.outline,
             width: dialogItemBorderWidth,
           ),
         ),
@@ -718,9 +711,7 @@ class SingleChatRoomHeader extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
+                style: text.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
               ),
             ),
           ],

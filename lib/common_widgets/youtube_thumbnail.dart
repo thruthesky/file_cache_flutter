@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'package:philgo/globals.dart';
 import '../youtube/youtube.service.dart';
 
 /// YouTube 썸네일을 표시하는 범용 위젯
@@ -55,13 +56,10 @@ class YoutubeThumbnail extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorWidget: (context, url, error) {
                     return Container(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surfaceContainerHighest,
+                      color: color.surfaceContainerHighest,
                       child: Icon(
                         Icons.error_outline,
-                        color:
-                            Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: color.onSurfaceVariant,
                       ),
                     );
                   },

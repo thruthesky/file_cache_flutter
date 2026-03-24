@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:philgo/common_widgets/app_masonry_grid.dart';
 import 'package:philgo/file/file.functions.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/post/list/widgets/display_thumbnail.dart';
 import 'package:philgo/post/post.model.dart';
 
@@ -22,27 +23,19 @@ class PostListMasonryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return AppMasonryGrid<Post>(
       pagingController: pagingController,
       itemBuilder: (context, post, index) {
         // 차단된 사용자의 글이면 차단 안내 카드 표시
         if (post.blocked) {
-          return _buildBlockedCard(context, scheme, post);
+          return _buildBlockedCard(post);
         }
 
         final imageUrl = _getImageUrl(post);
 
         // 이미지가 없으면 제목만 표시하는 컴팩트 카드
         if (imageUrl == null) {
-          return _buildTextOnlyCard(
-            context,
-            scheme,
-            textTheme,
-            post,
-          );
+          return _buildTextOnlyCard(post);
         }
 
         // 이미지가 있으면 DisplayThumbnail 공통 위젯으로 표시
@@ -51,7 +44,7 @@ class PostListMasonryView extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
-          elevation: 1,
+          elevation: 0,
           child: InkWell(
             onTap: () => onPostTap(post),
             child: Column(
@@ -73,7 +66,7 @@ class PostListMasonryView extends StatelessWidget {
                     post.subject,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: textTheme.bodyMedium?.copyWith(
+                    style: text.bodyMedium?.copyWith(
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -109,16 +102,11 @@ class PostListMasonryView extends StatelessWidget {
   }
 
   /// 이미지 없는 글: 제목만 표시하는 컴팩트 카드
-  Widget _buildTextOnlyCard(
-    BuildContext context,
-    ColorScheme scheme,
-    TextTheme textTheme,
-    Post post,
-  ) {
+  Widget _buildTextOnlyCard(Post post) {
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: InkWell(
         onTap: () => onPostTap(post),
         child: Container(
@@ -127,7 +115,7 @@ class PostListMasonryView extends StatelessWidget {
             post.subject,
             maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: textTheme.bodyMedium?.copyWith(
+            style: text.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -136,16 +124,11 @@ class PostListMasonryView extends StatelessWidget {
     );
   }
 
-  Widget _buildBlockedCard(
-    BuildContext context,
-    ColorScheme scheme,
-    Post post,
-  ) {
-    final textTheme = Theme.of(context).textTheme;
+  Widget _buildBlockedCard(Post post) {
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: InkWell(
         onTap: () => onPostTap(post),
         child: SizedBox(
@@ -157,13 +140,13 @@ class PostListMasonryView extends StatelessWidget {
                 FaIcon(
                   FontAwesomeIcons.lightBan,
                   size: 20,
-                  color: scheme.outline,
+                  color: color.outline,
                 ),
                 const SizedBox(height: 8),
                 Text(
                   // "Post from a blocked user"
                   '차단된 사용자의 글입니다'.tr(),
-                  style: textTheme.bodySmall?.copyWith(color: scheme.outline),
+                  style: text.bodySmall?.copyWith(color: color.outline),
                 ),
               ],
             ),

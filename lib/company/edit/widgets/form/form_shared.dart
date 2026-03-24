@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 
 // Use colorScheme.primary from context instead of a hardcoded color
 
@@ -32,7 +33,7 @@ class FormFieldLabel extends StatelessWidget {
               Text(
                 ' *',
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: color.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),

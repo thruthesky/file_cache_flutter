@@ -5,6 +5,7 @@ import 'package:philgo/bookmark/bookmark.model.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
 import 'package:philgo/chat/chat.theme.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
 /// 북마크된 채팅 목록 다이얼로그
@@ -48,19 +49,16 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: dialogElevation,
       child: Container(
         constraints: BoxConstraints(maxWidth: dialogMaxWidth),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: color.surface,
           borderRadius: BorderRadius.circular(dialogBorderRadius),
           border: Border.all(
-            color: colorScheme.outline,
+            color: color.outline,
             width: dialogBorderWidth,
           ),
         ),
@@ -71,14 +69,14 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
             Container(
               padding: dialogHeaderPadding,
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: color.primaryContainer,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(dialogHeaderBorderRadius),
                   topRight: Radius.circular(dialogHeaderBorderRadius),
                 ),
                 border: Border(
                   bottom: BorderSide(
-                    color: colorScheme.outline,
+                    color: color.outline,
                     width: dialogHeaderBorderWidth,
                   ),
                 ),
@@ -87,7 +85,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                 children: [
                   FaIcon(
                     FontAwesomeIcons.lightComments,
-                    color: colorScheme.primary,
+                    color: color.primary,
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
@@ -98,13 +96,13 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                         Text(
                           // "Bookmarked Chats"
                           '북마크된 채팅'.tr(),
-                          style: textTheme.titleMedium,
+                          style: text.titleMedium,
                         ),
                         SizedBox(height: subtitleSpacing),
                         Text(
                           widget.groupName,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.primary,
+                          style: text.bodySmall?.copyWith(
+                            color: color.primary,
                           ),
                         ),
                       ],
@@ -120,14 +118,14 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                           closeButtonBorderRadius,
                         ),
                         border: Border.all(
-                          color: colorScheme.outline,
+                          color: color.outline,
                           width: closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
                         size: closeIconSize,
-                        color: colorScheme.onSurface,
+                        color: color.onSurface,
                       ),
                     ),
                   ),
@@ -141,7 +139,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                 padding: dialogEmptyPadding,
                 child: Center(
                   child: CircularProgressIndicator(
-                    color: colorScheme.primary,
+                    color: color.primary,
                     strokeWidth: 3.0,
                   ),
                 ),
@@ -154,14 +152,14 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
                     FaIcon(
                       FontAwesomeIcons.lightComments,
                       size: dialogEmptyIconSize,
-                      color: colorScheme.outline,
+                      color: color.outline,
                     ),
                     SizedBox(height: dialogEmptySpacing),
                     Text(
                       // "No bookmarked chats yet"
                       '북마크된 채팅이 없습니다'.tr(),
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: colorScheme.outline,
+                      style: text.bodyLarge?.copyWith(
+                        color: color.outline,
                       ),
                     ),
                   ],
@@ -186,9 +184,6 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
   }
 
   Widget _buildItem(BookmarkModel bookmark) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
     final name =
         bookmark.otherNickname ?? bookmark.otherName ?? bookmark.entityId;
 
@@ -203,7 +198,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(dialogItemBorderRadius),
           border: Border.all(
-            color: colorScheme.outline,
+            color: color.outline,
             width: dialogItemBorderWidth,
           ),
         ),
@@ -213,10 +208,10 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
               width: dialogAvatarSize,
               height: dialogAvatarSize,
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: color.primaryContainer,
                 borderRadius: BorderRadius.circular(dialogAvatarBorderRadius),
                 border: Border.all(
-                  color: colorScheme.primary,
+                  color: color.primary,
                   width: dialogAvatarBorderWidth,
                 ),
               ),
@@ -226,7 +221,7 @@ class _BookmarkedChatsDialogState extends State<BookmarkedChatsDialog> {
             Expanded(
               child: Text(
                 name,
-                style: textTheme.bodyLarge,
+                style: text.bodyLarge,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),

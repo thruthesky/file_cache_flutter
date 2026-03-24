@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'form_shared.dart';
 
 /// Step 1: 기본 정보 (업소명, 카테고리, 한줄 소개, 상세 설명)
@@ -123,8 +124,7 @@ class _CategoryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final activeColor = scheme.primary;
+    final activeColor = color.primary;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -148,7 +148,7 @@ class _CategoryGrid extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? activeColor.withValues(alpha: 0.12)
-                      : scheme.surfaceContainerHighest,
+                      : color.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
                     color: isSelected ? activeColor : Colors.transparent,
@@ -161,7 +161,7 @@ class _CategoryGrid extends StatelessWidget {
                     FaIcon(
                       icon,
                       size: 20,
-                      color: isSelected ? activeColor : scheme.onSurfaceVariant,
+                      color: isSelected ? activeColor : color.onSurfaceVariant,
                     ),
                     const SizedBox(height: 5),
                     Text(
@@ -169,7 +169,7 @@ class _CategoryGrid extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 10,
                         height: 1.2,
-                        color: isSelected ? activeColor : scheme.onSurface,
+                        color: isSelected ? activeColor : color.onSurface,
                         fontWeight: isSelected
                             ? FontWeight.w700
                             : FontWeight.normal,

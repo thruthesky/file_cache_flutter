@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:markdown_widget/markdown_widget.dart';
 import 'package:philgo/ai/ai.service.dart';
 import 'package:philgo/post/post.model.dart';
+import 'package:philgo/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// AI 답변 위젯
@@ -76,18 +77,16 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
     // AI 답변 대상이 아니면 아무것도 표시하지 않음
     if (!widget.post.isAiAnswerTarget) return const SizedBox.shrink();
 
-    final scheme = Theme.of(context).colorScheme;
-
     // AI 답변이 없고 스트리밍 중도 아닌 경우 → 생성 버튼 표시
     if (!_hasExistingAnswer && !_isStreaming && _streamedText.isEmpty) {
-      return _buildGenerateButton(scheme);
+      return _buildGenerateButton();
     }
 
     // AI 답변 표시 (기존 답변 또는 스트리밍 중인 답변)
-    return _buildAnswerView(scheme);
+    return _buildAnswerView();
   }
 
-  Widget _buildGenerateButton(ColorScheme scheme) {
+  Widget _buildGenerateButton() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Column(
@@ -102,13 +101,13 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
               icon: FaIcon(
                 FontAwesomeIcons.lightSparkles,
                 size: 16,
-                color: scheme.primary,
+                color: color.primary,
               ),
               // "Generate AI Answer"
               label: Text('AI 답변 생성'.tr()),
               style: OutlinedButton.styleFrom(
-                foregroundColor: scheme.primary,
-                side: BorderSide(color: scheme.primary.withValues(alpha: 0.5)),
+                foregroundColor: color.primary,
+                side: BorderSide(color: color.primary.withValues(alpha: 0.5)),
                 padding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
@@ -117,7 +116,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
             const SizedBox(height: 8),
             Text(
               _error!,
-              style: TextStyle(color: scheme.error, fontSize: 13),
+              style: TextStyle(color: color.error, fontSize: 13),
             ),
           ],
         ],
@@ -125,7 +124,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
     );
   }
 
-  Widget _buildAnswerView(ColorScheme scheme) {
+  Widget _buildAnswerView() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       child: Column(
@@ -139,7 +138,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
               FaIcon(
                 FontAwesomeIcons.lightSparkles,
                 size: 14,
-                color: scheme.primary,
+                color: color.primary,
               ),
               const SizedBox(width: 6),
               Text(
@@ -148,7 +147,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: scheme.primary,
+                  color: color.primary,
                 ),
               ),
               if (_isStreaming) ...[
@@ -158,7 +157,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
                   height: 12,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: scheme.primary,
+                    color: color.primary,
                   ),
                 ),
               ],
@@ -182,14 +181,14 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
                       }
                     },
                     style: TextStyle(
-                      color: scheme.primary,
+                      color: color.primary,
                       decoration: TextDecoration.underline,
                     ),
                   ),
                   PConfig(
                     textStyle: TextStyle(
                       fontSize: 15,
-                      color: scheme.onSurface,
+                      color: color.onSurface,
                       height: 1.5,
                     ),
                   ),
@@ -200,7 +199,7 @@ class _AiAnswerWidgetState extends State<AiAnswerWidget> {
             const SizedBox(height: 8),
             Text(
               _error!,
-              style: TextStyle(color: scheme.error, fontSize: 13),
+              style: TextStyle(color: color.error, fontSize: 13),
             ),
           ],
         ],

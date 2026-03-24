@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_ui_database/firebase_ui_database.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/models/chat.join.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 class ChatRoomJoinListBuilder extends StatelessWidget {
@@ -18,7 +19,7 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
         child: Text(
           // "Login required"
           '로그인이 필요합니다'.tr(),
-          style: Theme.of(context).textTheme.bodyMedium,
+          style: text.bodyMedium,
         ),
       ),
     );
@@ -47,14 +48,14 @@ class ChatRoomJoinListBuilder extends StatelessWidget {
                 Icon(
                   Icons.info,
                   size: 80,
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: color.outlineVariant,
                 ),
                 const SizedBox(height: 16),
                 Text(
                   // "Your friends list is empty"
                   '친구 목록이 비어있습니다'.tr(),
-                  style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.outlineVariant,
+                  style: text.bodyMedium!.copyWith(
+                    color: color.outlineVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),

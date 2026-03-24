@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 /// 멀티 스텝 폼의 진행 상태를 표시하는 위젯
 ///
@@ -19,8 +21,7 @@ class FormStepTracker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final activeColor = scheme.primary;
+    final activeColor = color.primary;
 
     return Column(
       children: [
@@ -47,7 +48,7 @@ class FormStepTracker extends StatelessWidget {
                                     height: 2,
                                     color: leftCompleted
                                         ? activeColor
-                                        : scheme.outlineVariant,
+                                        : color.outlineVariant,
                                   ),
                           ),
                           // Placeholder for the circle width
@@ -60,7 +61,7 @@ class FormStepTracker extends StatelessWidget {
                                     height: 2,
                                     color: rightCompleted
                                         ? activeColor
-                                        : scheme.outlineVariant,
+                                        : color.outlineVariant,
                                   ),
                           ),
                         ],
@@ -81,7 +82,7 @@ class FormStepTracker extends StatelessWidget {
                         isCompleted: isCompleted,
                         isActive: isActive,
                         activeColor: activeColor,
-                        scheme: scheme,
+                        scheme: color,
                       ),
                     ),
                   );
@@ -102,7 +103,7 @@ class FormStepTracker extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 11,
-                    color: isActive ? activeColor : scheme.onSurfaceVariant,
+                    color: isActive ? activeColor : color.onSurfaceVariant,
                     fontWeight:
                         isActive ? FontWeight.w700 : FontWeight.normal,
                   ),
@@ -152,7 +153,7 @@ class _StepCircle extends StatelessWidget {
       decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
       child: Center(
         child: isCompleted
-            ? Icon(Icons.check, size: 14, color: fgColor)
+            ? FaIcon(FontAwesomeIcons.check, size: 14, color: fgColor)
             : Text(
                 '${index + 1}',
                 style: TextStyle(

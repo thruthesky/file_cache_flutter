@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 /// 댓글/대댓글 입력 폼
 ///
@@ -60,13 +61,11 @@ class _CommentInputState extends State<CommentInput> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLow,
-        border: Border(top: BorderSide(color: scheme.outlineVariant, width: 0.5)),
+        color: color.surfaceContainerLow,
+        border: Border(top: BorderSide(color: color.outlineVariant, width: 0.5)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -81,18 +80,18 @@ class _CommentInputState extends State<CommentInput> {
               textInputAction: TextInputAction.newline,
               decoration: InputDecoration(
                 hintText: widget.hintText,
-                hintStyle: TextStyle(color: scheme.onSurfaceVariant),
+                hintStyle: TextStyle(color: color.onSurfaceVariant),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: scheme.outline),
+                  borderSide: BorderSide(color: color.outline),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: scheme.outline),
+                  borderSide: BorderSide(color: color.outline),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: scheme.primary, width: 1.5),
+                  borderSide: BorderSide(color: color.primary, width: 1.5),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -100,7 +99,7 @@ class _CommentInputState extends State<CommentInput> {
                 ),
                 isDense: true,
               ),
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: text.bodyMedium,
             ),
           ),
           const SizedBox(width: 8),
@@ -119,7 +118,7 @@ class _CommentInputState extends State<CommentInput> {
                   icon: FaIcon(
                     FontAwesomeIcons.solidPaperPlane,
                     size: 18,
-                    color: scheme.primary,
+                    color: color.primary,
                   ),
                   constraints: const BoxConstraints(
                     minWidth: 36,

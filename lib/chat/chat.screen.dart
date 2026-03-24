@@ -8,6 +8,7 @@ import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/chat/widgets/bookmarked_chats_dialog.dart';
 import 'package:philgo/chat/widgets/favorite_folders_dialog.dart';
 import 'package:philgo/chat/widgets/pinned_chat_rooms_list.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/widgets/login.dart';
 
@@ -30,7 +31,7 @@ class _ChatScreenState extends State<ChatScreen> {
             FaIcon(
               FontAwesomeIcons.lightComments,
               size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: color.onSurfaceVariant,
             ),
             SizedBox(height: 16),
             // "Login required"
@@ -39,8 +40,8 @@ class _ChatScreenState extends State<ChatScreen> {
               // "Login to access all features"
               '로그인하여 모든 기능을 이용하세요'.tr(),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              style: text.bodyMedium?.copyWith(
+                color: color.onSurfaceVariant,
               ),
             ),
             SizedBox(height: 16),
@@ -58,8 +59,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   Widget buildChatRoomList() {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     return Theme(
       data: chatThemeData(context),
       child: Column(
@@ -70,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                    color: scheme.outlineVariant,
+                    color: color.outlineVariant,
                     width: headerBottomBorderWidth,
                   ),
                 ),
@@ -81,7 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Text(
                     // "Chat"
                     '채팅'.tr(),
-                    style: theme.textTheme.titleLarge!.copyWith(
+                    style: text.titleLarge!.copyWith(
                       fontWeight: FontWeight.normal,
                     ),
                   ),
@@ -91,7 +90,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: FaIcon(
                       FontAwesomeIcons.sharpSolidStar,
                       size: headerIconSize,
-                      color: scheme.onSurfaceVariant,
+                      color: color.onSurfaceVariant,
                     ),
                     onPressed: () async {
                       final group = await showDialog(
@@ -115,7 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: FaIcon(
                       FontAwesomeIcons.lightUserMagnifyingGlass,
                       size: headerIconSize,
-                      color: scheme.onSurfaceVariant,
+                      color: color.onSurfaceVariant,
                     ),
                     onPressed: () async {
                       final uid = await ChatService.instance
@@ -130,7 +129,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     icon: FaIcon(
                       FontAwesomeIcons.bars,
                       size: headerIconSize,
-                      color: scheme.onSurfaceVariant,
+                      color: color.onSurfaceVariant,
                     ),
                     onSelected: (value) {
                       if (value == 'admin_chat') {
@@ -145,7 +144,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             FaIcon(
                               FontAwesomeIcons.headset,
                               size: headerMenuIconSize,
-                              color: scheme.onSurfaceVariant,
+                              color: color.onSurfaceVariant,
                             ),
                             SizedBox(width: dialogItemSpacing),
                             // "Contact Admin"

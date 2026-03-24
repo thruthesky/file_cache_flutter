@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 /// Step 4: 검토 화면 — 입력한 정보를 요약하여 표시
 class CompanyReviewForm extends StatelessWidget {
@@ -136,7 +137,7 @@ class CompanyReviewForm extends StatelessWidget {
           const SizedBox(height: 20),
           _InfoBanner(
             icon: FontAwesomeIcons.circleInfo,
-            color: Theme.of(context).colorScheme.primary,
+            color: color.primary,
             // "Your listing will be reviewed by admin after saving.\nChanges to name, category, description, or ima..."
             text: '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.'.tr(),
           ),
@@ -162,7 +163,6 @@ class _ImageReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final items = [
       // "Logo"
       ('로고'.tr(), logoUrl, 1.0),
@@ -179,7 +179,7 @@ class _ImageReviewCard extends StatelessWidget {
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: scheme.outlineVariant),
+        side: BorderSide(color: color.outlineVariant),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -188,7 +188,7 @@ class _ImageReviewCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                FaIcon(FontAwesomeIcons.image, size: 13, color: scheme.primary),
+                FaIcon(FontAwesomeIcons.image, size: 13, color: color.primary),
                 const SizedBox(width: 8),
                 Text(
                   // "Images"
@@ -196,7 +196,7 @@ class _ImageReviewCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: scheme.primary,
+                    color: color.primary,
                   ),
                 ),
               ],
@@ -235,11 +235,11 @@ class _ImageReviewCard extends StatelessWidget {
                             height: 56,
                             fit: BoxFit.cover,
                             errorBuilder: (ctx, e, st) => Container(
-                              color: scheme.surfaceContainerHighest,
+                              color: color.surfaceContainerHighest,
                               child: Icon(
                                 Icons.broken_image_outlined,
                                 size: 20,
-                                color: scheme.onSurfaceVariant,
+                                color: color.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -286,13 +286,12 @@ class _ReviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Card(
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: scheme.outlineVariant),
+        side: BorderSide(color: color.outlineVariant),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -301,14 +300,14 @@ class _ReviewCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                FaIcon(icon, size: 13, color: scheme.primary),
+                FaIcon(icon, size: 13, color: color.primary),
                 const SizedBox(width: 8),
                 Text(
                   title,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
-                    color: scheme.primary,
+                    color: color.primary,
                   ),
                 ),
               ],

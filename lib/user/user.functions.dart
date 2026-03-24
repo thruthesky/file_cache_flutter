@@ -4,12 +4,14 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/api/api.service.dart';
 import 'package:philgo/post/list/widgets/post.list.tile.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/user.model.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/widgets/avatar.dart';
 
 String? loginUid() => FirebaseAuth.instance.currentUser?.uid;
@@ -84,8 +86,6 @@ Future<bool> toggleBlockUserByIdx(int idxBlockee) async {
 
 /// Show user profile dialog with Comic design
 void showProfileDialog(BuildContext context, UserModel otherUser) {
-  final theme = Theme.of(context);
-  final colorScheme = theme.colorScheme;
 
   showDialog(
     context: context,
@@ -101,9 +101,9 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
           constraints: const BoxConstraints(maxWidth: 400),
           decoration: BoxDecoration(
             // Comic design: surface background color
-            color: colorScheme.surface,
+            color: color.surface,
             // Comic design: 2.0px outline border with rounded corners
-            border: Border.all(color: colorScheme.outline, width: 2.0),
+            border: Border.all(color: color.outline, width: 2.0),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -122,8 +122,8 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                     // User Nickname
                     Text(
                       otherUser.nickname,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onSurface,
+                      style: text.titleLarge?.copyWith(
+                        color: color.onSurface,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -152,18 +152,18 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                             RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                               side: BorderSide(
-                                color: colorScheme.primary,
+                                color: color.primary,
                                 width: 2.0,
                               ),
                             ),
                           ),
                           // Comic design: primary background
                           backgroundColor: WidgetStateProperty.all(
-                            colorScheme.primary,
+                            color.primary,
                           ),
                           // Comic design: onPrimary text color
                           foregroundColor: WidgetStateProperty.all(
-                            colorScheme.onPrimary,
+                            color.onPrimary,
                           ),
                           // Comic design: padding in multiples of 8
                           padding: WidgetStateProperty.all(
@@ -174,7 +174,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                           ),
                           // Comic design: text style from Theme
                           textStyle: WidgetStateProperty.all(
-                            theme.textTheme.bodyMedium,
+                            text.bodyMedium,
                           ),
                         ),
                         // "View Profile"
@@ -193,18 +193,18 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: BorderSide(
-                              color: colorScheme.outline,
+                              color: color.outline,
                               width: 2.0,
                             ),
                           ),
                         ),
                         // Comic design: surface background
                         backgroundColor: WidgetStateProperty.all(
-                          colorScheme.surface,
+                          color.surface,
                         ),
                         // Comic design: onSurface text color
                         foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onSurface,
+                          color.onSurface,
                         ),
                         // Comic design: padding in multiples of 8
                         padding: WidgetStateProperty.all(
@@ -215,7 +215,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                         ),
                         // Comic design: text style from Theme
                         textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
+                          text.bodyMedium,
                         ),
                       ),
                       // "Close"
@@ -241,7 +241,7 @@ void showUserRecentPostsDialog({
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: Theme.of(context).colorScheme.surface,
+    backgroundColor: color.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
@@ -262,7 +262,7 @@ void showUserRecentPostsDialog({
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceContainerHigh,
+                  color: color.surfaceContainerHigh,
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -273,13 +273,13 @@ void showUserRecentPostsDialog({
                     Text(
                       // "Recent Posts"
                       '최근 게시글'.tr(),
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      style: text.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close),
+                      icon: const FaIcon(FontAwesomeIcons.xmark),
                       // "Close"
                       tooltip: '닫기'.tr(),
                     ),

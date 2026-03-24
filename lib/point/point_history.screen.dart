@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/point/point.service.dart';
 import 'package:philgo/point/point_log.model.dart';
 
@@ -115,15 +116,12 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Scaffold(
       // "Point History"
       appBar: AppBar(title: Text('포인트 내역'.tr()), elevation: 0),
       body: Column(
         children: [
-          _buildPointCard(theme, scheme),
+          _buildPointCard(),
           Expanded(
             child: PagingListener(
               controller: _pagingController,
@@ -135,9 +133,9 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                   separatorBuilder: (_, _) => const SizedBox(height: 4),
                   builderDelegate: PagedChildBuilderDelegate<PointLog>(
                     itemBuilder: (context, log, index) =>
-                        _buildLogItem(scheme, log, index),
+                        _buildLogItem(log, index),
                     noItemsFoundIndicatorBuilder: (_) =>
-                        _buildEmptyState(scheme),
+                        _buildEmptyState(),
                   ),
                 );
               },
@@ -148,13 +146,13 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     );
   }
 
-  Widget _buildPointCard(ThemeData theme, ColorScheme scheme) {
+  Widget _buildPointCard() {
     if (_isPointLoading) {
       return Container(
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
         decoration: BoxDecoration(
-          color: scheme.primaryContainer,
+          color: color.primaryContainer,
           borderRadius: BorderRadius.circular(16),
         ),
         child: const Center(child: CircularProgressIndicator()),
@@ -166,7 +164,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
         margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         decoration: BoxDecoration(
-          color: scheme.errorContainer,
+          color: color.errorContainer,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
@@ -175,15 +173,13 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
             FaIcon(
               FontAwesomeIcons.circleExclamation,
               size: 16,
-              color: scheme.onErrorContainer,
+              color: color.onErrorContainer,
             ),
             const SizedBox(width: 8),
             Flexible(
               child: Text(
                 _pointError!,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: scheme.onErrorContainer),
+                style: text.bodySmall?.copyWith(color: color.onErrorContainer),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -200,7 +196,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               child: FaIcon(
                 FontAwesomeIcons.arrowRotateRight,
                 size: 14,
-                color: scheme.onErrorContainer,
+                color: color.onErrorContainer,
               ),
             ),
           ],
@@ -212,7 +208,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
       decoration: BoxDecoration(
-        color: scheme.primaryContainer,
+        color: color.primaryContainer,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -220,9 +216,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
           Text(
             // "Current Points"
             '보유 포인트'.tr(),
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: scheme.onPrimaryContainer),
+            style: text.bodyMedium?.copyWith(color: color.onPrimaryContainer),
           ),
           const SizedBox(height: 8),
           Row(
@@ -231,21 +225,21 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               FaIcon(
                 FontAwesomeIcons.coins,
                 size: 24,
-                color: scheme.onPrimaryContainer,
+                color: color.onPrimaryContainer,
               ),
               const SizedBox(width: 12),
               Text(
                 _formatPoint(_currentPoint),
-                style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                  color: scheme.onPrimaryContainer,
+                style: text.headlineLarge?.copyWith(
+                  color: color.onPrimaryContainer,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(width: 4),
               Text(
                 'P',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: scheme.onPrimaryContainer,
+                style: text.titleLarge?.copyWith(
+                  color: color.onPrimaryContainer,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -256,7 +250,7 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0);
   }
 
-  Widget _buildEmptyState(ColorScheme scheme) {
+  Widget _buildEmptyState() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -266,16 +260,14 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
             FaIcon(
               FontAwesomeIcons.clockRotateLeft,
               size: 48,
-              color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+              color: color.onSurfaceVariant.withValues(alpha: 0.4),
             ),
             const SizedBox(height: 16),
             Text(
               // "No point history"
               '포인트 내역이 없습니다'.tr(),
               textAlign: TextAlign.center,
-              style: Theme.of(
-                context,
-              ).textTheme.bodyLarge?.copyWith(color: scheme.onSurfaceVariant),
+              style: text.bodyLarge?.copyWith(color: color.onSurfaceVariant),
             ),
           ],
         ).animate().fadeIn(duration: 400.ms),
@@ -283,10 +275,10 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
     );
   }
 
-  Widget _buildLogItem(ColorScheme scheme, PointLog log, int index) {
+  Widget _buildLogItem(PointLog log, int index) {
     return Card(
       elevation: 0,
-      color: scheme.surfaceContainerLowest,
+      color: color.surfaceContainerLowest,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -297,8 +289,8 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               height: 40,
               decoration: BoxDecoration(
                 color: log.isPositive
-                    ? scheme.primaryContainer
-                    : scheme.errorContainer,
+                    ? color.primaryContainer
+                    : color.errorContainer,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -306,8 +298,8 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                   _getLogIcon(log.module),
                   size: 16,
                   color: log.isPositive
-                      ? scheme.onPrimaryContainer
-                      : scheme.onErrorContainer,
+                      ? color.onPrimaryContainer
+                      : color.onErrorContainer,
                 ),
               ),
             ),
@@ -318,17 +310,15 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
                 children: [
                   Text(
                     _getLogDescription(log.module, log.action, log.etc),
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyMedium?.copyWith(color: scheme.onSurface),
+                    style: text.bodyMedium?.copyWith(color: color.onSurface),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _formatDate(log.stamp),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
+                    style: text.bodySmall?.copyWith(
+                      color: color.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -339,16 +329,16 @@ class _PointHistoryScreenState extends State<PointHistoryScreen> {
               children: [
                 Text(
                   '${log.isPositive ? '+' : ''}${_formatPoint(log.point)}P',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: log.isPositive ? scheme.primary : scheme.error,
+                  style: text.titleSmall?.copyWith(
+                    color: log.isPositive ? color.primary : color.error,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '${_formatPoint(log.pointAfter)}P',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
+                  style: text.bodySmall?.copyWith(
+                    color: color.onSurfaceVariant,
                   ),
                 ),
               ],

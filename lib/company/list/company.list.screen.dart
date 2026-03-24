@@ -8,6 +8,7 @@ import 'package:philgo/common_widgets/masonry_card.dart';
 import 'package:philgo/company/company.model.dart';
 import 'package:philgo/company/company.service.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
+import 'package:philgo/globals.dart';
 class CompanyListScreen extends StatefulWidget {
   const CompanyListScreen({super.key});
 
@@ -95,10 +96,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: scheme.surface,
+      backgroundColor: color.surface,
       // FAB는 AppScreen에서 통합 관리
       body: SafeArea(
         child: Column(
@@ -110,7 +109,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
                 heightFactor: _showHeader ? 1.0 : 0.0,
-                child: _buildHeader(scheme),
+                child: _buildHeader(),
               ),
             ),
             const Divider(height: 1),
@@ -189,7 +188,6 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
   /// 이미지가 없는 업소 카드의 플레이스홀더 (그라디언트 + 카테고리 아이콘)
   Widget _buildCompanyPlaceholder(CompanyModel company) {
-    final scheme = Theme.of(context).colorScheme;
     final icon = _categories
             .where((c) => c.$1 == company.category)
             .map((c) => c.$3)
@@ -201,8 +199,8 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            scheme.primaryContainer,
-            scheme.secondaryContainer,
+            color.primaryContainer,
+            color.secondaryContainer,
           ],
         ),
       ),
@@ -210,16 +208,16 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
         child: FaIcon(
           icon,
           size: 48,
-          color: scheme.onPrimaryContainer.withValues(alpha: 0.6),
+          color: color.onPrimaryContainer.withValues(alpha: 0.6),
         ),
       ),
     );
   }
 
-  Widget _buildHeader(ColorScheme scheme) {
+  Widget _buildHeader() {
     return Container(
       width: double.infinity,
-      color: scheme.surface,
+      color: color.surface,
       padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -258,7 +256,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                         size: 15,
                         color: isSelected
                             ? selectedColor
-                            : scheme.onSurfaceVariant,
+                            : color.onSurfaceVariant,
                       ),
                       const SizedBox(height: 3),
                       Padding(
@@ -269,7 +267,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                             fontSize: 10,
                             color: isSelected
                                 ? selectedColor
-                                : scheme.onSurface,
+                                : color.onSurface,
                             fontWeight: isSelected
                                 ? FontWeight.w700
                                 : FontWeight.normal,

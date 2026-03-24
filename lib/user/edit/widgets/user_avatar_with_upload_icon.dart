@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
@@ -25,8 +26,6 @@ class UserAvatarWithUploadIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return SizedBox(
       width: size,
       height: size,
@@ -53,15 +52,15 @@ class UserAvatarWithUploadIcon extends StatelessWidget {
                 width: size / 4,
                 height: size / 4,
                 decoration: BoxDecoration(
-                  color: scheme.primary,
+                  color: color.primary,
                   shape: BoxShape.circle,
-                  border: Border.all(color: scheme.surface, width: 2),
+                  border: Border.all(color: color.surface, width: 2),
                 ),
                 child: Center(
                   child: FaIcon(
                     FontAwesomeIcons.solidCamera,
                     size: size / 7,
-                    color: scheme.onPrimary,
+                    color: color.onPrimary,
                   ),
                 ),
               ),
@@ -79,15 +78,15 @@ class UserAvatarWithUploadIcon extends StatelessWidget {
                     width: size / 4,
                     height: size / 4,
                     decoration: BoxDecoration(
-                      color: scheme.error,
+                      color: color.error,
                       shape: BoxShape.circle,
-                      border: Border.all(color: scheme.surface, width: 2),
+                      border: Border.all(color: color.surface, width: 2),
                     ),
                     child: Center(
                       child: FaIcon(
                         FontAwesomeIcons.xmark,
                         size: size / 6,
-                        color: scheme.onError,
+                        color: color.onError,
                       ),
                     ),
                   ),

@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/common_widgets/full_screen_media_viewer.dart';
 import 'package:philgo/file/file.functions.dart';
@@ -54,7 +55,6 @@ class PostViewFiles extends StatelessWidget {
     String absoluteUrl,
     List<String> mediaUrls,
   ) {
-    final scheme = Theme.of(context).colorScheme;
     final type = getMediaType(absoluteUrl);
 
     switch (type) {
@@ -75,7 +75,7 @@ class PostViewFiles extends StatelessWidget {
                 fit: BoxFit.fitWidth,
                 placeholder: (_, _) => Container(
                   height: 200,
-                  color: scheme.surfaceContainerHigh,
+                  color: color.surfaceContainerHigh,
                   child: const Center(
                     child: CircularProgressIndicator(strokeWidth: 2),
                   ),
@@ -113,7 +113,7 @@ class PostViewFiles extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: scheme.surfaceContainerHigh,
+                color: color.surfaceContainerHigh,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -124,7 +124,7 @@ class PostViewFiles extends StatelessWidget {
                       FaIcon(
                         FontAwesomeIcons.lightFile,
                         size: 32,
-                        color: scheme.primary,
+                        color: color.primary,
                       ),
                       if (ext.isNotEmpty)
                         Container(
@@ -133,7 +133,7 @@ class PostViewFiles extends StatelessWidget {
                             vertical: 1,
                           ),
                           decoration: BoxDecoration(
-                            color: scheme.primary,
+                            color: color.primary,
                             borderRadius: BorderRadius.circular(3),
                           ),
                           child: Text(
@@ -151,14 +151,14 @@ class PostViewFiles extends StatelessWidget {
                   Expanded(
                     child: Text(
                       fileName,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: text.bodyMedium,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   FaIcon(
                     FontAwesomeIcons.lightArrowDownToLine,
                     size: 16,
-                    color: scheme.onSurfaceVariant,
+                    color: color.onSurfaceVariant,
                   ),
                 ],
               ),

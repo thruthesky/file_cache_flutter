@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/widgets/video_thumbnail.dart';
 
@@ -22,19 +23,17 @@ class UploadedFilePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     Widget preview = Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: scheme.outlineVariant),
-        color: scheme.surfaceContainerHighest,
+        border: Border.all(color: color.outlineVariant),
+        color: color.surfaceContainerHighest,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: _buildPreview(scheme),
+        child: _buildPreview(),
       ),
     );
 
@@ -53,14 +52,14 @@ class UploadedFilePreview extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: scheme.error,
+                color: color.error,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
               child: FaIcon(
                 FontAwesomeIcons.xmark,
                 size: 10,
-                color: scheme.onError,
+                color: color.onError,
               ),
             ),
           ),
@@ -69,12 +68,12 @@ class UploadedFilePreview extends StatelessWidget {
     );
   }
 
-  Widget _buildPreview(ColorScheme scheme) {
+  Widget _buildPreview() {
     if (file.isImage) {
       return Image.network(
         file.previewUrl,
         fit: BoxFit.cover,
-        errorBuilder: (_, _, _) => _fileIcon(scheme),
+        errorBuilder: (_, _, _) => _fileIcon(),
       );
     }
 
@@ -82,10 +81,10 @@ class UploadedFilePreview extends StatelessWidget {
       return VideoThumbnail(url: file.url, size: size);
     }
 
-    return _fileIcon(scheme);
+    return _fileIcon();
   }
 
-  Widget _fileIcon(ColorScheme scheme) {
+  Widget _fileIcon() {
     final IconData icon;
     if (file.isVideo) {
       icon = FontAwesomeIcons.lightFileVideo;
@@ -100,7 +99,7 @@ class UploadedFilePreview extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        FaIcon(icon, size: size * 0.3, color: scheme.primary),
+        FaIcon(icon, size: size * 0.3, color: color.primary),
         if (file.name.isNotEmpty) ...[
           const SizedBox(height: 4),
           Padding(
@@ -109,7 +108,7 @@ class UploadedFilePreview extends StatelessWidget {
               file.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 9, color: scheme.onSurfaceVariant),
+              style: TextStyle(fontSize: 9, color: color.onSurfaceVariant),
             ),
           ),
         ],

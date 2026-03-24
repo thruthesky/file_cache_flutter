@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/file/file.functions.dart';
 import 'package:philgo/file/widgets/video_thumbnail.dart';
@@ -21,11 +22,10 @@ class DisplayThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final absoluteUrl = toAbsoluteUrl(url);
     final type = getMediaType(absoluteUrl);
 
-    final content = _build(type, absoluteUrl, scheme);
+    final content = _build(type, absoluteUrl);
     Widget preview = ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: size.isFinite
@@ -48,14 +48,14 @@ class DisplayThumbnail extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: scheme.error,
+                color: color.error,
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
               child: FaIcon(
                 FontAwesomeIcons.xmark,
                 size: 10,
-                color: scheme.onError,
+                color: color.onError,
               ),
             ),
           ),
@@ -64,7 +64,7 @@ class DisplayThumbnail extends StatelessWidget {
     );
   }
 
-  Widget _build(MediaType type, String absoluteUrl, ColorScheme scheme) {
+  Widget _build(MediaType type, String absoluteUrl) {
     final iconSize = size.isFinite ? size : 72.0;
     switch (type) {
       case MediaType.image:
@@ -73,9 +73,9 @@ class DisplayThumbnail extends StatelessWidget {
           fit: BoxFit.cover,
           loadingBuilder: (_, child, progress) {
             if (progress == null) return child;
-            return _placeholder(scheme);
+            return _placeholder();
           },
-          errorBuilder: (_, _, _) => _placeholder(scheme),
+          errorBuilder: (_, _, _) => _placeholder(),
         );
 
       case MediaType.video:
@@ -86,14 +86,14 @@ class DisplayThumbnail extends StatelessWidget {
         return Stack(
           alignment: Alignment.center,
           children: [
-            _placeholder(scheme),
+            _placeholder(),
             Stack(
               alignment: Alignment.bottomRight,
               children: [
                 FaIcon(
                   FontAwesomeIcons.lightFile,
                   size: iconSize * 0.4,
-                  color: scheme.primary,
+                  color: color.primary,
                 ),
                 if (ext.isNotEmpty)
                   Container(
@@ -102,7 +102,7 @@ class DisplayThumbnail extends StatelessWidget {
                       vertical: 1,
                     ),
                     decoration: BoxDecoration(
-                      color: scheme.primary,
+                      color: color.primary,
                       borderRadius: BorderRadius.circular(2),
                     ),
                     child: Text(
@@ -121,6 +121,6 @@ class DisplayThumbnail extends StatelessWidget {
     }
   }
 
-  Widget _placeholder(ColorScheme scheme) =>
-      Container(color: scheme.surfaceContainerHigh);
+  Widget _placeholder() =>
+      Container(color: color.surfaceContainerHigh);
 }

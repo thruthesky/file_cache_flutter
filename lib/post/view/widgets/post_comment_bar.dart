@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/file/upload/widgets/file_upload.dart';
 import 'package:philgo/file/widgets/uploaded_file_preview.dart';
@@ -71,7 +72,6 @@ class _PostCommentBarState extends State<PostCommentBar> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final userState = Provider.of<UserState>(context, listen: false);
     final isLoggedIn = userState.isLoggedIn;
     final isReplying = widget.replyTo != null;
@@ -80,9 +80,9 @@ class _PostCommentBarState extends State<PostCommentBar> {
 
     return Container(
       decoration: BoxDecoration(
-        color: scheme.surface,
+        color: color.surface,
         border: Border(
-          top: BorderSide(color: scheme.outlineVariant, width: 0.5),
+          top: BorderSide(color: color.outlineVariant, width: 0.5),
         ),
       ),
       child: SafeArea(
@@ -101,7 +101,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                     FaIcon(
                       FontAwesomeIcons.reply,
                       size: 12,
-                      color: scheme.primary,
+                      color: color.primary,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
@@ -111,9 +111,9 @@ class _PostCommentBarState extends State<PostCommentBar> {
                           // 답글 대상 이름
                           Text(
                             '@${widget.replyTo!.userName}',
-                            style: Theme.of(context).textTheme.labelSmall
+                            style: text.labelSmall
                                 ?.copyWith(
-                                  color: scheme.primary,
+                                  color: color.primary,
                                   fontWeight: FontWeight.w600,
                                 ),
                             overflow: TextOverflow.ellipsis,
@@ -124,8 +124,8 @@ class _PostCommentBarState extends State<PostCommentBar> {
                               widget.replyTo!.content,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(color: scheme.onSurfaceVariant),
+                              style: text.bodySmall
+                                  ?.copyWith(color: color.onSurfaceVariant),
                             ),
                         ],
                       ),
@@ -136,7 +136,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
                         size: 14,
-                        color: scheme.onSurfaceVariant,
+                        color: color.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -174,8 +174,8 @@ class _PostCommentBarState extends State<PostCommentBar> {
                 child: Text(
                   // "Please login to write a comment."
                   '댓글을 작성하려면 로그인이 필요합니다.'.tr(),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
+                  style: text.bodySmall?.copyWith(
+                    color: color.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -228,7 +228,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                                   child: FaIcon(
                                     FontAwesomeIcons.lightCamera,
                                     size: 20,
-                                    color: scheme.onSurfaceVariant,
+                                    color: color.onSurfaceVariant,
                                   ),
                                 ),
                               ),
@@ -244,19 +244,19 @@ class _PostCommentBarState extends State<PostCommentBar> {
                         textInputAction: TextInputAction.newline,
                         decoration: InputDecoration(
                           hintText: hintText,
-                          hintStyle: TextStyle(color: scheme.onSurfaceVariant),
+                          hintStyle: TextStyle(color: color.onSurfaceVariant),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: scheme.outline),
+                            borderSide: BorderSide(color: color.outline),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
-                            borderSide: BorderSide(color: scheme.outline),
+                            borderSide: BorderSide(color: color.outline),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20),
                             borderSide: BorderSide(
-                              color: scheme.primary,
+                              color: color.primary,
                               width: 1.5,
                             ),
                           ),
@@ -266,7 +266,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                           ),
                           isDense: true,
                         ),
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: text.bodyMedium,
                       ),
                     ),
 
@@ -287,7 +287,7 @@ class _PostCommentBarState extends State<PostCommentBar> {
                             icon: FaIcon(
                               FontAwesomeIcons.solidPaperPlane,
                               size: 18,
-                              color: scheme.primary,
+                              color: color.primary,
                             ),
                             constraints: const BoxConstraints(
                               minWidth: 36,

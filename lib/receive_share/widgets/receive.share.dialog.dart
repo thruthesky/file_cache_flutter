@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/category/category.list.dart';
 import 'package:philgo/chat/chat.functions.dart';
@@ -82,7 +83,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close),
+                  icon: const FaIcon(FontAwesomeIcons.xmark),
                 ),
               ],
             ),
@@ -109,13 +110,13 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                             onTap: () => setState(() => tab = 'post'),
                             // "Create Post"
                             text: '게시글 작성'.tr(),
-                            color: Colors.blue,
+                            color: color.primary,
                             icon: FaIcon(
                               FontAwesomeIcons.thinSquarePlus,
                               size: 64,
                             ),
-                            primaryColor: Colors.blue.shade800,
-                            secondaryColor: Colors.white,
+                            primaryColor: color.primary,
+                            secondaryColor: color.onPrimary,
                           ),
                         ),
                       Expanded(
@@ -125,10 +126,10 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                           },
                           // "Send to chat friend"
                           text: '채팅 친구에게 보내기'.tr(),
-                          color: Colors.orange,
+                          color: color.secondary,
                           icon: FaIcon(size: 64, FontAwesomeIcons.thinComments),
-                          primaryColor: Colors.blue.shade50,
-                          secondaryColor: Colors.orangeAccent.shade100,
+                          primaryColor: color.surfaceContainerLowest,
+                          secondaryColor: color.secondary,
                         ),
                       ),
                     ],
@@ -142,7 +143,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                   Text('2. 보낼 친구를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                   ),
                 ],
               ),
@@ -192,7 +193,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                   Text('2. 게시할 카테고리를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
-                    icon: const Icon(Icons.close),
+                    icon: const FaIcon(FontAwesomeIcons.xmark),
                   ),
                 ],
               ),

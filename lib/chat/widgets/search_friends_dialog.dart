@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/chat.theme.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/user.functions.dart';
 import 'package:philgo/user/user.model.dart';
 import 'package:philgo/user/user.service.dart';
@@ -91,8 +92,6 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: dialogElevation,
@@ -102,10 +101,10 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
           maxWidth: dialogMaxWidth,
         ),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: color.surface,
           borderRadius: BorderRadius.circular(dialogBorderRadius),
           border: Border.all(
-            color: colorScheme.outline,
+            color: color.outline,
             width: dialogBorderWidth,
           ),
         ),
@@ -116,14 +115,14 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             Container(
               padding: dialogHeaderPadding,
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: color.primaryContainer,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(dialogHeaderBorderRadius),
                   topRight: Radius.circular(dialogHeaderBorderRadius),
                 ),
                 border: Border(
                   bottom: BorderSide(
-                    color: colorScheme.outline,
+                    color: color.outline,
                     width: dialogHeaderBorderWidth,
                   ),
                 ),
@@ -132,12 +131,12 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 children: [
                   FaIcon(
                     FontAwesomeIcons.lightUserGroup,
-                    color: colorScheme.primary,
+                    color: color.primary,
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
                   // "Find Friends"
-                  Text('친구 검색'.tr(), style: textTheme.titleMedium),
+                  Text('친구 검색'.tr(), style: text.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.of(context).pop(),
@@ -151,14 +150,14 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                           closeButtonBorderRadius,
                         ),
                         border: Border.all(
-                          color: colorScheme.outline,
+                          color: color.outline,
                           width: closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
                         size: closeIconSize,
-                        color: colorScheme.onSurface,
+                        color: color.onSurface,
                       ),
                     ),
                   ),
@@ -174,18 +173,18 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     TextField(
                       controller: _searchController,
                       onChanged: _onSearchChanged,
-                      style: textTheme.bodyLarge,
+                      style: text.bodyLarge,
                       decoration: InputDecoration(
                         // "Search by nickname"
                         hintText: '닉네임으로 검색'.tr(),
-                        hintStyle: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
+                        hintStyle: text.bodyLarge?.copyWith(
+                          color: color.onSurfaceVariant,
                         ),
                         prefixIcon: Padding(
                           padding: EdgeInsets.all(searchIconPadding),
                           child: FaIcon(
                             FontAwesomeIcons.lightMagnifyingGlass,
-                            color: colorScheme.primary,
+                            color: color.primary,
                             size: searchIconSize,
                           ),
                         ),
@@ -208,13 +207,11 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
   }
 
   Widget _buildSearchResults() {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     // Loading state - Comic 스타일
     if (_isSearching) {
       return Center(
         child: CircularProgressIndicator.adaptive(
-          valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
+          valueColor: AlwaysStoppedAnimation<Color>(color.primary),
         ),
       );
     }
@@ -228,13 +225,13 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             FaIcon(
               FontAwesomeIcons.lightMagnifyingGlass,
               size: dialogEmptyIconSize,
-              color: colorScheme.outline,
+              color: color.outline,
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
               // "Search by nickname"
               '닉네임으로 검색'.tr(),
-              style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
+              style: text.bodyLarge?.copyWith(color: color.outline),
             ),
           ],
         ),
@@ -250,13 +247,13 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             FaIcon(
               FontAwesomeIcons.lightMagnifyingGlassChart,
               size: dialogEmptyIconSize,
-              color: colorScheme.outline,
+              color: color.outline,
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
               // "No users found"
               '사용자를 찾을 수 없습니다'.tr(),
-              style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
+              style: text.bodyLarge?.copyWith(color: color.outline),
             ),
           ],
         ),
@@ -277,7 +274,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(dialogItemBorderRadius),
               border: Border.all(
-                color: colorScheme.outline,
+                color: color.outline,
                 width: dialogItemBorderWidth,
               ),
             ),
@@ -288,12 +285,12 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                   width: dialogAvatarSize,
                   height: dialogAvatarSize,
                   decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
+                    color: color.primaryContainer,
                     borderRadius: BorderRadius.circular(
                       dialogAvatarBorderRadius,
                     ),
                     border: Border.all(
-                      color: colorScheme.primary,
+                      color: color.primary,
                       width: dialogAvatarBorderWidth,
                     ),
                   ),
@@ -309,7 +306,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 Expanded(
                   child: Text(
                     user.nickname,
-                    style: textTheme.bodyLarge?.copyWith(
+                    style: text.bodyLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -319,18 +316,18 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                 Container(
                   padding: chatButtonPadding,
                   decoration: BoxDecoration(
-                    color: colorScheme.primary,
+                    color: color.primary,
                     borderRadius: BorderRadius.circular(chatButtonBorderRadius),
                     border: Border.all(
-                      color: colorScheme.primary,
+                      color: color.primary,
                       width: chatButtonBorderWidth,
                     ),
                   ),
                   child: Text(
                     // "Chat"
                     '채팅'.tr(),
-                    style: textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onPrimary,
+                    style: text.labelLarge?.copyWith(
+                      color: color.onPrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

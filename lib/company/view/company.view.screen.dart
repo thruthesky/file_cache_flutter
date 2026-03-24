@@ -11,6 +11,7 @@ import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/qr/company.qr_code.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
+import 'package:philgo/globals.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// 업소 상세 화면
@@ -164,9 +165,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final theme = Theme.of(context);
-
     return Scaffold(
       body: CustomScrollView(
         controller: _scrollController,
@@ -177,11 +175,11 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             pinned: true,
             elevation: 0,
             automaticallyImplyLeading: false,
-            backgroundColor: scheme.surfaceContainerLow,
-            foregroundColor: scheme.onPrimaryContainer,
+            backgroundColor: color.surfaceContainerLow,
+            foregroundColor: color.onPrimaryContainer,
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(1.0),
-              child: Container(height: 1.0, color: scheme.outlineVariant),
+              child: Container(height: 1.0, color: color.outlineVariant),
             ),
             leading: IconButton(
               icon: Icon(
@@ -193,7 +191,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                   : context.go(AppScreen.routeName),
             ),
             title: _isCollapsed
-                ? Text(_company.name, style: theme.textTheme.titleLarge)
+                ? Text(_company.name, style: text.titleLarge)
                 : null,
             actions: [
               if (_company.qrCodeEnabled || _isMyCompany)
@@ -224,7 +222,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               child: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(color.primary),
                 ),
               ),
             )
@@ -239,13 +237,13 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       FaIcon(
                         FontAwesomeIcons.triangleExclamation,
                         size: 48,
-                        color: scheme.error,
+                        color: color.error,
                       ),
                       const SizedBox(height: 16),
                       Text(
                         // "Failed to load business info."
                         '업소 정보를 불러오지 못했습니다.'.tr(),
-                        style: theme.textTheme.titleMedium,
+                        style: text.titleMedium,
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
@@ -352,9 +350,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     required IconData icon,
     required Widget child,
   }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -366,17 +361,17 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 width: 3,
                 height: 16,
                 decoration: BoxDecoration(
-                  color: scheme.primary,
+                  color: color.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(width: 8),
-              FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
+              FaIcon(icon, size: 14, color: color.onSurfaceVariant),
               const SizedBox(width: 6),
               Text(
                 title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: scheme.onSurface,
+                style: text.titleSmall?.copyWith(
+                  color: color.onSurface,
                   fontWeight: FontWeight.normal,
                   letterSpacing: 0.2,
                 ),
@@ -387,9 +382,9 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerLowest,
+            color: color.surfaceContainerLowest,
             border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.5),
+              color: color.outlineVariant.withValues(alpha: 0.5),
             ),
             borderRadius: BorderRadius.circular(16),
           ),
@@ -402,9 +397,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   }
 
   Widget _buildCompanyInfoContent() {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -422,7 +414,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 children: [
                   Text(
                     _company.name,
-                    style: theme.textTheme.headlineSmall?.copyWith(
+                    style: text.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -430,8 +422,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     const SizedBox(height: 6),
                     Text(
                       _company.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                      style: text.titleMedium?.copyWith(
+                        color: color.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -443,13 +435,13 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: scheme.primaryContainer,
+                        color: color.primaryContainer,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         _getCategoryDisplayName(_company.category),
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: scheme.onPrimaryContainer,
+                        style: text.labelMedium?.copyWith(
+                          color: color.onPrimaryContainer,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -464,7 +456,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           const SizedBox(height: 20),
           Container(
             height: 1,
-            color: scheme.outlineVariant.withValues(alpha: 0.3),
+            color: color.outlineVariant.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           _buildInfoRow(
@@ -483,13 +475,10 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     required String label,
     required String value,
   }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
+        FaIcon(icon, size: 14, color: color.onSurfaceVariant),
         const SizedBox(width: 8),
         Expanded(
           child: Column(
@@ -497,12 +486,12 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             children: [
               Text(
                 label,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+                style: text.labelMedium?.copyWith(
+                  color: color.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(value, style: theme.textTheme.bodyMedium),
+              Text(value, style: text.bodyMedium),
             ],
           ),
         ),
@@ -558,9 +547,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     required VoidCallback onTap,
     bool isLast = false,
   }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Column(
       children: [
         InkWell(
@@ -574,11 +560,11 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: scheme.primary.withValues(alpha: 0.1),
+                    color: color.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Center(
-                    child: FaIcon(icon, size: 18, color: scheme.primary),
+                    child: FaIcon(icon, size: 18, color: color.primary),
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -588,14 +574,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     children: [
                       Text(
                         label,
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: scheme.onSurfaceVariant,
+                        style: text.labelMedium?.copyWith(
+                          color: color.onSurfaceVariant,
                         ),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         value,
-                        style: theme.textTheme.bodyMedium?.copyWith(
+                        style: text.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -605,7 +591,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 FaIcon(
                   FontAwesomeIcons.chevronRight,
                   size: 14,
-                  color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  color: color.onSurfaceVariant.withValues(alpha: 0.5),
                 ),
               ],
             ),
@@ -615,22 +601,17 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           Container(
             height: 1,
             margin: const EdgeInsets.only(left: 56),
-            color: Theme.of(
-              context,
-            ).colorScheme.outlineVariant.withValues(alpha: 0.3),
+            color: color.outlineVariant.withValues(alpha: 0.3),
           ),
       ],
     );
   }
 
   Widget _buildDescriptionContent() {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Text(
       _company.description,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        color: scheme.onSurfaceVariant,
+      style: text.bodyMedium?.copyWith(
+        color: color.onSurfaceVariant,
         height: 1.6,
       ),
     );
@@ -638,9 +619,6 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
   /// 방문 후기 콘텐츠 빌드
   Widget _buildReviewsContent() {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     // 로딩 중
     if (_isReviewsLoading) {
       return Center(
@@ -651,7 +629,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             height: 24,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
+              valueColor: AlwaysStoppedAnimation<Color>(color.primary),
             ),
           ),
         ),
@@ -668,14 +646,14 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               FaIcon(
                 FontAwesomeIcons.lightCommentSlash,
                 size: 28,
-                color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                color: color.onSurfaceVariant.withValues(alpha: 0.4),
               ),
               const SizedBox(height: 12),
               Text(
                 // "No reviews yet"
                 '아직 후기가 없습니다'.tr(),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: scheme.onSurfaceVariant,
+                style: text.bodyMedium?.copyWith(
+                  color: color.onSurfaceVariant,
                 ),
               ),
             ],
@@ -688,12 +666,12 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
     return Column(
       children: [
         for (int i = 0; i < _reviews.length; i++) ...[
-          _buildReviewItem(_reviews[i], theme, scheme),
+          _buildReviewItem(_reviews[i]),
           if (i < _reviews.length - 1)
             Container(
               height: 1,
               margin: const EdgeInsets.symmetric(vertical: 12),
-              color: scheme.outlineVariant.withValues(alpha: 0.3),
+              color: color.outlineVariant.withValues(alpha: 0.3),
             ),
         ],
       ],
@@ -701,11 +679,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   }
 
   /// 개별 후기 아이템 빌드
-  Widget _buildReviewItem(
-    CompanyReviewModel review,
-    ThemeData theme,
-    ColorScheme scheme,
-  ) {
+  Widget _buildReviewItem(CompanyReviewModel review) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -715,21 +689,21 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
             FaIcon(
               FontAwesomeIcons.lightUser,
               size: 12,
-              color: scheme.onSurfaceVariant,
+              color: color.onSurfaceVariant,
             ),
             const SizedBox(width: 6),
             Text(
               review.authorName,
-              style: theme.textTheme.labelMedium?.copyWith(
+              style: text.labelMedium?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: scheme.onSurface,
+                color: color.onSurface,
               ),
             ),
             const Spacer(),
             Text(
               review.formattedDate,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: scheme.onSurfaceVariant,
+              style: text.labelSmall?.copyWith(
+                color: color.onSurfaceVariant,
               ),
             ),
           ],
@@ -740,8 +714,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         // 후기 내용
         Text(
           review.content,
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: scheme.onSurfaceVariant,
+          style: text.bodyMedium?.copyWith(
+            color: color.onSurfaceVariant,
             height: 1.5,
           ),
         ),
@@ -769,26 +743,26 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                             imageUrl: imageUrl,
                             fit: BoxFit.cover,
                             placeholder: (ctx, url) => Container(
-                              color: scheme.surfaceContainerHighest,
+                              color: color.surfaceContainerHighest,
                             ),
                             errorWidget: (ctx, url, err) => Container(
-                              color: scheme.surfaceContainerHighest,
+                              color: color.surfaceContainerHighest,
                               child: Center(
                                 child: FaIcon(
                                   FontAwesomeIcons.image,
                                   size: 16,
-                                  color: scheme.onSurfaceVariant,
+                                  color: color.onSurfaceVariant,
                                 ),
                               ),
                             ),
                           )
                         : Container(
-                            color: scheme.surfaceContainerHighest,
+                            color: color.surfaceContainerHighest,
                             child: Center(
                               child: FaIcon(
                                 FontAwesomeIcons.image,
                                 size: 16,
-                                color: scheme.onSurfaceVariant,
+                                color: color.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -811,15 +785,13 @@ class _CompanyLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Container(
       width: 80,
       height: 80,
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerLowest,
+        color: color.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+        border: Border.all(color: color.outlineVariant.withValues(alpha: 0.5)),
       ),
       clipBehavior: Clip.antiAlias,
       child: CachedNetworkImage(
@@ -829,7 +801,7 @@ class _CompanyLogo extends StatelessWidget {
         errorWidget: (ctx, u, e) => Center(
           child: FaIcon(
             FontAwesomeIcons.building,
-            color: scheme.onSurfaceVariant,
+            color: color.onSurfaceVariant,
             size: 32,
           ),
         ),

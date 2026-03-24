@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 
 class OnlineStatus extends StatefulWidget {
   const OnlineStatus({
@@ -88,7 +89,7 @@ class _OnlineStatusState extends State<OnlineStatus> {
             decoration: BoxDecoration(
               color: Colors.green,
               border: Border.all(
-                color: Theme.of(context).colorScheme.surface,
+                color: color.surface,
                 width: 2,
               ),
               borderRadius: BorderRadius.circular(6),

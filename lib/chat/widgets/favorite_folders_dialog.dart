@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
 import 'package:philgo/bookmark/bookmark_group.model.dart';
 import 'package:philgo/chat/chat.theme.dart';
+import 'package:philgo/globals.dart';
 
 /// 즐겨찾기 폴더 목록 다이얼로그
 /// 사용자의 즐겨찾기 폴더와 각 폴더의 북마크 개수를 표시
@@ -13,17 +14,15 @@ class FavoriteFoldersDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
     return Dialog(
       backgroundColor: Colors.transparent,
       elevation: dialogElevation,
       child: Container(
         constraints: BoxConstraints(maxWidth: dialogMaxWidth),
         decoration: BoxDecoration(
-          color: colorScheme.surface,
+          color: color.surface,
           borderRadius: BorderRadius.circular(dialogBorderRadius),
-          border: Border.all(color: colorScheme.outline, width: dialogBorderWidth),
+          border: Border.all(color: color.outline, width: dialogBorderWidth),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -32,25 +31,25 @@ class FavoriteFoldersDialog extends StatelessWidget {
             Container(
               padding: dialogHeaderPadding,
               decoration: BoxDecoration(
-                color: colorScheme.primaryContainer,
+                color: color.primaryContainer,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(dialogHeaderBorderRadius),
                   topRight: Radius.circular(dialogHeaderBorderRadius),
                 ),
                 border: Border(
-                  bottom: BorderSide(color: colorScheme.outline, width: dialogHeaderBorderWidth),
+                  bottom: BorderSide(color: color.outline, width: dialogHeaderBorderWidth),
                 ),
               ),
               child: Row(
                 children: [
                   FaIcon(
                     FontAwesomeIcons.lightStar,
-                    color: colorScheme.primary,
+                    color: color.primary,
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
                   // "Favorites"
-                  Text('즐겨찾기'.tr(), style: textTheme.titleMedium),
+                  Text('즐겨찾기'.tr(), style: text.titleMedium),
                   const Spacer(),
                   InkWell(
                     onTap: () => Navigator.pop(context),
@@ -60,14 +59,14 @@ class FavoriteFoldersDialog extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(closeButtonBorderRadius),
                         border: Border.all(
-                          color: colorScheme.outline,
+                          color: color.outline,
                           width: closeButtonBorderWidth,
                         ),
                       ),
                       child: FaIcon(
                         FontAwesomeIcons.lightXmark,
                         size: closeIconSize,
-                        color: colorScheme.onSurface,
+                        color: color.onSurface,
                       ),
                     ),
                   ),
@@ -88,25 +87,25 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         Container(
                           padding: dialogEmptyContainerPadding,
                           decoration: BoxDecoration(
-                            color: colorScheme.surfaceContainerHighest,
+                            color: color.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(dialogBorderRadius),
                             border: Border.all(
-                              color: colorScheme.outline,
+                              color: color.outline,
                               width: dialogBorderWidth,
                             ),
                           ),
                           child: FaIcon(
                             FontAwesomeIcons.lightFolderOpen,
                             size: dialogEmptyIconSize,
-                            color: colorScheme.outline,
+                            color: color.outline,
                           ),
                         ),
                         SizedBox(height: dialogEmptySpacing),
                         Text(
                           // "No favorites yet"
                           '즐겨찾기가 없습니다'.tr(),
-                          style: textTheme.bodyLarge?.copyWith(
-                            color: colorScheme.outline,
+                          style: text.bodyLarge?.copyWith(
+                            color: color.outline,
                           ),
                         ),
                       ],
@@ -134,10 +133,10 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         child: Container(
                           padding: folderItemPadding,
                           decoration: BoxDecoration(
-                            // color: colorScheme.surfaceContainerHighest,
+                            // color: color.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(dialogItemBorderRadius),
                             border: Border.all(
-                              color: colorScheme.outline,
+                              color: color.outline,
                               width: dialogItemBorderWidth,
                             ),
                           ),
@@ -145,31 +144,31 @@ class FavoriteFoldersDialog extends StatelessWidget {
                             children: [
                               FaIcon(
                                 FontAwesomeIcons.lightFolder,
-                                color: colorScheme.primary,
+                                color: color.primary,
                                 size: folderIconSize,
                               ),
                               SizedBox(width: folderIconSpacing),
                               Expanded(
                                 child: Text(
                                   group.name,
-                                  style: textTheme.bodyLarge,
+                                  style: text.bodyLarge,
                                 ),
                               ),
                               SizedBox(width: countBadgeSpacing),
                               Container(
                                 padding: countBadgePadding,
                                 decoration: BoxDecoration(
-                                  color: colorScheme.primaryContainer,
+                                  color: color.primaryContainer,
                                   borderRadius: BorderRadius.circular(countBadgeBorderRadius),
                                   border: Border.all(
-                                    color: colorScheme.primary,
+                                    color: color.primary,
                                     width: countBadgeBorderWidth,
                                   ),
                                 ),
                                 child: Text(
                                   group.count.toString(),
-                                  style: textTheme.labelLarge?.copyWith(
-                                    color: colorScheme.primary,
+                                  style: text.labelLarge?.copyWith(
+                                    color: color.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

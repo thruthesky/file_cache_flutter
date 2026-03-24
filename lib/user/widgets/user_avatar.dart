@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 /// 사용자 아바타 위젯
 ///
@@ -24,16 +25,15 @@ class UserAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final size = radius * 2;
 
     Widget fallback = CircleAvatar(
       radius: radius,
-      backgroundColor: scheme.primaryContainer,
+      backgroundColor: color.primaryContainer,
       child: FaIcon(
         FontAwesomeIcons.lightUser,
         size: radius * 0.9,
-        color: scheme.onPrimaryContainer,
+        color: color.onPrimaryContainer,
       ),
     );
 
@@ -47,7 +47,7 @@ class UserAvatar extends StatelessWidget {
       fadeOutDuration: Duration.zero,
       imageBuilder: (_, imageProvider) => CircleAvatar(
         radius: radius,
-        backgroundColor: scheme.primaryContainer,
+        backgroundColor: color.primaryContainer,
         backgroundImage: imageProvider,
       ),
       placeholder: (_, _) => fallback,

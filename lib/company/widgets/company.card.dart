@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/company/company.model.dart';
+import 'package:philgo/globals.dart';
 
 /// 업소록 그리드 카드 위젯
 ///
@@ -42,15 +43,14 @@ class CompanyCard extends StatelessWidget {
   }
 
   Widget _buildGradientPlaceholder(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.primaryContainer,
-            colorScheme.secondaryContainer,
+            color.primaryContainer,
+            color.secondaryContainer,
           ],
         ),
       ),
@@ -58,7 +58,7 @@ class CompanyCard extends StatelessWidget {
         child: FaIcon(
           _categoryIcon(),
           size: 48,
-          color: colorScheme.onPrimaryContainer.withValues(alpha: 0.6),
+          color: color.onPrimaryContainer.withValues(alpha: 0.6),
         ),
       ),
     );

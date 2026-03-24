@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:philgo/globals.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
 import 'package:philgo/post/post.model.dart';
@@ -39,8 +40,6 @@ class PostActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Row(
       children: [
         // 좋아요 — liked 상태 반영
@@ -49,7 +48,7 @@ class PostActionBar extends StatelessWidget {
               ? FontAwesomeIcons.solidThumbsUp
               : FontAwesomeIcons.lightThumbsUp,
           label: '${goodCount > 0 ? goodCount : ''}',
-          color: liked ? scheme.primary : scheme.onSurfaceVariant,
+          color: liked ? color.primary : color.onSurfaceVariant,
           onTap: onLike,
         ),
         const SizedBox(width: 8),
@@ -57,7 +56,7 @@ class PostActionBar extends StatelessWidget {
         PostActionButton(
           icon: FontAwesomeIcons.message,
           label: '',
-          color: scheme.onSurfaceVariant,
+          color: color.onSurfaceVariant,
           onTap: () {
             ChatRoomScreen.push(context, post.userFirebaseUid);
           },
@@ -71,7 +70,7 @@ class PostActionBar extends StatelessWidget {
                 ? FontAwesomeIcons.solidBookmark
                 : FontAwesomeIcons.lightBookmark,
             label: '',
-            color: bookmarked ? scheme.primary : scheme.onSurfaceVariant,
+            color: bookmarked ? color.primary : color.onSurfaceVariant,
             onTap: onBookmark!,
           ),
         ],
@@ -81,7 +80,7 @@ class PostActionBar extends StatelessWidget {
         PostActionButton(
           icon: FontAwesomeIcons.lightShareNodes,
           label: '',
-          color: scheme.onSurfaceVariant,
+          color: color.onSurfaceVariant,
           onTap: () => _sharePost(context),
         ),
 
@@ -92,7 +91,7 @@ class PostActionBar extends StatelessWidget {
           PostActionButton(
             icon: FontAwesomeIcons.lightPenToSquare,
             label: '',
-            color: scheme.onSurfaceVariant,
+            color: color.onSurfaceVariant,
             onTap: onEdit,
           ),
           const SizedBox(width: 8),
@@ -100,7 +99,7 @@ class PostActionBar extends StatelessWidget {
           PostActionButton(
             icon: FontAwesomeIcons.lightTrashCan,
             label: '',
-            color: scheme.error,
+            color: color.error,
             onTap: onDelete,
           ),
         ] else ...[
@@ -110,7 +109,7 @@ class PostActionBar extends StatelessWidget {
                 ? FontAwesomeIcons.solidFlag
                 : FontAwesomeIcons.lightFlag,
             label: '',
-            color: reported ? scheme.error : scheme.onSurfaceVariant,
+            color: reported ? color.error : color.onSurfaceVariant,
             onTap: onReport ?? () {},
           ),
           const SizedBox(width: 8),
@@ -120,7 +119,7 @@ class PostActionBar extends StatelessWidget {
                 ? FontAwesomeIcons.solidBan
                 : FontAwesomeIcons.lightBan,
             label: '',
-            color: blocked ? scheme.error : scheme.onSurfaceVariant,
+            color: blocked ? color.error : color.onSurfaceVariant,
             onTap: onBlock ?? () {},
           ),
         ],
