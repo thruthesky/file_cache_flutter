@@ -20,6 +20,25 @@ class ApiException implements Exception {
 
   ApiException(this.code, this.title, this.message, [this.originalError]);
 
+  /// 서버 에러 코드 → 한글 메시지 매핑
+  static const _errorMessages = <String, String>{
+    'NICKNAME_REQUIRED': '닉네임을 먼저 설정해주세요',
+    'LOGIN_REQUIRED': '로그인이 필요합니다',
+    'PERMISSION_DENIED': '권한이 없습니다',
+    'POST_NOT_FOUND': '게시글을 찾을 수 없습니다',
+    'COMMENT_NOT_FOUND': '댓글을 찾을 수 없습니다',
+    'ALREADY_REPORTED': '이미 신고한 글입니다',
+    'TITLE_REQUIRED': '제목을 입력해주세요',
+    'CONTENT_REQUIRED': '내용을 입력해주세요',
+    'HAS_COMMENTS': '댓글이 있는 글은 삭제할 수 없습니다',
+    'HAS_CHILDREN': '답글이 있는 댓글은 삭제할 수 없습니다',
+  };
+
+  /// 서버 에러 코드를 한글 메시지로 변환. 매핑이 없으면 원본 반환.
+  static String translateError(String serverMessage) {
+    return _errorMessages[serverMessage] ?? serverMessage;
+  }
+
   @override
   String toString() => message;
 }
@@ -114,10 +133,11 @@ class ApiService {
 
     // v7 에러 판별: success == false일 때만 에러
     if (json['success'] == false) {
+      final serverMessage = json['message'] ?? '알 수 없는 오류';
       throw ApiException(
         'api_error',
         'API 오류',
-        json['message'] ?? '알 수 없는 오류',
+        ApiException.translateError(serverMessage.toString()),
       );
     }
 
