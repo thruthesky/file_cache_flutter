@@ -32,21 +32,19 @@ class HomeProfileMenuItem extends StatelessWidget {
               ? UserEditScreen.push(context)
               : UserLoginScreen.push(context),
           onLongPress: () => _toggleDevBanner(context),
-          child: SizedBox(
-            width: 56,
-            child: Column(
-              children: [
-                _buildAvatar(data.photoUrl),
-                const SizedBox(height: 3),
-                Text(
-                  data.loggedIn ? '내 정보'.tr() : '로그인'.tr(),
-                  style: text.labelSmall?.copyWith(fontSize: 10),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _buildAvatar(data.photoUrl),
+              const SizedBox(height: 3),
+              Text(
+                data.loggedIn ? '내 정보'.tr() : '로그인'.tr(),
+                style: text.labelSmall,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         );
       },

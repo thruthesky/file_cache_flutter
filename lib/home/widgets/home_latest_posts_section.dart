@@ -270,6 +270,12 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
                 style: text.labelSmall?.copyWith(color: color.outline),
               ),
             ],
+            const SizedBox(width: 4),
+            FaIcon(
+              FontAwesomeIcons.chevronRight,
+              size: 8,
+              color: color.outline.withValues(alpha: 0.5),
+            ),
           ],
         ),
       ),

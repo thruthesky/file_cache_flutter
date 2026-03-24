@@ -52,63 +52,78 @@ class HomeHelperMenuSection extends StatelessWidget {
     BuildContext context,
     ({bool qr, bool event}) flags,
   ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 8,
-        children: [
-          // 내 정보 (항상 첫 번째 — 프로필 사진 표시)
-          const HomeProfileMenuItem(),
+    const columns = 6;
 
-          // 업소이벤트 (설정 활성화 시 표시)
-          if (flags.qr)
-            _buildEventItem(
-              context,
-              '업소이벤트',
-              FontAwesomeIcons.lightStore,
-              color.secondaryContainer,
-              color.onSecondaryContainer,
-              () => CompanyEventScreen.push(context),
-            ),
+    final items = <Widget>[
+      // 내 정보 (항상 첫 번째 — 프로필 사진 표시)
+      const HomeProfileMenuItem(),
 
-          // 이벤트응모 (설정 활성화 시 표시)
-          if (flags.event)
-            _buildEventItem(
-              context,
-              '이벤트응모',
-              FontAwesomeIcons.lightGift,
-              color.errorContainer,
-              color.onErrorContainer,
-              () => EventEntryScreen.push(context),
-            ),
+      // 업소이벤트 (설정 활성화 시 표시)
+      if (flags.qr)
+        _buildEventItem(
+          context,
+          '업소이벤트',
+          FontAwesomeIcons.lightStore,
+          color.secondaryContainer,
+          color.onSecondaryContainer,
+          () => CompanyEventScreen.push(context),
+        ),
 
-          // 필수정보
-          _buildItem(
-            context,
-            '필수정보',
-            FontAwesomeIcons.lightCircleInfo,
-            const Color(0xFFEF5350),
-            null,
-            onTap: () => EssentialInfoScreen.push(context),
-          ),
+      // 이벤트응모 (설정 활성화 시 표시)
+      if (flags.event)
+        _buildEventItem(
+          context,
+          '이벤트응모',
+          FontAwesomeIcons.lightGift,
+          color.errorContainer,
+          color.onErrorContainer,
+          () => EventEntryScreen.push(context),
+        ),
 
-          // 나머지 메뉴 (내 정보, 필수정보 제외)
-          ..._items.skip(2).map((item) {
-            final (label, icon, iconColor, url) = item;
-            final VoidCallback? itemOnTap = switch (label) {
-              '공지사항' => () => NoticeScreen.push(context),
-              '환율' => () => ExchangeRateScreen.push(context),
-              '날씨' => () => WeatherScreen.push(context),
-              '긴급연락처' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.emergencyNumbers, title: '긴급연락처'),
-              '경찰서' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.policeStations, title: '경찰서'),
-              _ => null,
-            };
-            return _buildItem(context, label, icon, iconColor, url,
-                onTap: itemOnTap);
-          }),
-        ],
+      // 필수정보
+      _buildItem(
+        context,
+        '필수정보',
+        FontAwesomeIcons.lightCircleInfo,
+        const Color(0xFFEF5350),
+        null,
+        onTap: () => EssentialInfoScreen.push(context),
       ),
+
+      // 나머지 메뉴 (내 정보, 필수정보 제외)
+      ..._items.skip(2).map((item) {
+        final (label, icon, iconColor, url) = item;
+        final VoidCallback? itemOnTap = switch (label) {
+          '공지사항' => () => NoticeScreen.push(context),
+          '환율' => () => ExchangeRateScreen.push(context),
+          '날씨' => () => WeatherScreen.push(context),
+          '긴급연락처' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.emergencyNumbers, title: '긴급연락처'),
+          '경찰서' => () => InfoViewScreen.push(context, accessCode: InfoAccessCodes.policeStations, title: '경찰서'),
+          _ => null,
+        };
+        return _buildItem(context, label, icon, iconColor, url,
+            onTap: itemOnTap);
+      }),
+    ];
+
+    // 6열 그리드: Row + Expanded로 완벽한 정렬 보장
+    final rows = <Widget>[];
+    for (int i = 0; i < items.length; i += columns) {
+      final rowChildren = <Widget>[];
+      for (int j = 0; j < columns; j++) {
+        final idx = i + j;
+        if (idx < items.length) {
+          rowChildren.add(Expanded(child: items[idx]));
+        } else {
+          rowChildren.add(const Expanded(child: SizedBox()));
+        }
+      }
+      rows.add(Row(children: rowChildren));
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Column(spacing: 8, children: rows),
     );
   }
 
@@ -132,31 +147,29 @@ class HomeHelperMenuSection extends StatelessWidget {
           }
         }
       },
-      child: SizedBox(
-        width: 56,
-        child: Column(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: iconColor.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: FaIcon(icon, size: 18, color: iconColor),
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 3),
-            Text(
-              label.tr(),
-              style: text.labelSmall?.copyWith(fontSize: 10),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Center(
+              child: FaIcon(icon, size: 18, color: iconColor),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label.tr(),
+            style: text.labelSmall,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -172,31 +185,29 @@ class HomeHelperMenuSection extends StatelessWidget {
   ) {
     return GestureDetector(
       onTap: onTap,
-      child: SizedBox(
-        width: 56,
-        child: Column(
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Center(
-                child: FaIcon(icon, size: 18, color: fgColor),
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(12),
             ),
-            const SizedBox(height: 3),
-            Text(
-              label.tr(),
-              style: text.labelSmall?.copyWith(fontSize: 10),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Center(
+              child: FaIcon(icon, size: 18, color: fgColor),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label.tr(),
+            style: text.labelSmall,
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
