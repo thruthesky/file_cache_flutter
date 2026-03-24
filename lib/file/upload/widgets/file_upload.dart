@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:philgo/api/api.service.dart';
@@ -190,7 +191,7 @@ class _FileUploadState extends State<FileUpload> {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: color.outlineVariant,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -206,7 +207,7 @@ class _FileUploadState extends State<FileUpload> {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
-                    color: Colors.grey[600],
+                    color: color.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -218,7 +219,7 @@ class _FileUploadState extends State<FileUpload> {
                 leading: FaIcon(
                   FontAwesomeIcons.lightCamera,
                   size: 20,
-                  color: Colors.grey[700],
+                  color: color.onSurfaceVariant,
                 ),
                 // "Take Photo with Camera"
                 title: Text('카메라로 사진 찍기'.tr()),
@@ -229,7 +230,7 @@ class _FileUploadState extends State<FileUpload> {
                 leading: FaIcon(
                   FontAwesomeIcons.lightVideo,
                   size: 20,
-                  color: Colors.grey[700],
+                  color: color.onSurfaceVariant,
                 ),
                 // "Record Video with Camera"
                 title: Text('카메라로 동영상 촬영'.tr()),
@@ -240,7 +241,7 @@ class _FileUploadState extends State<FileUpload> {
                 leading: FaIcon(
                   FontAwesomeIcons.lightImages,
                   size: 20,
-                  color: Colors.grey[700],
+                  color: color.onSurfaceVariant,
                 ),
                 // "Choose from Gallery"
                 title: Text('갤러리에서 선택'.tr()),
@@ -251,7 +252,7 @@ class _FileUploadState extends State<FileUpload> {
                 leading: FaIcon(
                   FontAwesomeIcons.lightPaperclip,
                   size: 20,
-                  color: Colors.grey[700],
+                  color: color.onSurfaceVariant,
                 ),
                 // "Upload File"
                 title: Text('파일 업로드'.tr()),
@@ -261,10 +262,10 @@ class _FileUploadState extends State<FileUpload> {
               leading: FaIcon(
                 FontAwesomeIcons.lightXmark,
                 size: 20,
-                color: Colors.grey[500],
+                color: color.outline,
               ),
               // "Cancel"
-              title: Text('취소'.tr(), style: TextStyle(color: Colors.grey[600])),
+              title: Text('취소'.tr(), style: TextStyle(color: color.onSurfaceVariant)),
               onTap: () => Navigator.pop(ctx, null),
             ),
             const SizedBox(height: 4),

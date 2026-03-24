@@ -2,6 +2,7 @@ import 'package:philgo/app/app.screen.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/file/upload/file_upload.model.dart';
 import 'package:philgo/post/post.model.dart';
 import 'package:philgo/bookmark/bookmark.service.dart';
@@ -229,7 +230,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: color.error),
             // "Delete"
             child: Text('삭제'.tr()),
           ),
@@ -266,7 +267,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: color.error),
             // "Report"
             child: Text('신고'.tr()),
           ),
@@ -324,7 +325,7 @@ class _PostViewScreenState extends State<PostViewScreen> {
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(
-              foregroundColor: _post.blocked ? null : Colors.red,
+              foregroundColor: _post.blocked ? null : color.error,
             ),
             child: Text(label),
           ),

@@ -16,6 +16,7 @@ import 'package:philgo/company/edit/company.edit.screen.dart';
 import 'package:philgo/company/view/company.view.screen.dart';
 import 'package:philgo/bookmark/bookmark.screen.dart';
 import 'package:philgo/event/event_coupon.screen.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/point/point_history.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/my/my.posts.screen.dart';
@@ -48,20 +49,20 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: scheme.surface,
+      backgroundColor: color.surface,
       body: SafeArea(
-        child: Column(
-          children: [
+        child: CustomScrollView(
+          slivers: [
             // 앱바 영역
-            _buildAppBar(context),
-            Container(height: 1, color: scheme.outlineVariant),
+            SliverToBoxAdapter(child: _buildAppBar(context)),
+            SliverToBoxAdapter(
+              child: Container(height: 1, color: color.outlineVariant),
+            ),
 
             // 스크롤 가능한 콘텐츠
-            Expanded(
-              child: SingleChildScrollView(
+            SliverToBoxAdapter(
+              child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   spacing: 28,
@@ -73,7 +74,6 @@ class _MenuScreenState extends State<MenuScreen> {
                     Consumer<UserState>(
                           builder: (context, userState, _) {
                             return _buildSection(
-                              context,
                               // "My Profile"
                               title: '내 정보'.tr(),
                               icon: FontAwesomeIcons.lightCircleUser,
@@ -90,7 +90,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 내 활동 섹션
                     _buildSection(
-                          context,
                           // "My Activity"
                           title: '내 활동'.tr(),
                           child: _buildActivityGrid(context),
@@ -101,7 +100,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 필리핀 생활 정보 섹션
                     _buildSection(
-                          context,
                           // "Philippines Info"
                           title: '필리핀 생활 정보'.tr(),
                           child: _buildInfoGrid(context),
@@ -112,7 +110,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 게시판 섹션
                     _buildSection(
-                          context,
                           // "Forum"
                           title: '게시판'.tr(),
                           child: _buildForumContent(context),
@@ -127,7 +124,6 @@ class _MenuScreenState extends State<MenuScreen> {
                               CompanyService.instance.companyNotifier,
                           builder: (context, myCompany, _) {
                             return _buildSection(
-                              context,
                               // "My Business"
                               title: '내 업소'.tr(),
                               icon: FontAwesomeIcons.lightStore,
@@ -145,7 +141,6 @@ class _MenuScreenState extends State<MenuScreen> {
                               CompanyService.instance.companyNotifier,
                           builder: (context, myCompany, _) {
                             return _buildSection(
-                              context,
                               // "Company"
                               title: '업소록'.tr(),
                               child: _buildCompanyGrid(context, myCompany),
@@ -158,7 +153,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 채팅 섹션
                     _buildSection(
-                          context,
                           // "Chat"
                           title: '채팅'.tr(),
                           child: _buildChatGrid(context),
@@ -169,7 +163,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 광고 섹션
                     _buildSection(
-                          context,
                           // "Advertising"
                           title: '광고'.tr(),
                           child: _buildAdGrid(context),
@@ -180,7 +173,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 지원 섹션
                     _buildSection(
-                          context,
                           // "Support"
                           title: '지원'.tr(),
                           child: _buildSupportGrid(context),
@@ -191,7 +183,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
                     // 앱 정보 섹션
                     _buildSection(
-                          context,
                           // "App Info"
                           title: '앱 정보'.tr(),
                           child: _buildAppInfoGrid(context),
@@ -219,14 +210,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                 icon: FaIcon(
                                   FontAwesomeIcons.lightTrashCan,
                                   size: 14,
-                                  color: scheme.onSurfaceVariant,
+                                  color: color.onSurfaceVariant,
                                 ),
                                 label: Text(
                                   // "Delete Account"
                                   '계정 삭제'.tr(),
-                                  style: TextStyle(
-                                    color: scheme.onSurfaceVariant,
-                                    fontSize: 13,
+                                  style: text.bodySmall?.copyWith(
+                                    color: color.onSurfaceVariant,
                                   ),
                                 ),
                               ),
@@ -240,16 +230,18 @@ class _MenuScreenState extends State<MenuScreen> {
                               icon: FaIcon(
                                 FontAwesomeIcons.lightRightFromBracket,
                                 size: 16,
-                                color: scheme.error,
+                                color: color.error,
                               ),
                               label: Text(
                                 // "Logout"
                                 '로그아웃'.tr(),
-                                style: TextStyle(color: scheme.error),
+                                style: text.labelLarge?.copyWith(
+                                  color: color.error,
+                                ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: scheme.error.withValues(alpha: 0.4),
+                                  color: color.error.withValues(alpha: 0.4),
                                 ),
                                 minimumSize: const Size(double.infinity, 48),
                               ),
@@ -272,7 +264,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 앱바 영역
   Widget _buildAppBar(BuildContext context) {
-    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -284,22 +275,18 @@ class _MenuScreenState extends State<MenuScreen> {
           ),
           const SizedBox(width: 8),
           // "Menu"
-          Text('메뉴'.tr(), style: theme.textTheme.titleLarge),
+          Text('메뉴'.tr(), style: text.titleLarge),
         ],
       ),
     );
   }
 
   /// 섹션 컨테이너 빌드 (아이콘 옵셔널)
-  Widget _buildSection(
-    BuildContext context, {
+  Widget _buildSection({
     required String title,
     IconData? icon,
     required Widget child,
   }) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -313,7 +300,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 width: 3,
                 height: 16,
                 decoration: BoxDecoration(
-                  color: scheme.primary,
+                  color: color.primary,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -321,15 +308,15 @@ class _MenuScreenState extends State<MenuScreen> {
 
               /// 섹션 아이콘 (옵셔널)
               if (icon != null) ...[
-                FaIcon(icon, size: 14, color: scheme.onSurfaceVariant),
+                FaIcon(icon, size: 14, color: color.onSurfaceVariant),
                 const SizedBox(width: 6),
               ],
 
               /// 섹션 타이틀
               Text(
                 title,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  color: scheme.onSurface,
+                style: text.titleSmall?.copyWith(
+                  color: color.onSurface,
                   fontWeight: FontWeight.normal,
                   letterSpacing: 0.2,
                 ),
@@ -342,9 +329,9 @@ class _MenuScreenState extends State<MenuScreen> {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: scheme.surfaceContainerLowest,
+            color: color.surfaceContainerLowest,
             border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.5),
+              color: color.outlineVariant.withValues(alpha: 0.5),
               width: 1.0,
             ),
             borderRadius: BorderRadius.circular(16),
@@ -359,15 +346,12 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 프로필 카드 내용
   Widget _buildProfileContent(BuildContext context, UserModel? user) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     if (user == null) {
       return GestureDetector(
         onTap: () => UserLoginScreen.push(context),
         child: Row(
           children: [
-            _buildDefaultAvatar(context),
+            _buildDefaultAvatar(),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -376,7 +360,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   Text(
                     // "Please login"
                     '로그인 해주세요'.tr(),
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: text.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -384,8 +368,8 @@ class _MenuScreenState extends State<MenuScreen> {
                   Text(
                     // "Login to access all features"
                     '로그인하여 모든 기능을 이용하세요'.tr(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
+                    style: text.bodySmall?.copyWith(
+                      color: color.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -394,7 +378,7 @@ class _MenuScreenState extends State<MenuScreen> {
             FaIcon(
               FontAwesomeIcons.lightChevronRight,
               size: 16,
-              color: scheme.onSurfaceVariant,
+              color: color.onSurfaceVariant,
             ),
           ],
         ),
@@ -414,10 +398,10 @@ class _MenuScreenState extends State<MenuScreen> {
                   fit: BoxFit.cover,
                   memCacheWidth: 112,
                   memCacheHeight: 112,
-                  placeholder: (_, _) => _buildDefaultAvatar(context),
-                  errorWidget: (_, _, _) => _buildDefaultAvatar(context),
+                  placeholder: (_, _) => _buildDefaultAvatar(),
+                  errorWidget: (_, _, _) => _buildDefaultAvatar(),
                 )
-              : _buildDefaultAvatar(context),
+              : _buildDefaultAvatar(),
         ),
         const SizedBox(width: 12),
 
@@ -428,7 +412,7 @@ class _MenuScreenState extends State<MenuScreen> {
             children: [
               Text(
                 user.displayName,
-                style: theme.textTheme.titleSmall?.copyWith(
+                style: text.titleSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -436,8 +420,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 const SizedBox(height: 2),
                 Text(
                   user.id,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
+                  style: text.bodySmall?.copyWith(
+                    color: color.onSurfaceVariant,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -448,30 +432,28 @@ class _MenuScreenState extends State<MenuScreen> {
                   FaIcon(
                     FontAwesomeIcons.lightPenToSquare,
                     size: 12,
-                    color: scheme.onSurfaceVariant,
+                    color: color.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     // "{} posts"
                     '{}개 게시물'.tr(args: ['${user.noOfPost}']),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      fontSize: 11,
+                    style: text.bodySmall?.copyWith(
+                      color: color.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 10),
                   FaIcon(
                     FontAwesomeIcons.lightComment,
                     size: 12,
-                    color: scheme.onSurfaceVariant,
+                    color: color.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     // "{} comments"
                     '{}개 댓글'.tr(args: ['${user.noOfComment}']),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      fontSize: 11,
+                    style: text.bodySmall?.copyWith(
+                      color: color.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -484,7 +466,7 @@ class _MenuScreenState extends State<MenuScreen> {
         FaIcon(
           FontAwesomeIcons.lightChevronRight,
           size: 16,
-          color: scheme.onSurfaceVariant,
+          color: color.onSurfaceVariant,
         ),
       ],
     );
@@ -497,20 +479,19 @@ class _MenuScreenState extends State<MenuScreen> {
     return url.startsWith('http://') || url.startsWith('https://');
   }
 
-  Widget _buildDefaultAvatar(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget _buildDefaultAvatar() {
     return Container(
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh,
+        color: color.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: FaIcon(
           FontAwesomeIcons.lightCircleUser,
           size: 28,
-          color: scheme.onSurfaceVariant,
+          color: color.onSurfaceVariant,
         ),
       ),
     );
@@ -687,8 +668,8 @@ class _MenuScreenState extends State<MenuScreen> {
             FontAwesomeIcons.youtube,
             // "YouTube"
             '유튜브'.tr(),
-            backgroundColor: Colors.red.shade600,
-            iconColor: Colors.white,
+            backgroundColor: color.error,
+            iconColor: color.onError,
             onTap: () => _navigateToForum('youtube'),
           ),
         ], context),
@@ -776,18 +757,16 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 서브카테고리 라벨 칩
   Widget _buildSubCategoryLabel(String label, BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh.withValues(alpha: 0.5),
+        color: color.surfaceContainerHigh.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         label,
-        style: TextStyle(
-          fontSize: 12,
-          color: scheme.onSurfaceVariant,
+        style: text.bodySmall?.copyWith(
+          color: color.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -796,8 +775,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 내 업소 섹션 콘텐츠
   Widget _buildMyCompanyContent(BuildContext context, CompanyModel? myCompany) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     final hasRegistered = myCompany != null && myCompany.name.isNotEmpty;
 
     return GestureDetector(
@@ -821,9 +798,9 @@ class _MenuScreenState extends State<MenuScreen> {
                     height: 56,
                     fit: BoxFit.cover,
                     errorWidget: ($, $$, $$$) =>
-                        _buildCompanyPlaceholderIcon(context),
+                        _buildCompanyPlaceholderIcon(),
                   )
-                : _buildCompanyPlaceholderIcon(context),
+                : _buildCompanyPlaceholderIcon(),
           ),
           const SizedBox(width: 12),
 
@@ -835,7 +812,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     children: [
                       Text(
                         myCompany.name,
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        style: text.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                         maxLines: 1,
@@ -845,8 +822,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         const SizedBox(height: 2),
                         Text(
                           myCompany.category,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                          style: text.bodySmall?.copyWith(
+                            color: color.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -856,8 +833,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         const SizedBox(height: 2),
                         Text(
                           myCompany.address,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                          style: text.bodySmall?.copyWith(
+                            color: color.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -867,8 +844,8 @@ class _MenuScreenState extends State<MenuScreen> {
                         const SizedBox(height: 2),
                         Text(
                           myCompany.phoneNumber,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
+                          style: text.bodySmall?.copyWith(
+                            color: color.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -880,7 +857,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       Text(
                         // "Please register your business"
                         '업소를 등록해 주세요'.tr(),
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        style: text.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -888,8 +865,8 @@ class _MenuScreenState extends State<MenuScreen> {
                       Text(
                         // "Register and promote your business"
                         '나의 업소를 등록하고 홍보하세요'.tr(),
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
+                        style: text.bodySmall?.copyWith(
+                          color: color.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -900,27 +877,26 @@ class _MenuScreenState extends State<MenuScreen> {
           FaIcon(
             FontAwesomeIcons.lightChevronRight,
             size: 16,
-            color: scheme.onSurfaceVariant,
+            color: color.onSurfaceVariant,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildCompanyPlaceholderIcon(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+  Widget _buildCompanyPlaceholderIcon() {
     return Container(
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHigh,
+        color: color.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
         child: FaIcon(
           FontAwesomeIcons.lightStore,
           size: 24,
-          color: scheme.onSurfaceVariant,
+          color: color.onSurfaceVariant,
         ),
       ),
     );
@@ -1086,9 +1062,6 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 개별 메뉴 아이템 위젯
   Widget _buildMenuItem(_MenuItemData item, BuildContext context) {
-    final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-
     return GestureDetector(
       onTap: item.onTap,
       child: Column(
@@ -1102,8 +1075,8 @@ class _MenuScreenState extends State<MenuScreen> {
               color:
                   item.backgroundColor ??
                   (item.isHighlighted
-                      ? scheme.primary.withValues(alpha: 0.1)
-                      : scheme.surfaceContainerHigh.withValues(alpha: 0.5)),
+                      ? color.primary.withValues(alpha: 0.1)
+                      : color.surfaceContainerHigh.withValues(alpha: 0.5)),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
@@ -1113,8 +1086,8 @@ class _MenuScreenState extends State<MenuScreen> {
                 color:
                     item.iconColor ??
                     (item.isHighlighted
-                        ? scheme.primary
-                        : scheme.onSurfaceVariant),
+                        ? color.primary
+                        : color.onSurfaceVariant),
               ),
             ),
           ),
@@ -1123,9 +1096,8 @@ class _MenuScreenState extends State<MenuScreen> {
           /// 아이콘 라벨
           Text(
             item.label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: scheme.onSurface,
-              fontSize: 11,
+            style: text.bodySmall?.copyWith(
+              color: color.onSurface,
             ),
             textAlign: TextAlign.center,
           ),

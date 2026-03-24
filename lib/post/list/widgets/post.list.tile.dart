@@ -318,7 +318,7 @@ class PostListTile extends StatelessWidget {
   /// 댓글 수에 따른 색상 반환
   Color _getCountColor(int count) {
     if (count >= 10) return color.error;
-    if (count >= 5) return Colors.amber.shade700;
+    if (count >= 5) return color.secondary;
     return color.tertiary;
   }
 

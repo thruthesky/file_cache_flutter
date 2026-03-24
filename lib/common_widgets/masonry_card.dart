@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 
 /// 범용 Masonry 카드 위젯
 ///
@@ -92,8 +93,8 @@ class _MasonryCardState extends State<MasonryCard> {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final scheme = color;
+    final textTheme = text;
     final media = _mediaType;
 
     // 미디어 없으면 제목만 표시하는 컴팩트 카드
@@ -106,7 +107,7 @@ class _MasonryCardState extends State<MasonryCard> {
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
-      elevation: 1,
+      elevation: 0,
       child: InkWell(
         onTap: widget.onTap,
         child: SizedBox(
@@ -135,7 +136,7 @@ class _MasonryCardState extends State<MasonryCard> {
     return Card(
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: widget.borderRadius),
-      elevation: 1,
+      elevation: 0,
       child: InkWell(
         onTap: widget.onTap,
         child: Container(
@@ -280,7 +281,7 @@ class _MasonryCardState extends State<MasonryCard> {
           ),
           errorWidget: (_, _, _) => Container(
             color: scheme.surfaceContainerHigh,
-            child: Icon(Icons.broken_image, color: scheme.outline),
+            child: FaIcon(FontAwesomeIcons.lightImageSlash, color: scheme.outline),
           ),
         );
       },
@@ -306,7 +307,7 @@ class _MasonryCardState extends State<MasonryCard> {
           ),
           errorWidget: (_, _, _) => Container(
             color: scheme.surfaceContainerHigh,
-            child: Icon(Icons.broken_image, color: scheme.outline),
+            child: FaIcon(FontAwesomeIcons.lightImageSlash, color: scheme.outline),
           ),
         );
       },
@@ -317,7 +318,7 @@ class _MasonryCardState extends State<MasonryCard> {
     return Container(
       color: scheme.surfaceContainerHigh,
       child: Center(
-        child: Icon(Icons.image_outlined, color: scheme.outline, size: 40),
+        child: FaIcon(FontAwesomeIcons.lightImage, color: scheme.outline, size: 40),
       ),
     );
   }

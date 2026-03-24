@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/advertisement/advertisement.model.dart';
 import 'package:philgo/advertisement/advertisement.service.dart';
 import 'package:philgo/advertisement/advertisement.view.screen.dart';
@@ -67,7 +68,7 @@ class _HomeWingBannersState extends State<HomeWingBanners> {
                     Container(color: color.surfaceContainerLow),
                 errorWidget: (_, _, _) => Container(
                   color: color.surfaceContainerLow,
-                  child: Icon(Icons.image_not_supported,
+                  child: FaIcon(FontAwesomeIcons.lightImageSlash,
                       size: 16, color: color.outline),
                 ),
               ),

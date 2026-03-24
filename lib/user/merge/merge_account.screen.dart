@@ -561,7 +561,7 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
             labelText: '인증 코드'.tr(),
             hintText: '123456',
             border: const OutlineInputBorder(),
-            prefixIcon: const Icon(Icons.lock_outline),
+            prefixIcon: const FaIcon(FontAwesomeIcons.lightLock),
           ),
         ),
         const SizedBox(height: 24),

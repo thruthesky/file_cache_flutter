@@ -120,7 +120,7 @@ void showSuccessSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
       content: Text(message),
-      backgroundColor: Colors.green,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       duration: duration,
     ),
   );
@@ -136,7 +136,7 @@ void showErrorSnackBar(
     SnackBar(
       behavior: SnackBarBehavior.floating,
       content: Text(message),
-      backgroundColor: Colors.red,
+      backgroundColor: Theme.of(context).colorScheme.error,
       duration: duration,
     ),
   );

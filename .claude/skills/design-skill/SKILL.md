@@ -1,5 +1,5 @@
 ---
-name: "flutter-design-skill"
+name: "design-skill"
 description: "Flutter UI design guideline and standards for PhilGo App. Use this skill when the task involves: (1) UI structure or visual design decisions, (2) creating a new widget or screen, (3) refactoring an existing widget's design, (4) interaction patterns (tap, selection, animation), (5) theming, color, typography, or spacing decisions, (6) ThemeExtension or design token implementation, (7) responsive layout with MediaQuery or custom slivers. Trigger keywords: design, UI, widget, screen, layout, theme, color, spacing, animation, responsive, ThemeExtension, design token, sliver."
 ---
 

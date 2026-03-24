@@ -214,7 +214,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
         elevation: 0,
         scrolledUnderElevation: 1,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const FaIcon(FontAwesomeIcons.arrowLeft),
           onPressed: () => Navigator.of(context).pop(_latestPost),
         ),
         // "Edit Post"

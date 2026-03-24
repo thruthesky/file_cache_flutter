@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/user/other_user/other_user.screen.dart';
 import 'package:philgo/user/widgets/user_avatar.dart';
 import 'package:philgo/point/widgets/earned_point_badge.dart';
@@ -138,7 +139,7 @@ class _CommentTileState extends State<CommentTile> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: color.error),
             // "Block"
             child: Text('차단'.tr()),
           ),
@@ -533,7 +534,7 @@ class _CommentTileState extends State<CommentTile> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: color.error),
             // "Delete"
             child: Text('삭제'.tr()),
           ),

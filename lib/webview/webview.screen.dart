@@ -49,7 +49,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.chevron_left, color: color.onSurface, size: 28),
+                FaIcon(FontAwesomeIcons.chevronLeft, color: color.onSurface, size: 22),
                 Text(
                   // "Back"
                   '돌아가기'.tr(),

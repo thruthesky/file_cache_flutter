@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Avatar Widget (아바타 위젯)
 ///
@@ -46,7 +47,7 @@ class Avatar extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(radius)),
-        child: CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
+        child: CircleAvatar(child: FaIcon(FontAwesomeIcons.lightUser, size: size / 1.5)),
       );
     }
 
@@ -63,10 +64,10 @@ class Avatar extends StatelessWidget {
           // 로딩 중: 기본 아이콘 표시 (로딩 인디케이터 대신)
           // 캐시된 이미지는 즉시 표시되므로 깜빡임 방지
           placeholder: (context, url) =>
-              CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
+              CircleAvatar(child: FaIcon(FontAwesomeIcons.lightUser, size: size / 1.5)),
           // 에러 발생 시: 기본 아이콘 표시
           errorWidget: (context, url, error) =>
-              CircleAvatar(child: Icon(Icons.person, size: size / 1.5)),
+              CircleAvatar(child: FaIcon(FontAwesomeIcons.lightUser, size: size / 1.5)),
           // 네트워크 타임아웃 방지를 위한 httpHeaders와 memCacheWidth/Height 설정
           memCacheWidth: (size * 2).toInt(),
           memCacheHeight: (size * 2).toInt(),

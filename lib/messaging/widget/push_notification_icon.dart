@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:philgo/globals.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:philgo/messaging/messaging.defines.dart';
 import 'package:philgo/user/widgets/login.dart';
@@ -65,11 +67,11 @@ class _PushNotificationIconState extends State<PushNotificationIcon> {
   }
 
   Widget OnIcon() {
-    return Icon(Icons.notifications, color: Colors.blue);
+    return FaIcon(FontAwesomeIcons.lightBell, color: color.primary);
   }
 
   Widget OffIconIcon() {
-    return Icon(Icons.notifications_off, color: Colors.grey);
+    return FaIcon(FontAwesomeIcons.lightBellSlash, color: color.outline);
   }
 
   @override

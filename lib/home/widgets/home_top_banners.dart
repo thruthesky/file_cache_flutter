@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/advertisement/advertisement.model.dart';
 import 'package:philgo/advertisement/advertisement.service.dart';
 import 'package:philgo/advertisement/advertisement.view.screen.dart';
@@ -129,7 +130,7 @@ class _HomeTopBannersState extends State<HomeTopBanners> {
             placeholder: (_, _) => Container(color: color.surfaceContainerLow),
             errorWidget: (_, _, _) => Container(
               color: color.surfaceContainerLow,
-              child: Icon(Icons.image_not_supported, color: color.outline),
+              child: FaIcon(FontAwesomeIcons.lightImageSlash, color: color.outline),
             ),
           ),
         ),
