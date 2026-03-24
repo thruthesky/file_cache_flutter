@@ -13,6 +13,7 @@ import 'package:philgo/point/point_advertisement.service.dart';
 import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/post/create/widgets/wanted_hiring_form.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -420,8 +421,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       }
 
       if (!mounted) return;
-      // 생성된 게시글을 결과로 반환
-      Navigator.of(context).pop(post);
+      // 글 작성 화면을 닫고 글 보기 화면으로 이동
+      Navigator.of(context).pop();
+      PostViewScreen.push(context, post);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

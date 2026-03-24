@@ -14,9 +14,7 @@ import 'package:philgo/home/home.screen.dart';
 import 'package:philgo/menu/menu.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/list/forum.screen.dart';
-import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post_category_bottom_sheet.dart';
-import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -267,18 +265,13 @@ class _AppScreenState extends State<AppScreen> {
     }
     showPostCategoryBottomSheet(
       context,
-      onSelected: (postId, category) async {
-        final result = await Navigator.of(context).push<dynamic>(
+      onSelected: (postId, category) {
+        Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) =>
                 PostCreateScreen(postId: postId, category: category),
           ),
         );
-        if (result is Post && context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => PostViewScreen(post: result)),
-          );
-        }
       },
     );
   }
