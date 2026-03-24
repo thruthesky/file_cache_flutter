@@ -72,7 +72,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 내 정보 섹션
                     Consumer<UserState>(
                           builder: (context, userState, _) {
-                            return _buildSection(
+                            final section = _buildSection(
                               context,
                               // "My Profile"
                               title: '내 정보'.tr(),
@@ -82,6 +82,14 @@ class _MenuScreenState extends State<MenuScreen> {
                                 userState.user,
                               ),
                             );
+                            if (userState.user == null) {
+                              return GestureDetector(
+                                onTap: () => UserLoginScreen.push(context),
+                                behavior: HitTestBehavior.opaque,
+                                child: section,
+                              );
+                            }
+                            return section;
                           },
                         )
                         .animate()
@@ -363,41 +371,38 @@ class _MenuScreenState extends State<MenuScreen> {
     final scheme = theme.colorScheme;
 
     if (user == null) {
-      return GestureDetector(
-        onTap: () => UserLoginScreen.push(context),
-        child: Row(
-          children: [
-            _buildDefaultAvatar(context),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    // "Please login"
-                    '로그인 해주세요'.tr(),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+      return Row(
+        children: [
+          _buildDefaultAvatar(context),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  // "Please login"
+                  '로그인 해주세요'.tr(),
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    // "Login to access all features"
-                    '로그인하여 모든 기능을 이용하세요'.tr(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  // "Login to access all features"
+                  '로그인하여 모든 기능을 이용하세요'.tr(),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            FaIcon(
-              FontAwesomeIcons.lightChevronRight,
-              size: 16,
-              color: scheme.onSurfaceVariant,
-            ),
-          ],
-        ),
+          ),
+          FaIcon(
+            FontAwesomeIcons.lightChevronRight,
+            size: 16,
+            color: scheme.onSurfaceVariant,
+          ),
+        ],
       );
     }
 
