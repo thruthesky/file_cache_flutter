@@ -87,6 +87,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                 size: 20,
               ),
               const SizedBox(width: 8),
+              // "Error"
               Text('오류'.tr(), style: const TextStyle(fontSize: 18)),
             ],
           ),
@@ -148,6 +149,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "Profile"
         title: Text('프로필'.tr()),
         backgroundColor: color.surface,
         foregroundColor: color.onSurface,
@@ -165,10 +167,12 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                 switch (value) {
                   case 'block':
                     ScaffoldMessenger.of(context).showSnackBar(
+                      // "[NO TRANSLATION: 차단 기능은 준비 중입니다.]"
                       SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())),
                     );
                   case 'report':
                     ScaffoldMessenger.of(context).showSnackBar(
+                      // "[NO TRANSLATION: 신고 기능은 준비 중입니다.]"
                       SnackBar(content: Text('신고 기능은 준비 중입니다.'.tr())),
                     );
                 }
@@ -186,6 +190,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                           color: popScheme.onSurface,
                         ),
                         const SizedBox(width: 10),
+                        // "Block"
                         Text('차단'.tr()),
                       ],
                     ),
@@ -201,6 +206,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                         ),
                         const SizedBox(width: 10),
                         Text(
+                          // "Report"
                           '신고'.tr(),
                           style: TextStyle(color: popScheme.error),
                         ),
@@ -220,6 +226,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
+                  // "Unable to load user information"
                   '사용자 정보를 불러올 수 없습니다'.tr(),
                   style: TextStyle(color: color.error),
                   textAlign: TextAlign.center,
@@ -273,8 +280,11 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // "Posts"
               _buildStat('글'.tr(), user.noOfPost.toString()),
+              // "Comments"
               _buildStat('댓글'.tr(), user.noOfComment.toString()),
+              // "Level"
               _buildStat('레벨'.tr(), user.level.toString()),
             ],
           ),
@@ -289,21 +299,25 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
                 _bookmarked
                     ? FontAwesomeIcons.solidBookmark
                     : FontAwesomeIcons.lightBookmark,
+                // "Bookmark"
                 '북마크'.tr(),
                 _toggleBookmark,
               ),
               const SizedBox(width: 16),
               _buildActionButton(
                 FontAwesomeIcons.lightCommentDots,
+                // "Chat"
                 '채팅'.tr(),
                 () {
                   ChatRoomScreen.push(context, user.firebaseUid);
                 },
               ),
               const SizedBox(width: 16),
+              // "Block"
               _buildActionButton(FontAwesomeIcons.lightBan, '차단'.tr(), () {
                 ScaffoldMessenger.of(
                   context,
+                // "[NO TRANSLATION: 차단 기능은 준비 중입니다.]"
                 ).showSnackBar(SnackBar(content: Text('차단 기능은 준비 중입니다.'.tr())));
               }),
             ],
@@ -314,6 +328,7 @@ class _OtherUserScreenState extends State<OtherUserScreen> {
           // Recent posts section
           if (_recentPosts.isNotEmpty) ...[
             Text(
+              // "Recent Posts"
               '최근 글'.tr(),
               style: text.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,

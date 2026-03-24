@@ -14,9 +14,7 @@ import 'package:philgo/home/home.screen.dart';
 import 'package:philgo/menu/menu.screen.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
 import 'package:philgo/post/list/forum.screen.dart';
-import 'package:philgo/post/post.model.dart';
 import 'package:philgo/post/post_category_bottom_sheet.dart';
-import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/chat/chat.service.dart';
@@ -120,14 +118,17 @@ class _AppScreenState extends State<AppScreen> {
             items: [
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightHouse),
+                // "Home"
                 label: '홈'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightClipboard),
+                // "Forum"
                 label: '게시판'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightBuilding),
+                // "Company"
                 label: '업소록'.tr(),
               ),
               BottomNavigationBarItem(
@@ -141,10 +142,12 @@ class _AppScreenState extends State<AppScreen> {
                     );
                   },
                 ),
+                // "Chat"
                 label: '채팅'.tr(),
               ),
               BottomNavigationBarItem(
                 icon: const FaIcon(FontAwesomeIcons.lightBars),
+                // "Menu"
                 label: '메뉴'.tr(),
               ),
             ],
@@ -176,6 +179,7 @@ class _AppScreenState extends State<AppScreen> {
       return [
         AppFabMenuItem(
           icon: FontAwesomeIcons.lightRightToBracket,
+          // "Login"
           label: '로그인'.tr(),
           onTap: () => UserLoginScreen.push(context),
         ),
@@ -188,11 +192,13 @@ class _AppScreenState extends State<AppScreen> {
         return [
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightPen,
+            // "Write"
             label: '글쓰기'.tr(),
             onTap: () => _openPostWrite(context),
           ),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -201,11 +207,13 @@ class _AppScreenState extends State<AppScreen> {
         return [
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightPen,
+            // "Write"
             label: '글쓰기'.tr(),
             onTap: () => _openPostCreateForForum(context),
           ),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -215,6 +223,7 @@ class _AppScreenState extends State<AppScreen> {
           _buildCompanyEditMenuItem(context),
           AppFabMenuItem(
             icon: FontAwesomeIcons.lightQrcode,
+            // "Business Event"
             label: '업소이벤트'.tr(),
             onTap: () => CompanyEventScreen.push(context),
           ),
@@ -233,6 +242,7 @@ class _AppScreenState extends State<AppScreen> {
       icon: hasCompany
           ? FontAwesomeIcons.lightPenToSquare
           : FontAwesomeIcons.lightPlus,
+      // "Edit Business", "Register Business"
       label: hasCompany ? '업소 수정'.tr() : '업소 등록'.tr(),
       onTap: () {
         if (!UserService.isLoggedIn) {
@@ -255,18 +265,8 @@ class _AppScreenState extends State<AppScreen> {
     }
     showPostCategoryBottomSheet(
       context,
-      onSelected: (postId, category) async {
-        final result = await Navigator.of(context).push<dynamic>(
-          MaterialPageRoute(
-            builder: (_) =>
-                PostCreateScreen(postId: postId, category: category),
-          ),
-        );
-        if (result is Post && context.mounted) {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (_) => PostViewScreen(post: result)),
-          );
-        }
+      onSelected: (postId, category) {
+        PostCreateScreen.push(context, postId: postId, category: category);
       },
     );
   }
@@ -278,13 +278,10 @@ class _AppScreenState extends State<AppScreen> {
       return;
     }
     final nav = AppNavigationState.of(context);
-    Navigator.of(context).push<dynamic>(
-      MaterialPageRoute(
-        builder: (_) => PostCreateScreen(
-          postId: nav.selectedPostId,
-          category: nav.selectedCategory,
-        ),
-      ),
+    PostCreateScreen.push(
+      context,
+      postId: nav.selectedPostId,
+      category: nav.selectedCategory,
     );
   }
 }

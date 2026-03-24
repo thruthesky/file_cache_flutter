@@ -1,3 +1,4 @@
+import 'package:philgo/app/app.screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -19,14 +20,13 @@ import 'package:url_launcher/url_launcher.dart';
 /// 내 업소인 경우 수정 버튼이 표시된다.
 /// 하단에 방문 후기 섹션이 표시된다 (사진 썸네일 + 후기 CTA).
 class CompanyViewScreen extends StatefulWidget {
-  static const String routeName = '/CompanyView';
+  static const String routeName = '/company/view';
   static Function(BuildContext ctx, {required CompanyModel company}) push =
-      (ctx, {required company}) =>
-          ctx.push(routeName, extra: company);
+      (ctx, {required company}) => ctx.push(routeName, extra: company);
 
-  final CompanyModel company;
+  final GoRouterState state;
 
-  const CompanyViewScreen({super.key, required this.company});
+  const CompanyViewScreen({super.key, required this.state});
 
   @override
   State<CompanyViewScreen> createState() => _CompanyViewScreenState();
@@ -46,7 +46,15 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   @override
   void initState() {
     super.initState();
-    _company = widget.company;
+    // 1. extra에서 CompanyModel 가져오기 (일반 네비게이션)
+    if (widget.state.extra is CompanyModel) {
+      _company = widget.state.extra as CompanyModel;
+    } else {
+      // 2. query parameters fallback (딥링크)
+      final idx =
+          int.tryParse(widget.state.uri.queryParameters['idx'] ?? '') ?? 0;
+      _company = CompanyModel.minimal(idx: idx);
+    }
     _scrollController.addListener(_onScroll);
     _loadCompany();
     _loadReviews();
@@ -180,7 +188,9 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                 Icons.arrow_back,
                 color: _isCollapsed ? null : Colors.white,
               ),
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(context).canPop()
+                  ? Navigator.of(context).pop()
+                  : context.go(AppScreen.routeName),
             ),
             title: _isCollapsed
                 ? Text(_company.name, style: theme.textTheme.titleLarge)
@@ -193,10 +203,8 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     size: 20,
                     color: _isCollapsed ? null : Colors.white,
                   ),
-                  onPressed: () => CompanyQrCodeScreen.push(
-                    context,
-                    _company.idx,
-                  ),
+                  onPressed: () =>
+                      CompanyQrCodeScreen.push(context, _company.idx),
                 ),
               if (_isMyCompany)
                 IconButton(
@@ -235,6 +243,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
+                        // "Failed to load business info."
                         '업소 정보를 불러오지 못했습니다.'.tr(),
                         style: theme.textTheme.titleMedium,
                         textAlign: TextAlign.center,
@@ -246,6 +255,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                           FontAwesomeIcons.arrowRotateRight,
                           size: 16,
                         ),
+                        // "Try Again"
                         label: Text('다시 시도'.tr()),
                       ),
                     ],
@@ -264,6 +274,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                     // 1. 기본 정보
                     _buildSection(
+                      // "Business Info"
                       title: '업소 정보'.tr(),
                       icon: FontAwesomeIcons.building,
                       child: _buildCompanyInfoContent(),
@@ -273,6 +284,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 2. 연락처
                     if (_hasContactInfo()) ...[
                       _buildSection(
+                        // "Contact"
                         title: '연락처'.tr(),
                         icon: FontAwesomeIcons.addressBook,
                         child: _buildContactContent(),
@@ -283,6 +295,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
                     // 3. 설명
                     if (_company.description.isNotEmpty) ...[
                       _buildSection(
+                        // "Description"
                         title: '상세 설명'.tr(),
                         icon: FontAwesomeIcons.alignLeft,
                         child: _buildDescriptionContent(),
@@ -292,6 +305,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
 
                     // 4. 방문 후기
                     _buildSection(
+                      // "Visit Review"
                       title: '방문 후기'.tr(),
                       icon: FontAwesomeIcons.lightCommentDots,
                       child: _buildReviewsContent(),
@@ -455,6 +469,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
           const SizedBox(height: 16),
           _buildInfoRow(
             icon: FontAwesomeIcons.locationDot,
+            // "Location"
             label: '위치'.tr(),
             value: _getValidLocation(),
           ),
@@ -501,6 +516,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.phoneNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.phone,
+            // "Phone"
             label: '전화번호'.tr(),
             value: _company.phoneNumber,
             onTap: () => _launchUrl('tel:${_company.phoneNumber}'),
@@ -508,6 +524,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.mobileNumber.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.mobileScreen,
+            // "Mobile"
             label: '휴대폰'.tr(),
             value: _company.mobileNumber,
             onTap: () => _launchUrl('tel:${_company.mobileNumber}'),
@@ -515,6 +532,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.kakaotalkId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.comment,
+            // "KakaoTalk"
             label: '카카오톡'.tr(),
             value: _company.kakaotalkId,
             onTap: () =>
@@ -523,6 +541,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
         if (_company.telegramId.isNotEmpty)
           _buildContactItem(
             icon: FontAwesomeIcons.telegram,
+            // "Telegram"
             label: '텔레그램'.tr(),
             value: _company.telegramId,
             onTap: () => _launchUrl('https://t.me/${_company.telegramId}'),
@@ -653,6 +672,7 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
               ),
               const SizedBox(height: 12),
               Text(
+                // "No reviews yet"
                 '아직 후기가 없습니다'.tr(),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: scheme.onSurfaceVariant,

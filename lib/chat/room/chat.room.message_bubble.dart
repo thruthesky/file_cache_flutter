@@ -118,6 +118,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
+                      // "You"
                       '나'.tr(),
                       style: TextStyle(
                         fontSize: senderNameFontSize,
@@ -143,20 +144,28 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   if (isCurrentUser && (_canEdit() || _canDelete()))
                     GestureDetector(
                       onTap: () => _showMessageOptionsOrEditDelete(context),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 2, right: 4),
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 2, right: 4),
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.08),
+                          shape: BoxShape.circle,
+                        ),
                         child: FaIcon(
                           FontAwesomeIcons.ellipsis,
                           size: 14,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 150),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
                   // Message bubble content - max 80% width
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth:
-                          constraints.maxWidth * maxWidthFraction,
+                      maxWidth: constraints.maxWidth * maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -171,55 +180,56 @@ class ChatRoomMessageBubble extends StatelessWidget {
                         ],
                         if (message.text?.isNotEmpty == true)
                           Container(
-                              padding: textPadding,
-                              decoration: BoxDecoration(
-                                color: isCurrentUser
-                                    ? Theme.of(context).colorScheme.primary
-                                          .withValues(alpha: 50)
-                                    : Theme.of(context).colorScheme.onSecondary,
-                                borderRadius:
-                                    BorderRadius.circular(
-                                      bubbleBorderRadius,
-                                    ).copyWith(
-                                      bottomLeft: Radius.circular(
-                                        !isCurrentUser && showSenderInfo
-                                            ? bubbleTailRadius
-                                            : bubbleBorderRadius,
-                                      ),
-                                      bottomRight: Radius.circular(
-                                        isCurrentUser && showSenderInfo
-                                            ? bubbleTailRadius
-                                            : bubbleBorderRadius,
-                                      ),
+                            padding: textPadding,
+                            decoration: BoxDecoration(
+                              color: isCurrentUser
+                                  ? Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withValues(alpha: 50)
+                                  : Theme.of(context).colorScheme.onSecondary,
+                              borderRadius:
+                                  BorderRadius.circular(
+                                    bubbleBorderRadius,
+                                  ).copyWith(
+                                    bottomLeft: Radius.circular(
+                                      !isCurrentUser && showSenderInfo
+                                          ? bubbleTailRadius
+                                          : bubbleBorderRadius,
                                     ),
-                              ),
-                              child: SelectableLinkify(
-                                text: message.text!,
-                                style: TextStyle(
-                                  color: isCurrentUser
-                                      ? Theme.of(context).colorScheme.onPrimary
-                                      : Theme.of(context).colorScheme.secondary,
-                                  fontSize: messageFontSize,
-                                ),
-                                linkStyle: isCurrentUser
-                                    ? TextStyle(
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onPrimary,
-                                      )
-                                    : null,
-                                options: LinkifyOptions(humanize: false),
-                                onOpen: (link) async {
-                                  log(link.toString(), name: 'link:onOpen');
-
-                                  if (!await launchUrl(Uri.parse(link.url))) {
-                                    throw Exception(
-                                      'Could not launch ${link.url}',
-                                    );
-                                  }
-                                },
-                              ),
+                                    bottomRight: Radius.circular(
+                                      isCurrentUser && showSenderInfo
+                                          ? bubbleTailRadius
+                                          : bubbleBorderRadius,
+                                    ),
+                                  ),
                             ),
+                            child: SelectableLinkify(
+                              text: message.text!,
+                              style: TextStyle(
+                                color: isCurrentUser
+                                    ? Theme.of(context).colorScheme.onPrimary
+                                    : Theme.of(context).colorScheme.secondary,
+                                fontSize: messageFontSize,
+                              ),
+                              linkStyle: isCurrentUser
+                                  ? TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onPrimary,
+                                    )
+                                  : null,
+                              options: LinkifyOptions(humanize: false),
+                              onOpen: (link) async {
+                                log(link.toString(), name: 'link:onOpen');
+
+                                if (!await launchUrl(Uri.parse(link.url))) {
+                                  throw Exception(
+                                    'Could not launch ${link.url}',
+                                  );
+                                }
+                              },
+                            ),
+                          ),
 
                         SizedBox(height: timestampSpacing),
 
@@ -237,6 +247,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                             if (message.isEdited) ...[
                               SizedBox(width: 4),
                               Text(
+                                // "[NO TRANSLATION: (수정됨)]"
                                 '(수정됨)'.tr(),
                                 style: TextStyle(
                                   fontSize: timestampFontSize,
@@ -286,6 +297,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // "[NO TRANSLATION: 메시지 옵션]"
                     '메시지 옵션'.tr(),
                     style: TextStyle(
                       fontSize: bottomSheetHeaderFontSize,
@@ -295,6 +307,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
+                    // "Close"
                     tooltip: '닫기'.tr(),
                   ),
                 ],
@@ -310,6 +323,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   color: Theme.of(parentContext).colorScheme.primary,
                   size: 20,
                 ),
+                // "Edit"
                 title: Text('수정'.tr()),
                 onTap: () {
                   Navigator.of(context).pop();
@@ -326,6 +340,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   size: 20,
                 ),
                 title: Text(
+                  // "Delete"
                   '삭제'.tr(),
                   style: const TextStyle(color: Colors.red),
                 ),
@@ -381,6 +396,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     ),
                     const SizedBox(width: 12),
                     Text(
+                      // "[NO TRANSLATION: 메시지 수정]"
                       '메시지 수정'.tr(),
                       style: theme.textTheme.titleLarge?.copyWith(
                         color: colorScheme.onSurface,
@@ -402,6 +418,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    // "[NO TRANSLATION: 메시지를 입력하세요]"
                     hintText: '메시지를 입력하세요'.tr(),
                   ),
                 ),
@@ -438,6 +455,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Cancel"
                       child: Text('취소'.tr()),
                     ),
                     const SizedBox(width: 8),
@@ -460,6 +478,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
+                                // "[NO TRANSLATION: 수정에 실패했습니다]"
                                 content: Text('수정에 실패했습니다'.tr()),
                               ),
                             );
@@ -490,6 +509,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Save"
                       child: Text('저장'.tr()),
                     ),
                   ],
@@ -509,142 +529,180 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     showDialog(
       context: parentContext,
-      builder: (context) => Dialog(
-        elevation: dialogElevation,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(dialogBorderRadius),
-        ),
-        backgroundColor: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            color: colorScheme.surface,
-            border: Border.all(
-              color: colorScheme.outline,
-              width: dialogBorderWidth,
+      builder: (context) {
+        bool isDeleting = false;
+        return StatefulBuilder(
+          builder: (context, setState) => Dialog(
+            elevation: dialogElevation,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(dialogBorderRadius),
             ),
-            borderRadius: BorderRadius.circular(dialogBorderRadius),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Title
-              Padding(
-                padding: dialogTitlePadding,
-                child: Row(
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.lightTrashCan,
-                      color: colorScheme.error,
-                      size: dialogHeaderIconSize,
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      '메시지 삭제'.tr(),
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: colorScheme.onSurface,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+            backgroundColor: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                border: Border.all(
+                  color: colorScheme.outline,
+                  width: dialogBorderWidth,
                 ),
+                borderRadius: BorderRadius.circular(dialogBorderRadius),
               ),
-              // Content
-              Padding(
-                padding: dialogBodyPadding,
-                child: Text(
-                  '이 메시지를 삭제하시겠습니까?'.tr(),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: colorScheme.onSurface,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Title
+                  Padding(
+                    padding: dialogTitlePadding,
+                    child: Row(
+                      children: [
+                        FaIcon(
+                          FontAwesomeIcons.lightTrashCan,
+                          color: colorScheme.error,
+                          size: dialogHeaderIconSize,
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          // "[NO TRANSLATION: 메시지 삭제]"
+                          '메시지 삭제'.tr(),
+                          style: theme.textTheme.titleLarge?.copyWith(
+                            color: colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              // Actions
-              Padding(
-                padding: dialogActionsPadding,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(0),
-                        shape: WidgetStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              actionButtonBorderRadius,
-                            ),
-                            side: BorderSide(
-                              color: colorScheme.outline,
-                              width: actionButtonBorderWidth,
-                            ),
-                          ),
-                        ),
-                        backgroundColor: WidgetStateProperty.all(
-                          colorScheme.surface,
-                        ),
-                        foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onSurface,
-                        ),
-                        padding: WidgetStateProperty.all(actionButtonPadding),
-                        textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
-                        ),
+                  // Content
+                  Padding(
+                    padding: dialogBodyPadding,
+                    child: Text(
+                      // "[NO TRANSLATION: 이 메시지를 삭제하시겠습니까?]"
+                      '이 메시지를 삭제하시겠습니까?'.tr(),
+                      style: theme.textTheme.bodyLarge?.copyWith(
+                        color: colorScheme.onSurface,
                       ),
-                      child: Text('취소'.tr()),
                     ),
-                    const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await ChatService.instance.deleteMessage(
-                            roomId: roomId!,
-                            messageId: message.id!,
-                          );
-                          if (context.mounted) Navigator.of(context).pop();
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('삭제에 실패했습니다'.tr()),
+                  ),
+                  // Actions
+                  Padding(
+                    padding: dialogActionsPadding,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        ElevatedButton(
+                          onPressed: isDeleting
+                              ? null
+                              : () => Navigator.of(context).pop(),
+                          style: ButtonStyle(
+                            elevation: WidgetStateProperty.all(0),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  actionButtonBorderRadius,
+                                ),
+                                side: BorderSide(
+                                  color: colorScheme.outline,
+                                  width: actionButtonBorderWidth,
+                                ),
                               ),
-                            );
-                          }
-                        }
-                      },
-                      style: ButtonStyle(
-                        elevation: WidgetStateProperty.all(0),
-                        shape: WidgetStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              actionButtonBorderRadius,
                             ),
-                            side: BorderSide(
-                              color: colorScheme.error,
-                              width: actionButtonBorderWidth,
+                            backgroundColor: WidgetStateProperty.all(
+                              colorScheme.surface,
+                            ),
+                            foregroundColor: WidgetStateProperty.all(
+                              colorScheme.onSurface,
+                            ),
+                            padding: WidgetStateProperty.all(
+                              actionButtonPadding,
+                            ),
+                            textStyle: WidgetStateProperty.all(
+                              theme.textTheme.bodyMedium,
                             ),
                           ),
+                          // "Cancel"
+                          child: Text('취소'.tr()),
                         ),
-                        backgroundColor: WidgetStateProperty.all(
-                          colorScheme.error,
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: isDeleting
+                              ? null
+                              : () async {
+                                  // setState(() => isDeleting = true);
+                                  if (context.mounted) {
+                                    isDeleting = true;
+                                    setState(() {});
+                                  }
+
+                                  try {
+                                    await ChatService.instance.deleteMessage(
+                                      roomId: roomId!,
+                                      messageId: message.id!,
+                                    );
+                                    if (context.mounted) {
+                                      Navigator.of(context).pop();
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      setState(() => isDeleting = false);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          // "[NO TRANSLATION: 삭제에 실패했습니다]"
+                                          content: Text('삭제에 실패했습니다'.tr()),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                          style: ButtonStyle(
+                            elevation: WidgetStateProperty.all(0),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  actionButtonBorderRadius,
+                                ),
+                                side: BorderSide(
+                                  color: colorScheme.error,
+                                  width: actionButtonBorderWidth,
+                                ),
+                              ),
+                            ),
+                            backgroundColor: WidgetStateProperty.all(
+                              colorScheme.error,
+                            ),
+                            foregroundColor: WidgetStateProperty.all(
+                              colorScheme.onError,
+                            ),
+                            padding: WidgetStateProperty.all(
+                              actionButtonPadding,
+                            ),
+                            textStyle: WidgetStateProperty.all(
+                              theme.textTheme.bodyMedium,
+                            ),
+                          ),
+                          // "Delete"
+                          child: isDeleting
+                              ? SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: colorScheme.onError,
+                                  ),
+                                )
+                              : Text('삭제'.tr()),
                         ),
-                        foregroundColor: WidgetStateProperty.all(
-                          colorScheme.onError,
-                        ),
-                        padding: WidgetStateProperty.all(actionButtonPadding),
-                        textStyle: WidgetStateProperty.all(
-                          theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                      child: Text('삭제'.tr()),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -653,8 +711,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
     return Padding(
       padding: messagePadding,
       child: Row(
-        mainAxisAlignment:
-            isCurrentUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isCurrentUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           Container(
             padding: textPadding,
@@ -672,6 +731,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 ),
                 SizedBox(width: blockedIconSpacing),
                 Text(
+                  // "[NO TRANSLATION: 삭제된 메시지입니다]"
                   '삭제된 메시지입니다'.tr(),
                   style: TextStyle(
                     color: blockedTextColor,
@@ -716,9 +776,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
           padding: protocolPadding,
           decoration: BoxDecoration(
             color: protocolBgColor,
-            borderRadius: BorderRadius.circular(
-              protocolBorderRadius,
-            ),
+            borderRadius: BorderRadius.circular(protocolBorderRadius),
           ),
           child: Text(
             protocolText,
@@ -740,14 +798,19 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
     switch (message.protocol) {
       case ChatProtocol.create:
+        // "Room has been created"
         return '채팅방이 생성되었습니다'.tr();
       case ChatProtocol.join:
+        // "{} has joined the room"
         return '{}님이 입장했습니다'.tr(args: [senderName]);
       case ChatProtocol.invitationNotSent:
+        // "Invitation not sent"
         return '초대가 전송되지 않았습니다'.tr();
       case ChatProtocol.left:
+        // "{} left the room"
         return '{}님이 퇴장했습니다'.tr(args: [senderName]);
       case ChatProtocol.removed:
+        // "{} has been removed from the room"
         return '{}님이 방에서 제거되었습니다'.tr(args: [senderName]);
       default:
         // Fallback to the message text if protocol is not recognized
@@ -766,11 +829,13 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
   /// Get user display name
   String userDisplayName() {
+    // "No name"
     if (sender == null) return '이름없음'.tr();
 
     if (sender!.nickname.isNotEmpty) {
       return sender!.nickname;
     } else {
+      // "No name"
       return '이름없음'.tr();
     }
   }
@@ -811,10 +876,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 );
               }
             },
-            child: DisplayThumbnail(
-              url: urls[i],
-              size: bubbleImageWidth,
-            ),
+            child: DisplayThumbnail(url: urls[i], size: bubbleImageWidth),
           ),
           // Add spacing between files except for the last one
           if (i < urls.length - 1) SizedBox(height: imageSpacing),
@@ -856,8 +918,10 @@ class ChatRoomMessageBubble extends StatelessWidget {
   Widget _buildBlindedMessage(BuildContext context) {
     String blindReason = '';
     if (message.moderated == 'M') {
+      // "This message was blocked by AI moderation."
       blindReason = '이 메시지는 AI 검토에 의해 차단되었습니다.'.tr();
     } else if (message.moderated == 'A') {
+      // "This message was blocked as an advertisement."
       blindReason = '이 메시지는 광고로 차단되었습니다.'.tr();
     }
 
@@ -899,6 +963,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   ] else ...[
                     // "You" text for current user
                     Text(
+                      // "You"
                       '나'.tr(),
                       style: TextStyle(
                         fontSize: senderNameFontSize,
@@ -923,8 +988,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   // Blinded message content - max 80% width
                   ConstrainedBox(
                     constraints: BoxConstraints(
-                      maxWidth:
-                          constraints.maxWidth * maxWidthFraction,
+                      maxWidth: constraints.maxWidth * maxWidthFraction,
                     ),
                     child: Column(
                       crossAxisAlignment: isCurrentUser
@@ -963,9 +1027,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                                     size: blockedIconSize,
                                     color: blockedTextColor,
                                   ),
-                                  SizedBox(
-                                    width: blockedIconSpacing,
-                                  ),
+                                  SizedBox(width: blockedIconSpacing),
                                   Text(
                                     blindReason,
                                     style: TextStyle(
@@ -1018,14 +1080,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.block,
-                color: blockedTextColor,
-                size: blockedIconSize,
-              ),
+              Icon(Icons.block, color: blockedTextColor, size: blockedIconSize),
               SizedBox(width: avatarNameSpacing),
               Flexible(
                 child: Text(
+                  // "This message was blocked."
                   '이 메시지는 차단되었습니다.'.tr(),
                   style: TextStyle(
                     color: blockedTextColor,
@@ -1066,6 +1125,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // "Menu"
                     '메뉴'.tr(),
                     style: TextStyle(
                       fontSize: bottomSheetHeaderFontSize,
@@ -1075,6 +1135,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
+                    // "Close"
                     tooltip: '닫기'.tr(),
                   ),
                 ],
@@ -1085,6 +1146,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: 8),
               visualDensity: const VisualDensity(horizontal: -4),
               leading: userAvatar(),
+              // "Profile"
               title: Text('프로필'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
@@ -1094,6 +1156,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             SizedBox(height: bottomSheetItemSpacing),
             ListTile(
               leading: const Icon(Icons.post_add),
+              // "Recent Posts"
               title: Text('최근 글'.tr()),
               onTap: () {
                 Navigator.of(context).pop();
@@ -1107,6 +1170,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
             // Report option
             ListTile(
               leading: const Icon(Icons.report, color: Colors.red),
+              // "Report"
               title: Text('신고'.tr(), style: const TextStyle(color: Colors.red)),
               onTap: () {
                 Navigator.of(context).pop();
@@ -1126,6 +1190,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 yes: () => ListTile(
                   leading: Icon(Icons.person_add, color: Colors.green),
                   title: Text(
+                    // "Unblock User"
                     '차단 해제'.tr(),
                     style: TextStyle(color: Colors.green),
                   ),
@@ -1137,6 +1202,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 no: () => ListTile(
                   leading: Icon(Icons.block, color: Colors.orange),
                   title: Text(
+                    // "Block User"
                     '사용자 차단'.tr(),
                     style: TextStyle(color: Colors.orange),
                   ),
@@ -1199,6 +1265,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // "Blocked User Options"
                     '차단된 사용자 옵션'.tr(),
                     style: TextStyle(
                       fontSize: bottomSheetHeaderFontSize,
@@ -1208,6 +1275,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   IconButton(
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close),
+                    // "Close"
                     tooltip: '닫기'.tr(),
                   ),
                 ],
@@ -1222,6 +1290,7 @@ class ChatRoomMessageBubble extends StatelessWidget {
                 userDisplayName(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
+              // "This message was blocked."
               subtitle: Text('이 메시지는 차단되었습니다.'.tr()),
             ),
             SizedBox(height: bottomSheetItemSpacing),
@@ -1230,9 +1299,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.person_add, color: Colors.green),
               title: Text(
+                // "Unblock User"
                 '차단 해제'.tr(),
                 style: const TextStyle(color: Colors.green),
               ),
+              // "Unblock this user to view their messages."
               subtitle: Text('이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.'.tr()),
               onTap: () {
                 Navigator.of(context).pop();

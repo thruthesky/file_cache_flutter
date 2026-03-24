@@ -19,6 +19,7 @@ class EmptyPostList extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
+            // "No posts"
             '게시글이 없습니다'.tr(),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 16),
           ),

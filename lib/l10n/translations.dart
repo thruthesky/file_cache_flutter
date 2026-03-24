@@ -23,6 +23,7 @@ class Translations {
     // 하단 네비게이션
     '홈': '홈',
     '게시판': '게시판',
+    '게시판을 선택해주세요': '게시판을 선택해주세요',
     '채팅': '채팅',
     '업소록': '업소록',
     '메뉴': '메뉴',
@@ -188,6 +189,11 @@ class Translations {
     '이 메시지는 광고로 차단되었습니다.': '이 메시지는 광고로 차단되었습니다.',
     '이 메시지는 차단되었습니다.': '이 메시지는 차단되었습니다.',
     '닫기': '닫기',
+    '업데이트 필요': '업데이트 필요',
+    '새로운 버전이 출시되었습니다.': '새로운 버전이 출시되었습니다.',
+    '더 나은 서비스를 위해 앱을 업데이트해 주세요.': '더 나은 서비스를 위해 앱을 업데이트해 주세요.',
+    '업데이트가 안되면 앱을 삭제 후 다시 설치해 주세요.': '업데이트가 안되면 앱을 삭제 후 다시 설치해 주세요.',
+    '업데이트': '업데이트',
     '차단 해제': '차단 해제',
     '사용자 차단': '사용자 차단',
     '차단된 사용자 옵션': '차단된 사용자 옵션',
@@ -258,6 +264,7 @@ class Translations {
     '{시간}시간 전': '{시간}시간 전',
     '{일}일 전': '{일}일 전',
     '마지막 접속: {시간}': '마지막 접속: {시간}',
+    '삭제에 실패했습니다': '삭제에 실패했습니다',
 
     // 메뉴 추가
     '운영자 문의': '운영자 문의',
@@ -365,6 +372,7 @@ class Translations {
     '예: 필고 카페': '예: 필고 카페',
     '업소명을 입력하세요': '업소명을 입력하세요',
     '카테고리': '카테고리',
+    '카테고리를 선택해주세요': '카테고리를 선택해주세요',
     '한줄 소개': '한줄 소개',
     '예: 필리핀 최고의 한인 카페': '예: 필리핀 최고의 한인 카페',
     '상세 설명': '상세 설명',
@@ -759,6 +767,7 @@ class Translations {
     // 하단 네비게이션
     '홈': 'Home',
     '게시판': 'Forum',
+    '게시판을 선택해주세요': 'Please select a forum',
     '채팅': 'Chat',
     '업소록': 'Company',
     '메뉴': 'Menu',
@@ -926,6 +935,11 @@ class Translations {
     '이 메시지는 광고로 차단되었습니다.': 'This message was blocked as an advertisement.',
     '이 메시지는 차단되었습니다.': 'This message was blocked.',
     '닫기': 'Close',
+    '업데이트 필요': 'Update Required',
+    '새로운 버전이 출시되었습니다.': 'A new version has been released.',
+    '더 나은 서비스를 위해 앱을 업데이트해 주세요.': 'Please update the app for a better experience.',
+    '업데이트가 안되면 앱을 삭제 후 다시 설치해 주세요.': 'If the update fails, please uninstall and reinstall the app.',
+    '업데이트': 'Update',
     '차단 해제': 'Unblock User',
     '사용자 차단': 'Block User',
     '차단된 사용자 옵션': 'Blocked User Options',
@@ -997,6 +1011,7 @@ class Translations {
     '{시간}시간 전': '{시간}h ago',
     '{일}일 전': '{일}d ago',
     '마지막 접속: {시간}': 'Last seen: {시간}',
+    '삭제에 실패했습니다': 'Failed to delete',
 
     // 메뉴 추가
     '운영자 문의': 'Contact Admin',
@@ -1101,6 +1116,7 @@ class Translations {
     '예: 필고 카페': 'e.g. PhilGo Cafe',
     '업소명을 입력하세요': 'Please enter business name',
     '카테고리': 'Category',
+    '카테고리를 선택해주세요': 'Please select a category',
     '한줄 소개': 'Short Introduction',
     '예: 필리핀 최고의 한인 카페': 'e.g. Best Korean cafe in the Philippines',
     '상세 설명': 'Description',

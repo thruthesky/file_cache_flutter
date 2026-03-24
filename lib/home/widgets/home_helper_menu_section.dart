@@ -11,7 +11,7 @@ import 'package:philgo/currency/currency.screen.dart';
 import 'package:philgo/info/essential_info.screen.dart';
 import 'package:philgo/info/info_view.screen.dart';
 import 'package:philgo/notice/notice.screen.dart';
-import 'package:philgo/user/edit/user.edit.screen.dart';
+import 'package:philgo/home/widgets/home_profile_menu_item.dart';
 import 'package:philgo/weather/weather.screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -58,10 +58,8 @@ class HomeHelperMenuSection extends StatelessWidget {
         spacing: 12,
         runSpacing: 8,
         children: [
-          // 내 정보 (항상 첫 번째)
-          _buildItem(context, '내 정보', FontAwesomeIcons.circleUser,
-              const Color(0xFF5C6BC0), null,
-              onTap: () => UserEditScreen.push(context)),
+          // 내 정보 (항상 첫 번째 — 프로필 사진 표시)
+          const HomeProfileMenuItem(),
 
           // 업소이벤트 (설정 활성화 시 표시)
           if (flags.qr)

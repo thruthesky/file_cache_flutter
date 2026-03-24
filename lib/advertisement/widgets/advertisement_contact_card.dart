@@ -183,20 +183,30 @@ class AdvertisementContactCard extends StatelessWidget {
       };
 
   String get _title => switch (type) {
+        // "KakaoTalk"
         ContactType.kakaotalk => '카카오톡'.tr(),
+        // "Telegram"
         ContactType.telegram => '텔레그램'.tr(),
+        // "Phone/SMS"
         ContactType.phone => '전화/문자'.tr(),
         ContactType.wechat => 'WeChat',
         ContactType.line => 'LINE',
+        // "Facebook Messenger"
         ContactType.messenger => '페이스북 메신저'.tr(),
       };
 
   String get _description => switch (type) {
+        // "Tap to add KakaoTalk friend"
         ContactType.kakaotalk => '터치하여 카카오톡 친구 추가'.tr(),
+        // "Tap to start Telegram chat"
         ContactType.telegram => '터치하여 텔레그램 대화 시작'.tr(),
+        // "Tap to send SMS"
         ContactType.phone => '터치하여 문자 보내기'.tr(),
+        // "Scan the QR code"
         ContactType.wechat => 'QR 코드를 스캔하세요'.tr(),
+        // "Tap to add LINE friend"
         ContactType.line => '터치하여 라인 친구 추가'.tr(),
+        // "Tap to start Messenger chat"
         ContactType.messenger => '터치하여 메신저 대화 시작'.tr(),
       };
 }

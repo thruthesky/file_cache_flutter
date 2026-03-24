@@ -89,6 +89,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
+        // "QR code saved to gallery."
         SnackBar(content: Text('QR 코드가 갤러리에 저장되었습니다.'.tr())),
       );
     }
@@ -96,21 +97,37 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
 
   String _getCategoryDisplayName(String categoryId) {
     final categoryMap = {
+      // "Government"
       'public-office': '관공서'.tr(),
+      // "Education"
       'education': '교육'.tr(),
+      // "Food & Drink"
       'food': '음식/음료'.tr(),
+      // "Transportation"
       'transport': '교통'.tr(),
+      // "Health/Hospital"
       'hospital': '건강/병원'.tr(),
+      // "Shopping/Mart"
       'mart': '쇼핑/마트'.tr(),
+      // "Bank/Finance"
       'bank': '은행/금융'.tr(),
+      // "Electronics"
       'gadget': '전자제품'.tr(),
+      // "Travel/Tourism"
       'travel-agency': '여행/관광'.tr(),
+      // "Hotel"
       'hotel': '호텔'.tr(),
+      // "Rent a Car"
       'rentcar': '렌터카'.tr(),
+      // "Beauty/Wellness"
       'beauty': '미용/웰빙'.tr(),
+      // "Real Estate"
       'real-estate': '부동산'.tr(),
+      // "Entertainment"
       'ktv': '엔터테인먼트'.tr(),
+      // "Spa/Relaxation"
       'spa': '스파/휴식'.tr(),
+      // "Other Services"
       'etc': '기타 서비스'.tr(),
     };
     return categoryMap[categoryId.toLowerCase()] ?? categoryId;
@@ -120,6 +137,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "View QR Code"
         title: Text('QR 코드 보기'.tr(), style: text.titleLarge),
         backgroundColor: color.surface,
         elevation: 0,
@@ -148,6 +166,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
             ),
             const SizedBox(height: 16),
             Text(
+              // "Loading..."
               '로딩 중...'.tr(),
               style: text.bodyMedium?.copyWith(color: color.onSurfaceVariant),
             ),
@@ -184,6 +203,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
                   _loadCompany();
                 },
                 icon: const FaIcon(FontAwesomeIcons.arrowRotateRight, size: 16),
+                // "Try Again"
                 label: Text('다시 시도'.tr()),
               ),
             ],
@@ -229,6 +249,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
               const SizedBox(width: 8),
               Flexible(
                 child: Text(
+                  // "Scan this QR code to participate in PhilGo business events."
                   '이 QR 코드를 스캔하여 필고 업소 이벤트에 참가하세요.'.tr(),
                   style: text.bodyMedium?.copyWith(
                     color: color.onSurfaceVariant,
@@ -407,6 +428,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
           ),
           const SizedBox(height: 8),
           Text(
+            // "Join Event"
             '이벤트 참여'.tr(),
             style: text.bodyLarge?.copyWith(
               color: color.onPrimary.withValues(alpha: 0.9),
@@ -465,6 +487,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
             ),
             const SizedBox(height: 24),
             Text(
+              // "QR code for this business is not yet available.\nPlease wait for admin approval."
               '이 업소의 QR 코드는 아직 사용할 수 없습니다.\n관리자 승인을 기다려 주세요.'.tr(),
               style: text.bodyLarge?.copyWith(color: color.onSurfaceVariant),
               textAlign: TextAlign.center,
@@ -508,6 +531,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
+              // "Warning: Businesses that misuse this QR code will be removed from the directory."
               '주의: 본 QR 코드를 부정 사용하는 업소는 업소 목록에서 삭제가 됩니다.'.tr(),
               style: text.bodyMedium?.copyWith(
                 color: color.error,
@@ -541,6 +565,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
                   size: 14,
                   color: color.onSurface,
                 ),
+                // "Share"
                 label: Text('공유'.tr()),
               ),
             ),
@@ -553,6 +578,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
                   size: 14,
                   color: color.onPrimary,
                 ),
+                // "Download"
                 label: Text('다운로드'.tr()),
               ),
             ),
@@ -568,6 +594,7 @@ class _CompanyQrCodeScreenState extends State<CompanyQrCodeScreen> {
                   size: 14,
                   color: color.onSurface,
                 ),
+                // "View Business"
                 label: Text('업소 보기'.tr()),
               ),
             ),

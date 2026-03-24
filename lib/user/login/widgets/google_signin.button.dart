@@ -45,6 +45,7 @@ class GoogleSignInButton extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
+                    // "Sign in with Google"
                     'Google로 로그인'.tr(),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -80,6 +81,7 @@ class GoogleSignInButton extends StatelessWidget {
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,
+      // "[NO TRANSLATION: Google 로그인 성공!]"
       ).showSnackBar(SnackBar(content: Text('Google 로그인 성공!'.tr())));
 
       context.pop();

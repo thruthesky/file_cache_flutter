@@ -83,6 +83,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        // "Invalid QR code."
         content: Text('유효하지 않은 QR 코드입니다.'.tr()),
         backgroundColor: Theme.of(context).colorScheme.error,
         duration: const Duration(seconds: 2),
@@ -98,6 +99,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        // "Scan QR Code"
         title: Text('QR 코드 스캔'.tr()),
         elevation: 0,
         backgroundColor: Colors.black,
@@ -120,6 +122,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
+                      // "Camera is unavailable."
                       '카메라를 사용할 수 없습니다.'.tr(),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: Colors.white,
@@ -157,6 +160,7 @@ class _QrScannerScreenState extends State<QrScannerScreen> {
         ),
         const SizedBox(height: 24),
         Text(
+          // "Align the business QR code within the frame"
           '업소의 QR 코드를 프레임 안에 맞춰주세요'.tr(),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: Colors.white.withValues(alpha: 0.9),

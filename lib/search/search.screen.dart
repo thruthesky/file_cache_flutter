@@ -106,6 +106,7 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 Icon(Icons.chevron_left, color: color.onSurface, size: 28),
                 Text(
+                  // "Back"
                   '돌아가기'.tr(),
                   style: text.bodyMedium?.copyWith(color: color.onSurface),
                 ),

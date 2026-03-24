@@ -214,15 +214,19 @@ class _ForumScreenState extends State<ForumScreen> {
       final confirm = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
+          // "Blocked Users"
           title: Text('차단된 사용자'.tr()),
+          // "This user is blocked. Do you want to unblock them to view the post?"
           content: Text('차단된 사용자입니다. 차단을 해제하고 글을 보시겠습니까?'.tr()),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
+              // "Cancel"
               child: Text('취소'.tr()),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
+              // "Unblock User"
               child: Text('차단 해제'.tr()),
             ),
           ],

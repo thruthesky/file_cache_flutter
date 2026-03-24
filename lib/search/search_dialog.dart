@@ -99,6 +99,7 @@ class _SearchDialogState extends State<SearchDialog> {
                   ),
                   const SizedBox(width: 12),
                   Text(
+                    // "Search"
                     '검색'.tr(),
                     style: text.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -142,6 +143,7 @@ class _SearchDialogState extends State<SearchDialog> {
                     focusNode: _focusNode,
                     style: text.bodyLarge,
                     decoration: InputDecoration(
+                      // "Search"
                       hintText: '${'검색'.tr()}...',
                       hintStyle: text.bodyLarge?.copyWith(
                         color: color.onSurfaceVariant.withValues(alpha: 0.6),
@@ -224,6 +226,7 @@ class _SearchDialogState extends State<SearchDialog> {
                                     ),
                                     const SizedBox(width: 8),
                                     Text(
+                                      // "Cancel"
                                       '취소'.tr(),
                                       style: text.labelLarge?.copyWith(
                                         color: color.onSurfaceVariant,
@@ -275,6 +278,7 @@ class _SearchDialogState extends State<SearchDialog> {
                                     ),
                                     const SizedBox(width: 10),
                                     Text(
+                                      // "Search"
                                       '검색'.tr(),
                                       style: text.labelLarge?.copyWith(
                                         color: color.onPrimary,

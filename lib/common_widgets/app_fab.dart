@@ -170,6 +170,7 @@ class _EventFabButton extends StatelessWidget {
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Tooltip(
+            // "Event Entry"
             message: '이벤트응모'.tr(),
             child: Center(
               child: IconTheme(

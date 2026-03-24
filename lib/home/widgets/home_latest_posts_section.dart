@@ -233,6 +233,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
                 ).openForumScreen(postId: postId, category: category);
               },
               child: Text(
+                // "More"
                 '더보기'.tr(),
                 style: text.labelSmall?.copyWith(color: color.primary),
               ),

@@ -79,6 +79,7 @@ class _CommentListViewState extends State<CommentListView> {
               ),
               const SizedBox(width: 6),
               Text(
+                // "Comments"
                 '${'댓글'.tr()} ${widget.noOfComment}',
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: scheme.onSurfaceVariant,
@@ -99,6 +100,7 @@ class _CommentListViewState extends State<CommentListView> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: Text(
+              // "No comments yet."
               '댓글이 없습니다.'.tr(),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: scheme.onSurfaceVariant,

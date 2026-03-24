@@ -121,7 +121,9 @@ class _CompanyQrCodeScannedScreenState
     if (rawError == null) {
       return (
         icon: FontAwesomeIcons.lightCircleExclamation,
+        // "Scan Error"
         title: '스캔 오류'.tr(),
+        // "An unknown error occurred."
         description: '알 수 없는 오류가 발생했습니다.'.tr(),
         extra: null,
       );
@@ -134,7 +136,9 @@ class _CompanyQrCodeScannedScreenState
       final lastVisitTime = parts.length > 1 ? parts[1] : '';
       return (
         icon: FontAwesomeIcons.lightClockRotateLeft,
+        // "Duplicate scan within 24 hours"
         title: '24시간 이내 중복 스캔'.tr(),
+        // "You can only scan once per business within 24 hours."
         description: '동일 업소에서 24시간 이내에는 1회만 스캔할 수 있습니다.'.tr(),
         extra: lastVisitTime.isNotEmpty ? '이전 방문: $lastVisitTime' : null,
       );
@@ -143,7 +147,9 @@ class _CompanyQrCodeScannedScreenState
     if (msg.contains('만료된')) {
       return (
         icon: FontAwesomeIcons.lightHourglassEnd,
+        // "Expired QR Code"
         title: '만료된 QR 코드'.tr(),
+        // "This QR code has expired. Please request a new one from the business."
         description: 'QR 코드가 만료되었습니다. 업소에서 새로운 QR 코드를 요청해 주세요.'.tr(),
         extra: null,
       );
@@ -152,7 +158,9 @@ class _CompanyQrCodeScannedScreenState
     if (msg.contains('유효하지 않은')) {
       return (
         icon: FontAwesomeIcons.lightQrcode,
+        // "Invalid QR Code"
         title: '유효하지 않은 QR 코드'.tr(),
+        // "Please scan a valid PhilGo business QR code."
         description: '올바른 필고 업소 QR 코드를 스캔해 주세요.'.tr(),
         extra: null,
       );
@@ -161,7 +169,9 @@ class _CompanyQrCodeScannedScreenState
     if (msg.contains('비활성화')) {
       return (
         icon: FontAwesomeIcons.lightBan,
+        // "Disabled QR Code"
         title: '비활성화된 QR 코드'.tr(),
+        // "This business QR code has been disabled."
         description: '이 업소의 QR 코드가 비활성화되어 있습니다.'.tr(),
         extra: null,
       );
@@ -170,7 +180,9 @@ class _CompanyQrCodeScannedScreenState
     if (msg.contains('업소')) {
       return (
         icon: FontAwesomeIcons.lightBuilding,
+        // "Business Unavailable"
         title: '업소 확인 불가'.tr(),
+        // "Unable to verify business information."
         description: '업소 정보를 확인할 수 없습니다.'.tr(),
         extra: null,
       );
@@ -178,6 +190,7 @@ class _CompanyQrCodeScannedScreenState
 
     return (
       icon: FontAwesomeIcons.lightCircleExclamation,
+      // "Scan Error"
       title: '스캔 오류'.tr(),
       description: msg,
       extra: null,
@@ -220,6 +233,7 @@ class _CompanyQrCodeScannedScreenState
 
   Widget _buildAppBarTitle() {
     if (_company == null) {
+      // "Point Event"
       return Text('포인트 이벤트'.tr(), style: text.titleLarge);
     }
     final c = _company!;
@@ -274,6 +288,7 @@ class _CompanyQrCodeScannedScreenState
             ),
             const SizedBox(height: 16),
             Text(
+              // "Loading..."
               '로딩 중...'.tr(),
               style: text.bodyMedium?.copyWith(color: color.onSurfaceVariant),
             ),
@@ -308,18 +323,21 @@ class _CompanyQrCodeScannedScreenState
               children: [
                 const SizedBox(height: 8),
                 _buildSectionHeader(
+                  // "Business Info"
                   '업소 정보'.tr(),
                   FontAwesomeIcons.lightBuilding,
                 ),
                 _buildCompanyInfoCard(phoneDisplay, validAddress),
                 const SizedBox(height: 24),
                 _buildSectionHeader(
+                  // "Visitor Info"
                   '방문자 정보'.tr(),
                   FontAwesomeIcons.lightUser,
                 ),
                 _buildUserInfoSection(),
                 const SizedBox(height: 24),
                 _buildSectionHeader(
+                  // "QR Scan Result"
                   'QR 스캔 결과'.tr(),
                   FontAwesomeIcons.lightQrcode,
                 ),
@@ -432,6 +450,7 @@ class _CompanyQrCodeScannedScreenState
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
+                // "Details"
                 '상세보기'.tr(),
                 style: text.labelSmall?.copyWith(
                   color: color.primary,
@@ -556,6 +575,7 @@ class _CompanyQrCodeScannedScreenState
             ),
             const SizedBox(width: 8),
             Text(
+              // "Verifying QR code..."
               'QR 코드 검증 중...'.tr(),
               style: text.bodySmall?.copyWith(color: color.onSurfaceVariant),
             ),
@@ -624,6 +644,7 @@ class _CompanyQrCodeScannedScreenState
                       isSuccess
                           ? (companyName.isNotEmpty
                               ? '$companyName QR 스캔 성공!'
+                              // "QR code scan successful!"
                               : 'QR 코드 스캔 성공!'.tr())
                           : _scanResult!['message']?.toString() ?? '',
                       style: text.bodyMedium?.copyWith(
@@ -704,6 +725,7 @@ class _CompanyQrCodeScannedScreenState
                     color: color.primary),
                 const SizedBox(width: 6),
                 Text(
+                  // "Earn extra points!"
                   '추가 포인트를 받으세요!'.tr(),
                   style: text.bodySmall?.copyWith(
                     color: color.primary,
@@ -763,7 +785,9 @@ class _CompanyQrCodeScannedScreenState
                       const SizedBox(width: 12),
                       Text(
                         isRevisit
+                            // "Revisit Point Draw"
                             ? '재방문 포인트 추첨'.tr()
+                            // "Earn Points by Writing a Review"
                             : '후기 작성으로 포인트 받기'.tr(),
                         style: text.titleLarge?.copyWith(
                           color: color.onPrimary,
@@ -881,6 +905,7 @@ class _CompanyQrCodeScannedScreenState
               child: FilledButton.icon(
                 onPressed: () => context.pop(),
                 icon: const FaIcon(FontAwesomeIcons.lightArrowLeft, size: 16),
+                // "Back"
                 label: Text('돌아가기'.tr()),
               ),
             ).animate().fadeIn(duration: 400.ms, delay: 400.ms),

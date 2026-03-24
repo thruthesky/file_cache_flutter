@@ -127,6 +127,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                           : null,
                       title: company.name.isNotEmpty
                           ? company.name
+                          // "(No name)"
                           : '(이름 없음)'.tr(),
                       onTap: () => CompanyViewScreen.push(
                         context,
@@ -157,6 +158,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                           size: 48,
                         ),
                         const SizedBox(height: 16),
+                        // "No businesses registered"
                         Text('등록된 업소가 없습니다'.tr()),
                       ],
                     ),
@@ -165,10 +167,12 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // "Unable to load business. Please try again."
                         Text('업소를 가져올 수 없습니다. 다시 시도해주세요.'.tr()),
                         const SizedBox(height: 8),
                         TextButton(
                           onPressed: () => _pagingController.refresh(),
+                          // "Try Again"
                           child: Text('다시 시도'.tr()),
                         ),
                       ],
@@ -227,6 +231,7 @@ class _CompanyListScreenState extends State<CompanyListScreen> {
 
           // All + 16 categories = 17 items
           final items = <(String?, String, IconData)>[
+            // "All"
             (null, '전체'.tr(), FontAwesomeIcons.layerGroup),
             ..._categories.map((c) => (c.$1, c.$2.tr(), c.$3)),
           ];

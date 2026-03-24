@@ -66,6 +66,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       .scale(begin: const Offset(0.8, 0.8)),
                   const SizedBox(height: 20),
                   Text(
+                    // "Welcome to PhilGo"
                     '필고에 오신 것을 환영합니다'.tr(),
                     style: text.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -74,6 +75,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   ).animate().fadeIn(duration: 400.ms, delay: 100.ms),
                   const SizedBox(height: 8),
                   Text(
+                    // "Sign in with your social account"
                     '소셜 계정으로 간편하게 로그인하세요'.tr(),
                     style: text.bodyMedium?.copyWith(
                       color: color.onSurfaceVariant,
@@ -113,6 +115,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                         FaIcon(FontAwesomeIcons.lightFileContract, size: 13, color: color.primary),
                         const SizedBox(width: 4),
                         Text(
+                          // "Terms of Service"
                           '이용약관'.tr(),
                           style: text.bodySmall?.copyWith(
                             color: color.primary,
@@ -134,6 +137,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                         FaIcon(FontAwesomeIcons.lightShieldHalved, size: 13, color: color.primary),
                         const SizedBox(width: 4),
                         Text(
+                          // "Privacy Policy"
                           '개인정보처리방침'.tr(),
                           style: text.bodySmall?.copyWith(
                             color: color.primary,

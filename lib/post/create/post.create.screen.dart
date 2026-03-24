@@ -13,6 +13,7 @@ import 'package:philgo/point/point_advertisement.service.dart';
 import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/post/create/widgets/wanted_hiring_form.dart';
 import 'package:philgo/post/post.service.dart';
+import 'package:philgo/post/view/post.view.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -144,6 +145,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
 
   /// 카테고리 라벨 가져오기
   String _getCategoryLabel(String? category) {
+    // "[NO TRANSLATION: 카테고리 선택]"
     if (category == null) return '카테고리 선택'.tr();
     final found = Config.forumCategories.where(
       (c) => c.$1 == _selectedPostId && c.$2 == category,
@@ -190,6 +192,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     bottom: 8,
                   ),
                   child: Text(
+                    // "[NO TRANSLATION: 게시판을 선택해주세요]"
                     '게시판을 선택해주세요'.tr(),
                     style: text.titleMedium?.copyWith(
                       color: color.onSurfaceVariant,
@@ -282,6 +285,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                     bottom: 8,
                   ),
                   child: Text(
+                    // "[NO TRANSLATION: 카테고리를 선택해주세요]"
                     '카테고리를 선택해주세요'.tr(),
                     style: text.titleMedium?.copyWith(
                       color: color.onSurfaceVariant,
@@ -298,6 +302,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         final isSelected = _selectedCategory == null;
                         return ListTile(
                           title: Text(
+                            // "All"
                             '전체'.tr(),
                             style: isSelected
                                 ? TextStyle(
@@ -408,6 +413,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
           // 광고 등록 실패해도 글 작성은 성공이므로 알림만 표시
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
+              // "[NO TRANSLATION: 포인트 광고 등록 실패]"
               SnackBar(content: Text('${'포인트 광고 등록 실패'.tr()}: $e')),
             );
           }
@@ -415,12 +421,14 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       }
 
       if (!mounted) return;
-      // 생성된 게시글을 결과로 반환
-      Navigator.of(context).pop(post);
+      // 글 작성 화면을 닫고 글 보기 화면으로 이동
+      Navigator.of(context).pop();
+      PostViewScreen.push(context, post);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
+      // "Failed to create post"
       ).showSnackBar(SnackBar(content: Text('${'게시글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -439,6 +447,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
         foregroundColor: scheme.onSurface,
         elevation: 0,
         scrolledUnderElevation: 1,
+        // "Write"
         title: Text('글쓰기'.tr(), style: theme.textTheme.titleMedium),
         actions: [
           // 제출 버튼
@@ -592,6 +601,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
+                // "Title"
                 hintText: '제목'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -604,6 +614,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               maxLength: 255,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
+                  // "Please enter a title"
                   return '제목을 입력하세요'.tr();
                 }
                 return null;
@@ -615,6 +626,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
             TextFormField(
               controller: _contentController,
               decoration: InputDecoration(
+                // "Please enter content"
                 hintText: '내용을 입력하세요'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -628,6 +640,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
               minLines: 8,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
+                  // "Please enter content"
                   return '내용을 입력하세요'.tr();
                 }
                 return null;
@@ -674,7 +687,9 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                         const SizedBox(width: 8),
                         Text(
                           _advertisementDays != null
+                              // "Point Ad", "[NO TRANSLATION: 일]"
                               ? '${'포인트 광고'.tr()}: $_advertisementDays${'일'.tr()}'
+                              // "Point Ad"
                               : '포인트 광고'.tr(),
                           style: theme.textTheme.labelMedium?.copyWith(
                             color: _advertisementDays != null
@@ -725,6 +740,7 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
                       },
                       onError: (e) {
                         ScaffoldMessenger.of(context).showSnackBar(
+                          // "Upload failed"
                           SnackBar(content: Text('${'업로드 실패'.tr()}: $e')),
                         );
                       },

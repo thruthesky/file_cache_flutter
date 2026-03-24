@@ -55,6 +55,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
     if (_nicknameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(
         context,
+      // "Please enter your nickname."
       ).showSnackBar(SnackBar(content: Text('닉네임을 입력해 주세요.'.tr())));
       return;
     }
@@ -74,6 +75,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
       context.read<UserState>().setUser(updated);
       ScaffoldMessenger.of(
         context,
+      // "Profile saved."
       ).showSnackBar(SnackBar(content: Text('프로필이 저장되었습니다.'.tr())));
       Navigator.of(context).pop();
     } catch (e) {
@@ -94,6 +96,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        // "Edit Profile"
         title: Text('프로필 편집'.tr(), style: theme.textTheme.titleLarge),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1),
@@ -113,6 +116,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
             IconButton(
               onPressed: _save,
               icon: const FaIcon(FontAwesomeIcons.check),
+              // "Save"
               tooltip: '저장'.tr(),
             ),
         ],
@@ -130,6 +134,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
               /// [1] 프로필 사진 섹션
               _buildSection(
+                // "Profile Photo"
                 title: '프로필 사진'.tr(),
                 icon: FontAwesomeIcons.camera,
                 child: Center(
@@ -169,6 +174,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                     onTapDelete: () async {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                          // "Deleting photo..."
                           content: Text('사진을 삭제하는 중...'.tr()),
                           duration: const Duration(seconds: 2),
                         ),
@@ -217,6 +223,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                         Expanded(
                           child: _buildStatChip(
                             icon: FontAwesomeIcons.coins,
+                            // "Points"
                             label: '포인트'.tr(),
                             value:
                                 '${NumberFormat('#,###').format(user.point)}P',
@@ -227,6 +234,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                         Expanded(
                           child: _buildStatChip(
                             icon: FontAwesomeIcons.trophy,
+                            // "Level"
                             label: '레벨'.tr(),
                             value: 'Lv.${user.level}',
                             color: scheme.tertiary,
@@ -242,17 +250,20 @@ class _UserEditScreenState extends State<UserEditScreen> {
 
               /// [2] 기본 정보 섹션
               _buildSection(
+                    // "Basic Info"
                     title: '기본 정보'.tr(),
                     icon: FontAwesomeIcons.user,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // 닉네임
+                        // "Nickname"
                         _buildFieldLabel('닉네임'.tr(), FontAwesomeIcons.at),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _nicknameController,
                           decoration: InputDecoration(
+                            // "Enter your nickname."
                             hintText: '닉네임을 입력하세요.'.tr(),
                             border: const OutlineInputBorder(),
                           ),
@@ -260,11 +271,13 @@ class _UserEditScreenState extends State<UserEditScreen> {
                         const SizedBox(height: 20),
 
                         // 이름
+                        // "Name"
                         _buildFieldLabel('이름'.tr(), FontAwesomeIcons.idCard),
                         const SizedBox(height: 8),
                         TextFormField(
                           controller: _nameController,
                           decoration: InputDecoration(
+                            // "Enter your name."
                             hintText: '이름을 입력하세요.'.tr(),
                             border: const OutlineInputBorder(),
                           ),
@@ -296,6 +309,7 @@ class _UserEditScreenState extends State<UserEditScreen> {
                             )
                           : const FaIcon(FontAwesomeIcons.floppyDisk, size: 18),
                       label: Text(
+                        // "Save"
                         '저장'.tr(),
                         style: theme.textTheme.titleMedium?.copyWith(
                           color: scheme.onPrimary,

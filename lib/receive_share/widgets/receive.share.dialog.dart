@@ -35,8 +35,10 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
     }
 
     if (isSingleChatRoom(join.id)) {
+      // "no name"
       return join.userDisplayName.isNotEmpty ? join.userDisplayName : '이름 없음'.tr();
     } else {
+      // "No room name"
       return join.roomName.isNotEmpty ? join.roomName : '방 이름 없음'.tr();
     }
   }
@@ -70,6 +72,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             Row(
               children: [
                 Text(
+                  // "Receive Share"
                   '공유 받기'.tr(),
                   style: const TextStyle(
                     fontSize: 18,
@@ -91,7 +94,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                 children: [
                   Text(
                     Config.forumCategories.isNotEmpty
+                        // "Choose Post or Chat"
                         ? '게시글 또는 채팅 선택'.tr()
+                        // "Choose Chat"
                         : '채팅 선택'.tr(),
                   ),
                   Row(
@@ -102,6 +107,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                         Expanded(
                           child: ShareWhereButton(
                             onTap: () => setState(() => tab = 'post'),
+                            // "Create Post"
                             text: '게시글 작성'.tr(),
                             color: Colors.blue,
                             icon: FaIcon(
@@ -117,6 +123,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                           onTap: () {
                             setState(() => tab = 'chat');
                           },
+                          // "Send to chat friend"
                           text: '채팅 친구에게 보내기'.tr(),
                           color: Colors.orange,
                           icon: FaIcon(size: 64, FontAwesomeIcons.thinComments),
@@ -131,6 +138,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'chat') ...[
               Row(
                 children: [
+                  // "2. Select a friend to send"
                   Text('2. 보낼 친구를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),
@@ -167,7 +175,9 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
                                 child: CircularProgressIndicator.adaptive(),
                               )
                             : status[join.id] == 'sent'
+                            // "Open"
                             ? Text('열기'.tr())
+                            // "Send"
                             : Text('보내기'.tr()),
                       ),
                     ),
@@ -178,6 +188,7 @@ class _ReceiveShareDialogState extends State<ReceiveShareDialog> {
             if (tab == 'post') ...[
               Row(
                 children: [
+                  // "2. Select a category to post"
                   Text('2. 게시할 카테고리를 선택하세요'.tr()),
                   IconButton(
                     onPressed: () => setState(() => tab = ''),

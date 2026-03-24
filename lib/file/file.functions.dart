@@ -136,7 +136,18 @@ String? getYouTubeVideoId(String url) {
 }
 
 /// 상대 URL → 절대 URL 변환
+///
+/// 1. 상대 경로(/uploads/...)는 v7BaseUrl을 앞에 붙인다.
+/// 2. 절대 URL 중 philgo 서버 도메인(philgo.com, v7-local.philgo.com 등)은
+///    v7BaseUrl로 도메인을 교체한다. 로컬 개발 시 IP 기반 접속에서도
+///    이미지가 정상 표시되도록 하기 위함이다.
 String toAbsoluteUrl(String url) {
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return '${Config.v7BaseUrl}$url';
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return '${Config.v7BaseUrl}$url';
+  }
+  final uri = Uri.tryParse(url);
+  if (uri != null && uri.host.contains('philgo')) {
+    return '${Config.v7BaseUrl}${uri.path}';
+  }
+  return url;
 }

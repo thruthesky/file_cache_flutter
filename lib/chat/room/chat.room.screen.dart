@@ -1,35 +1,51 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:philgo/app/app.navigaton.state.dart';
 import 'package:philgo/app/app.screen.dart';
 import 'package:philgo/chat/chat.functions.dart';
 import 'package:philgo/chat/room/single.chat_room.dart';
 import 'package:philgo/chat/room/single.chat_room.message_list.dart';
+import 'package:philgo/globals.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/widgets/login.dart';
 
 import 'package:go_router/go_router.dart';
 
 class ChatRoomScreen extends StatefulWidget {
-  static const String routeName = '/chat/:id';
+  static const String routeName = '/chat/index';
   static Function(BuildContext ctx, String roomId) push = (ctx, roomId) =>
-      ctx.push(routeName.replaceFirst(':id', roomId));
+      ctx.push('$routeName?uid=$roomId');
   static Function(BuildContext ctx, String roomId) go = (ctx, roomId) =>
-      ctx.go(routeName.replaceFirst(':id', roomId));
+      ctx.go('$routeName?uid=$roomId');
 
   // helper for admin chat
-  static Function(BuildContext ctx) pushAdminChat = (ctx) => ctx.push(
-    routeName.replaceFirst(':id', SettingsState.of(ctx).adminChatUid),
-  );
+  static Function(BuildContext ctx) pushAdminChat = (ctx) =>
+      ctx.push('$routeName?uid=${SettingsState.of(ctx).adminChatUid}');
 
-  final String id; // This can be roomId or uid for single chat
+  final GoRouterState state;
 
-  const ChatRoomScreen({super.key, required this.id});
+  const ChatRoomScreen({super.key, required this.state});
 
   @override
   State<ChatRoomScreen> createState() => _ChatRoomScreenState();
 }
 
 class _ChatRoomScreenState extends State<ChatRoomScreen> {
+  String get id {
+    String id = widget.state.pathParameters['id'] ?? '';
+    if (id == '') {
+      id = widget.state.uri.queryParameters['uid'] ?? '';
+    }
+    return id;
+  }
+
+  @override
+  initState() {
+    super.initState();
+    Globals.screenName = 'ChatRoomScreen';
+    Globals.screenId = id;
+  }
+
   SingleChatRoomMessageListController messageListController =
       SingleChatRoomMessageListController();
 
@@ -37,22 +53,30 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   Widget build(BuildContext context) {
     return Login(
       builder: (uid) {
-        if (isSingleChatRoom(widget.id) || isFirebaseUid(widget.id)) {
-          return SingleChatRoom(id: widget.id);
+        if (isSingleChatRoom(id) || isFirebaseUid(id)) {
+          return SingleChatRoom(id: id);
         }
 
         return Scaffold(
+          // "Invalid Chat Room ID"
           appBar: AppBar(title: Text('잘못된 채팅방 ID'.tr())),
           body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             spacing: 16,
             children: [
+              // "Invalid Chat Room ID"
               Center(child: Text('잘못된 채팅방 ID'.tr())),
               ElevatedButton(
                 onPressed: () {
-                  context.go(AppScreen.routeName);
+                  if (context.mounted && context.canPop()) {
+                    context.pop();
+                  } else {
+                    AppNavigationState.of(context).openChatScreen();
+                    context.go(AppScreen.routeName);
+                  }
                 },
+                // "Go Back to Home"
                 child: Text('홈으로 돌아가기'.tr()),
               ),
             ],
@@ -63,7 +87,9 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
       // Loading of the Login of the user
       loading: loading(),
       notLoggedIn: Scaffold(
+        // "Login required"
         appBar: AppBar(title: Text('로그인이 필요합니다'.tr())),
+        // "Please log in to continue"
         body: Center(child: Text('로그인 후 이용해 주세요'.tr())),
       ),
     );

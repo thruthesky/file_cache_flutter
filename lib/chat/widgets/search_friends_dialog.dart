@@ -83,6 +83,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
     } catch (e) {
       // Handle error
       if (mounted) {
+        // "Failed to start chat: {}"
         showErrorSnackBar(context, '채팅 시작 실패: {}'.tr(args: [e.toString()]));
       }
     }
@@ -135,6 +136,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
+                  // "Find Friends"
                   Text('친구 검색'.tr(), style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
@@ -174,6 +176,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                       onChanged: _onSearchChanged,
                       style: textTheme.bodyLarge,
                       decoration: InputDecoration(
+                        // "Search by nickname"
                         hintText: '닉네임으로 검색'.tr(),
                         hintStyle: textTheme.bodyLarge?.copyWith(
                           color: colorScheme.onSurfaceVariant,
@@ -229,6 +232,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
+              // "Search by nickname"
               '닉네임으로 검색'.tr(),
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
@@ -250,6 +254,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
             ),
             SizedBox(height: dialogEmptySpacing),
             Text(
+              // "No users found"
               '사용자를 찾을 수 없습니다'.tr(),
               style: textTheme.bodyLarge?.copyWith(color: colorScheme.outline),
             ),
@@ -322,6 +327,7 @@ class _SearchFriendsDialogState extends State<SearchFriendsDialog> {
                     ),
                   ),
                   child: Text(
+                    // "Chat"
                     '채팅'.tr(),
                     style: textTheme.labelLarge?.copyWith(
                       color: colorScheme.onPrimary,

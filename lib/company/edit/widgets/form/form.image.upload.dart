@@ -41,11 +41,14 @@ class CompanyImageUploadForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormFieldLabel(
+            // "Logo Image"
             label: '로고 이미지'.tr(),
+            // "Business logo or profile image"
             hint: '업소의 로고 또는 프로필 이미지'.tr(),
             child: _UploadTile(
               imageUrl: logoUrl,
               icon: FontAwesomeIcons.image,
+              // "Select Logo"
               hint: '로고 선택'.tr(),
               aspectRatio: 1,
               module: 'company',
@@ -55,11 +58,14 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Cover Image"
             label: '대표 이미지'.tr(),
+            // "Main image shown in list and header"
             hint: '목록 및 상단에 표시되는 메인 이미지'.tr(),
             child: _UploadTile(
               imageUrl: titleImageUrl,
               icon: FontAwesomeIcons.panorama,
+              // "Select Cover Image"
               hint: '대표 이미지 선택'.tr(),
               aspectRatio: 16 / 9,
               module: 'company',
@@ -69,11 +75,14 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Business License"
             label: '사업자등록증'.tr(),
+            // "Upload your business license photo"
             hint: '사업자등록증 사진을 업로드하세요'.tr(),
             child: _UploadTile(
               imageUrl: businessLicenseUrl,
               icon: FontAwesomeIcons.fileContract,
+              // "Select Business License"
               hint: '사업자등록증 선택'.tr(),
               aspectRatio: 4 / 3,
               module: 'company',
@@ -83,11 +92,14 @@ class CompanyImageUploadForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Office/Store Interior Photo"
             label: '사무실/매장 내부 사진'.tr(),
+            // "Interior, menu, ambiance photos, etc."
             hint: '업소 내부, 메뉴, 분위기 사진 등'.tr(),
             child: _UploadTile(
               imageUrl: photoUrl,
               icon: FontAwesomeIcons.camera,
+              // "Select Photo"
               hint: '사진 선택'.tr(),
               aspectRatio: 4 / 3,
               module: 'company',
@@ -165,6 +177,7 @@ class _UploadTileState extends State<_UploadTile> {
                 ),
                 const SizedBox(width: 4),
                 Text(
+                  // "Change"
                   '변경'.tr(),
                   style: const TextStyle(color: Colors.white, fontSize: 12),
                 ),
@@ -200,6 +213,7 @@ class _UploadTileState extends State<_UploadTile> {
           ),
           const SizedBox(height: 4),
           Text(
+            // "Tap to select"
             '탭하여 선택'.tr(),
             style: TextStyle(fontSize: 11, color: scheme.outlineVariant),
           ),
@@ -254,6 +268,7 @@ class _UploadTileState extends State<_UploadTile> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
+                  // "Upload failed: {}"
                   '업로드 실패: {}'.tr(
                     args: [e.toString().replaceFirst('Exception: ', '')],
                   ),
@@ -299,6 +314,7 @@ class _UploadTileState extends State<_UploadTile> {
                 if (!context.mounted) return;
                 ScaffoldMessenger.of(
                   context,
+                // "Photo has been deleted"
                 ).showSnackBar(SnackBar(content: Text('사진이 삭제되었습니다'.tr())));
               },
               child: Container(

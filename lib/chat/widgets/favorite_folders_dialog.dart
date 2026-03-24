@@ -49,6 +49,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                     size: dialogHeaderIconSize,
                   ),
                   SizedBox(width: dialogItemSpacing),
+                  // "Favorites"
                   Text('즐겨찾기'.tr(), style: textTheme.titleMedium),
                   const Spacer(),
                   InkWell(
@@ -102,6 +103,7 @@ class FavoriteFoldersDialog extends StatelessWidget {
                         ),
                         SizedBox(height: dialogEmptySpacing),
                         Text(
+                          // "No favorites yet"
                           '즐겨찾기가 없습니다'.tr(),
                           style: textTheme.bodyLarge?.copyWith(
                             color: colorScheme.outline,

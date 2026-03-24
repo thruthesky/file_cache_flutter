@@ -47,19 +47,24 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
   }
 
   Future<void> _unblock(BlockedUserModel user) async {
+    // "No name"
     final name = user.nickname.isNotEmpty ? user.nickname : '이름없음'.tr();
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Unblock User"
         title: Text('차단 해제'.tr()),
+        // "Do you want to unblock {name}?"
         content: Text('{name}님의 차단을 해제하시겠습니까?'.tr(namedArgs: {'name': name})),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
+            // "Unblock User"
             child: Text('차단 해제'.tr()),
           ),
         ],
@@ -72,6 +77,7 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
     setState(() {
       _users?.removeWhere((u) => u.idxBlockee == user.idxBlockee);
     });
+    // "User has been unblocked"
     showSuccessSnackBar(context, '차단이 해제되었습니다'.tr());
   }
 
@@ -98,6 +104,7 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
+                    // "Blocked Users"
                     '차단된 사용자'.tr(),
                     style: text.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -110,6 +117,7 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
                       size: 18,
                       color: color.onSurface,
                     ),
+                    // "Close"
                     tooltip: '닫기'.tr(),
                   ),
                 ],
@@ -132,6 +140,7 @@ class _BlockedUsersSheetState extends State<_BlockedUsersSheet> {
                           ),
                           const SizedBox(height: 12),
                           Text(
+                            // "No blocked users"
                             '차단된 사용자가 없습니다'.tr(),
                             style: text.bodyMedium?.copyWith(
                               color: color.onSurfaceVariant,

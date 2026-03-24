@@ -25,6 +25,7 @@ class BlockedUserTile extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
+              // "No name"
               user.nickname.isNotEmpty ? user.nickname : '이름없음'.tr(),
               style: text.bodyLarge?.copyWith(fontWeight: FontWeight.w500),
             ),
@@ -37,6 +38,7 @@ class BlockedUserTile extends StatelessWidget {
               color: color.error,
             ),
             label: Text(
+              // "Unblock User"
               '차단 해제'.tr(),
               style: TextStyle(color: color.error, fontSize: 13),
             ),

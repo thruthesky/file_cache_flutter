@@ -73,6 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           builder: (context, userState, _) {
                             return _buildSection(
                               context,
+                              // "My Profile"
                               title: '내 정보'.tr(),
                               icon: FontAwesomeIcons.lightCircleUser,
                               child: _buildProfileContent(
@@ -89,6 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 내 활동 섹션
                     _buildSection(
                           context,
+                          // "My Activity"
                           title: '내 활동'.tr(),
                           child: _buildActivityGrid(context),
                         )
@@ -99,6 +101,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 필리핀 생활 정보 섹션
                     _buildSection(
                           context,
+                          // "Philippines Info"
                           title: '필리핀 생활 정보'.tr(),
                           child: _buildInfoGrid(context),
                         )
@@ -109,6 +112,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 게시판 섹션
                     _buildSection(
                           context,
+                          // "Forum"
                           title: '게시판'.tr(),
                           child: _buildForumContent(context),
                         )
@@ -123,6 +127,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           builder: (context, myCompany, _) {
                             return _buildSection(
                               context,
+                              // "My Business"
                               title: '내 업소'.tr(),
                               icon: FontAwesomeIcons.lightStore,
                               child: _buildMyCompanyContent(context, myCompany),
@@ -140,6 +145,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           builder: (context, myCompany, _) {
                             return _buildSection(
                               context,
+                              // "Company"
                               title: '업소록'.tr(),
                               child: _buildCompanyGrid(context, myCompany),
                             );
@@ -152,6 +158,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 채팅 섹션
                     _buildSection(
                           context,
+                          // "Chat"
                           title: '채팅'.tr(),
                           child: _buildChatGrid(context),
                         )
@@ -162,6 +169,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 광고 섹션
                     _buildSection(
                           context,
+                          // "Advertising"
                           title: '광고'.tr(),
                           child: _buildAdGrid(context),
                         )
@@ -172,6 +180,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 지원 섹션
                     _buildSection(
                           context,
+                          // "Support"
                           title: '지원'.tr(),
                           child: _buildSupportGrid(context),
                         )
@@ -182,6 +191,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 앱 정보 섹션
                     _buildSection(
                           context,
+                          // "App Info"
                           title: '앱 정보'.tr(),
                           child: _buildAppInfoGrid(context),
                         )
@@ -211,6 +221,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                   color: scheme.onSurfaceVariant,
                                 ),
                                 label: Text(
+                                  // "Delete Account"
                                   '계정 삭제'.tr(),
                                   style: TextStyle(
                                     color: scheme.onSurfaceVariant,
@@ -231,6 +242,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                 color: scheme.error,
                               ),
                               label: Text(
+                                // "Logout"
                                 '로그아웃'.tr(),
                                 style: TextStyle(color: scheme.error),
                               ),
@@ -270,6 +282,7 @@ class _MenuScreenState extends State<MenuScreen> {
             height: 40,
           ),
           const SizedBox(width: 8),
+          // "Menu"
           Text('메뉴'.tr(), style: theme.textTheme.titleLarge),
         ],
       ),
@@ -360,6 +373,7 @@ class _MenuScreenState extends State<MenuScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
+                    // "Please login"
                     '로그인 해주세요'.tr(),
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -367,6 +381,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
+                    // "Login to access all features"
                     '로그인하여 모든 기능을 이용하세요'.tr(),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
@@ -436,6 +451,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
+                    // "{} posts"
                     '{}개 게시물'.tr(args: ['${user.noOfPost}']),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
@@ -450,6 +466,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   ),
                   const SizedBox(width: 4),
                   Text(
+                    // "{} comments"
                     '{}개 댓글'.tr(args: ['${user.noOfComment}']),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: scheme.onSurfaceVariant,
@@ -514,11 +531,13 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightPenToSquare,
+        // "Edit Profile"
         '프로필 수정'.tr(),
         onTap: _requireLogin(() => UserEditScreen.push(context)),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightClockRotateLeft,
+        // "My Posts"
         '내 게시글'.tr(),
         onTap: _requireLogin(
           () => Navigator.of(
@@ -528,17 +547,15 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       _MenuItemData(
         FontAwesomeIcons.lightPenNib,
+        // "Write"
         '글쓰기'.tr(),
         onTap: _requireLogin(
-          () => Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => const PostCreateScreen(postId: 'freetalk'),
-            ),
-          ),
+          () => PostCreateScreen.push(context, postId: 'freetalk'),
         ),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightMagnifyingGlass,
+        // "Find Friends"
         '친구 검색'.tr(),
         onTap: _requireLogin(() async {
           final uid = await ChatService.instance.showUserSearchDialog(context);
@@ -549,6 +566,7 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       _MenuItemData(
         FontAwesomeIcons.lightUserSlash,
+        // "Blocked Users"
         '차단된 사용자'.tr(),
         onTap: _requireLogin(
           () => showBlockedUsersBottomSheet(context: context),
@@ -556,16 +574,19 @@ class _MenuScreenState extends State<MenuScreen> {
       ),
       _MenuItemData(
         FontAwesomeIcons.lightTicket,
+        // "Event Coupons"
         '이벤트 쿠폰'.tr(),
         onTap: _requireLogin(() => EventCouponScreen.push(context)),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightCoins,
+        // "Point History"
         '포인트 내역'.tr(),
         onTap: _requireLogin(() => PointHistoryScreen.push(context)),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightBookmark,
+        // "Bookmark"
         '북마크'.tr(),
         onTap: _requireLogin(() => BookmarkScreen.push(context)),
       ),
@@ -579,24 +600,35 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightStarShooting,
+        // "Essential Info"
         '필수 정보'.tr(),
         isHighlighted: true,
       ),
+      // "Notices"
       _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr(),
           onTap: () => NoticeScreen.push(context)),
+      // "Exchange Rate"
       _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr(),
           onTap: () => ExchangeRateScreen.push(context)),
       _MenuItemData(
         FontAwesomeIcons.lightCloudSun,
+        // "Weather"
         '날씨'.tr(),
         onTap: () => WeatherScreen.push(context),
       ),
+      // "Emergency"
       _MenuItemData(FontAwesomeIcons.lightPhoneVolume, '긴급연락처'.tr()),
+      // "Beginner Guide"
       _MenuItemData(FontAwesomeIcons.lightCircleInfo, '초보 필독'.tr()),
+      // "Month Stay"
       _MenuItemData(FontAwesomeIcons.lightCalendarDays, '한달살기'.tr()),
+      // "Travel"
       _MenuItemData(FontAwesomeIcons.lightMountain, '여행'.tr()),
+      // "Tourist Spots"
       _MenuItemData(FontAwesomeIcons.lightMapLocationDot, '여행 명소'.tr()),
+      // "Food Delivery"
       _MenuItemData(FontAwesomeIcons.lightBicycle, '음식 배달'.tr()),
+      // "Delivery K"
       _MenuItemData(FontAwesomeIcons.lightBowlRice, '배달K'.tr()),
     ];
 
@@ -616,31 +648,37 @@ class _MenuScreenState extends State<MenuScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // 커뮤니티 서브카테고리
+        // "Community"
         _buildSubCategoryLabel('커뮤니티'.tr(), context),
         const SizedBox(height: 16),
         _buildMenuGrid([
           _MenuItemData(
             FontAwesomeIcons.lightComments,
+            // "Free Board"
             '자유게시판'.tr(),
             onTap: () => _navigateToForum('freetalk'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightCircleQuestion,
+            // "Q&A"
             '묻고 답하기'.tr(),
             onTap: () => _navigateToForum('qna'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightPeopleArrows,
+            // "Greetings"
             '인사'.tr(),
             onTap: () => _navigateToForum('greeting'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightBlog,
+            // "Blog"
             '블로그'.tr(),
             onTap: () => _navigateToForum('blog'),
           ),
           _MenuItemData(
             FontAwesomeIcons.youtube,
+            // "YouTube"
             '유튜브'.tr(),
             backgroundColor: Colors.red.shade600,
             iconColor: Colors.white,
@@ -651,16 +689,19 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 24),
 
         // 회원장터 서브카테고리
+        // "Marketplace"
         _buildSubCategoryLabel('회원장터'.tr(), context),
         const SizedBox(height: 16),
         _buildMenuGrid([
           _MenuItemData(
             FontAwesomeIcons.lightCartShopping,
+            // "Buy & Sell"
             '사고팔기'.tr(),
             onTap: () => _navigateToForum('buyandsell'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightBriefcase,
+            // "Jobs"
             '구인구직'.tr(),
             onTap: () => _navigateToForum('wanted'),
           ),
@@ -669,46 +710,55 @@ class _MenuScreenState extends State<MenuScreen> {
         const SizedBox(height: 24),
 
         // 기타 서브카테고리
+        // "Others"
         _buildSubCategoryLabel('기타'.tr(), context),
         const SizedBox(height: 16),
         _buildMenuGrid([
           _MenuItemData(
             FontAwesomeIcons.lightSpa,
+            // "Massage"
             '마사지'.tr(),
             onTap: () => _navigateToForum('massage'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightHouse,
+            // "Boarding/Dorm"
             '하숙집/기숙사'.tr(),
             onTap: () => _navigateToForum('boarding_house'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightPlaneDeparture,
+            // "Travel"
             '여행'.tr(),
             onTap: () => _navigateToForum('travel'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightBuildingColumns,
+            // "Business"
             '비즈니스'.tr(),
             onTap: () => _navigateToForum('business'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightGraduationCap,
+            // "School"
             '학교'.tr(),
             onTap: () => _navigateToForum('school'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightTriangleExclamation,
+            // "Warning"
             '주의/경고'.tr(),
             onTap: () => _navigateToForum('caution'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightUtensils,
+            // "Food Delivery"
             '음식배달'.tr(),
             onTap: () => _navigateToForum('food_delivery'),
           ),
           _MenuItemData(
             FontAwesomeIcons.lightBurger,
+            // "Restaurant"
             '레스토랑'.tr(),
             onTap: () => _navigateToForum('rest'),
           ),
@@ -821,6 +871,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        // "Please register your business"
                         '업소를 등록해 주세요'.tr(),
                         style: theme.textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -828,6 +879,7 @@ class _MenuScreenState extends State<MenuScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
+                        // "Register and promote your business"
                         '나의 업소를 등록하고 홍보하세요'.tr(),
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant,
@@ -874,6 +926,7 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightBuilding,
+        // "Search Business"
         '업소 검색'.tr(),
         onTap: () => AppNavigationState.of(context).openCompanyScreen(),
       ),
@@ -881,6 +934,7 @@ class _MenuScreenState extends State<MenuScreen> {
         hasRegistered
             ? FontAwesomeIcons.lightPenToSquare
             : FontAwesomeIcons.lightCirclePlus,
+        // "Edit Business", "Register Business"
         hasRegistered ? '업소 수정'.tr() : '업소 등록'.tr(),
         onTap: _requireLogin(() {
           if (myCompany != null) {
@@ -898,11 +952,13 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightComments,
+        // "Open Chat"
         '오픈 채팅방'.tr(),
         onTap: () => AppNavigationState.of(context).openChatScreen(),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightHeadset,
+        // "Contact Admin"
         '운영자 문의'.tr(),
         onTap: () {
           ChatRoomScreen.pushAdminChat(context);
@@ -918,10 +974,12 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightRectangleAd,
+        // "Banner Ad"
         '배너 광고'.tr(),
         onTap: () => WebViewScreen.push(
           context,
           url: '${Config.v7BaseUrl}/adv/banner',
+          // "Banner Ad"
           title: '배너 광고'.tr(),
         ),
       ),
@@ -935,24 +993,29 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightCircleQuestion,
+        // "App Guide"
         '앱 사용 안내'.tr(),
         onTap: () => AppGuideScreen.push(context),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightFileContract,
+        // "Terms of Service"
         '이용 약관'.tr(),
         onTap: () => WebViewScreen.push(
           context,
           url: '${Config.v7BaseUrl}/help/terms',
+          // "Terms of Service"
           title: '이용 약관'.tr(),
         ),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightShieldHalved,
+        // "Privacy Policy"
         '개인정보 처리방침'.tr(),
         onTap: () => WebViewScreen.push(
           context,
           url: '${Config.v7BaseUrl}/help/privacy',
+          // "Privacy Policy"
           title: '개인정보 처리방침'.tr(),
         ),
       ),
@@ -966,11 +1029,13 @@ class _MenuScreenState extends State<MenuScreen> {
     final items = [
       _MenuItemData(
         FontAwesomeIcons.lightFloppyDisk,
+        // "App Info"
         '앱 정보'.tr(),
         onTap: () => AppInfoScreen.push(context),
       ),
       _MenuItemData(
         FontAwesomeIcons.lightCircleInfo,
+        // "Version Info"
         '버전 정보'.tr(),
         onTap: () => VersionScreen.push(context),
       ),

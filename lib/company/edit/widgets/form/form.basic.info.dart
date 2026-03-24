@@ -47,17 +47,21 @@ class CompanyBasicInfoForm extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FormFieldLabel(
+            // "Business Name"
             label: '업소명'.tr(),
             required: true,
             child: TextFormField(
               controller: nameController,
+              // "e.g. PhilGo Cafe"
               decoration: _inputDecoration('예: 필고 카페'.tr()),
               validator: (v) =>
+                  // "Please enter business name"
                   (v == null || v.trim().isEmpty) ? '업소명을 입력하세요'.tr() : null,
             ),
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Category"
             label: '카테고리'.tr(),
             required: true,
             child: _CategoryGrid(
@@ -68,19 +72,23 @@ class CompanyBasicInfoForm extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Short Introduction"
             label: '한줄 소개'.tr(),
             child: TextFormField(
               controller: titleController,
+              // "e.g. Best Korean cafe in the Philippines"
               decoration: _inputDecoration('예: 필리핀 최고의 한인 카페'.tr()),
               maxLength: 100,
             ),
           ),
           const SizedBox(height: 24),
           FormFieldLabel(
+            // "Description"
             label: '상세 설명'.tr(),
             child: TextFormField(
               controller: descriptionController,
               decoration: _inputDecoration(
+                // "Enter a detailed description of your business"
                 '업소에 대한 자세한 설명을 입력하세요'.tr(),
               ).copyWith(alignLabelWithHint: true),
               maxLines: 12,

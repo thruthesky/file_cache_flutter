@@ -244,7 +244,7 @@
             "deviceId": "0N14426I24109E26",
             "args": [
                 "--dart-define=ENV=dev",
-                "--dart-define=V7_API_ENDPOINT=https://192.168.55.109/api.php"
+                "--dart-define=V7_API_ENDPOINT=http://192.168.55.117/api.php"
             ]
         },
         {

@@ -55,6 +55,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   roomId: init.join.id,
                   success: () {
                     if (mounted) {
+                      // "Left the room successfully"
                       showSuccessSnackBar(context, '방을 나갔습니다'.tr());
                       if (Navigator.canPop(context)) {
                         Navigator.of(context).pop();
@@ -64,6 +65,7 @@ class _SingleChatRoomState extends State<SingleChatRoom> {
                   error: (e) {
                     debugPrint('Error leaving room: $e');
                     if (mounted) {
+                      // "Error leaving room"
                       showErrorSnackBar(context, '방 나가기 오류'.tr());
                     }
                   },

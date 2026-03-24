@@ -201,6 +201,7 @@ class _FileUploadState extends State<FileUpload> {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
+                  // "Select Upload Option"
                   '업로드 옵션 선택'.tr(),
                   style: TextStyle(
                     fontSize: 13,
@@ -219,6 +220,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
+                // "Take Photo with Camera"
                 title: Text('카메라로 사진 찍기'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.cameraPhoto),
               ),
@@ -229,6 +231,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
+                // "Record Video with Camera"
                 title: Text('카메라로 동영상 촬영'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.cameraVideo),
               ),
@@ -239,6 +242,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
+                // "Choose from Gallery"
                 title: Text('갤러리에서 선택'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.gallery),
               ),
@@ -249,6 +253,7 @@ class _FileUploadState extends State<FileUpload> {
                   size: 20,
                   color: Colors.grey[700],
                 ),
+                // "Upload File"
                 title: Text('파일 업로드'.tr()),
                 onTap: () => Navigator.pop(ctx, _UploadSource.file),
               ),
@@ -258,6 +263,7 @@ class _FileUploadState extends State<FileUpload> {
                 size: 20,
                 color: Colors.grey[500],
               ),
+              // "Cancel"
               title: Text('취소'.tr(), style: TextStyle(color: Colors.grey[600])),
               onTap: () => Navigator.pop(ctx, null),
             ),

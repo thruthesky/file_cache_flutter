@@ -21,9 +21,9 @@ class ForumNotificationDialog extends StatelessWidget {
   /// 카테고리의 구독 ID 생성 (postId 또는 postId-category)
   static String _subscriptionId(String postId, String? category) {
     if (category != null && category.isNotEmpty) {
-      return 'forum-$postId-$category';
+      return '-forum-$postId-$category';
     }
-    return 'forum-$postId';
+    return '-forum-$postId';
   }
 
   @override
@@ -35,6 +35,7 @@ class ForumNotificationDialog extends StatelessWidget {
         children: [
           FaIcon(FontAwesomeIcons.lightBell, size: 20, color: color.primary),
           const SizedBox(width: 8),
+          // "Notification Settings"
           Text('알림 설정'.tr(), style: text.titleMedium),
         ],
       ),
@@ -45,6 +46,7 @@ class ForumNotificationDialog extends StatelessWidget {
             ? Padding(
                 padding: const EdgeInsets.all(24),
                 child: Text(
+                  // "Login required"
                   '로그인이 필요합니다'.tr(),
                   textAlign: TextAlign.center,
                   style: text.bodyMedium?.copyWith(
@@ -57,6 +59,7 @@ class ForumNotificationDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
+          // "Close"
           child: Text('닫기'.tr()),
         ),
       ],

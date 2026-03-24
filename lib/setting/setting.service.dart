@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/setting/build_number_check.dart';
 import 'package:philgo/setting/setting.model.dart';
 import 'package:philgo/setting/setting.state.dart';
 
@@ -55,6 +56,8 @@ class SettingService {
       final settings = Settings.fromJson(json);
       if (_context.mounted) {
         SettingsState.of(_context).setSettings(settings);
+        // 빌드 번호 비교 → 강제 업데이트 다이얼로그 표시
+        checkBuildNumber(settings);
       }
     } catch (e) {
       debugPrint('v7 설정 로드 실패: $e');

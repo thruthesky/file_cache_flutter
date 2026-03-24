@@ -93,6 +93,7 @@ class _CommentTileState extends State<CommentTile> {
 
   Future<void> _reportComment() async {
     if (_reported) {
+      // "You already reported this comment"
       showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
       return;
     }
@@ -100,12 +101,14 @@ class _CommentTileState extends State<CommentTile> {
       await PostService.report(idx: widget.comment.idx, type: 'comment');
       if (!mounted) return;
       setState(() => _reported = true);
+      // "Report submitted successfully"
       showSuccessSnackBar(context, '신고가 접수되었습니다'.tr());
     } catch (e) {
       if (!mounted) return;
       final msg = e.toString();
       if (msg.contains('already-reported')) {
         setState(() => _reported = true);
+        // "You already reported this comment"
         showErrorSnackBar(context, '이미 신고한 댓글입니다'.tr());
       } else {
         showErrorSnackBar(context, msg);
@@ -116,22 +119,27 @@ class _CommentTileState extends State<CommentTile> {
   Future<void> _blockCommentAuthor() async {
     final name = widget.comment.userName.isNotEmpty
         ? widget.comment.userName
+        // "No name"
         : '이름없음'.tr();
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Block"
         title: Text('차단'.tr()),
         content: Text(
+          // "Do you want to block {name}?", "Blocking this user will hide their posts from the list"
           '${'{name}님을 차단하시겠습니까?'.tr(namedArgs: {'name': name})}\n${'차단하면 이 사용자의 글이 목록에서 숨겨집니다'.tr()}',
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            // "Block"
             child: Text('차단'.tr()),
           ),
         ],
@@ -144,6 +152,7 @@ class _CommentTileState extends State<CommentTile> {
       if (!mounted) return;
       showSuccessSnackBar(
         context,
+        // "User has been blocked", "User has been unblocked"
         blocked ? '사용자를 차단했습니다'.tr() : '차단이 해제되었습니다'.tr(),
       );
     } catch (e) {
@@ -300,6 +309,7 @@ class _CommentTileState extends State<CommentTile> {
                   child: Text(
                     comment.userName.isNotEmpty
                         ? comment.userName
+                        // "No name"
                         : '이름없음'.tr(),
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -428,6 +438,7 @@ class _CommentTileState extends State<CommentTile> {
                               ),
                               const SizedBox(width: 8),
                               Text(
+                                // "Reported", "Report"
                                 _reported ? '신고됨'.tr() : '신고'.tr(),
                                 style: TextStyle(color: popScheme.error),
                               ),
@@ -445,6 +456,7 @@ class _CommentTileState extends State<CommentTile> {
                                 color: popScheme.onSurface,
                               ),
                               const SizedBox(width: 8),
+                              // "Block"
                               Text('차단'.tr()),
                             ],
                           ),
@@ -467,6 +479,7 @@ class _CommentTileState extends State<CommentTile> {
     final content = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Edit Comment"
         title: Text('댓글 수정'.tr()),
         content: TextField(
           controller: controller,
@@ -474,6 +487,7 @@ class _CommentTileState extends State<CommentTile> {
           minLines: 2,
           maxLines: 8,
           decoration: InputDecoration(
+            // "Please enter comment content"
             hintText: '댓글 내용을 입력하세요'.tr(),
             border: OutlineInputBorder(),
           ),
@@ -481,6 +495,7 @@ class _CommentTileState extends State<CommentTile> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           FilledButton(
@@ -489,6 +504,7 @@ class _CommentTileState extends State<CommentTile> {
               if (text.isEmpty) return;
               Navigator.pop(ctx, text);
             },
+            // "Edit"
             child: Text('수정'.tr()),
           ),
         ],
@@ -505,16 +521,20 @@ class _CommentTileState extends State<CommentTile> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        // "Comment deleted"
         title: Text('댓글 삭제'.tr()),
+        // "Are you sure you want to delete this comment?"
         content: Text('정말 이 댓글을 삭제하시겠습니까?'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
+            // "Cancel"
             child: Text('취소'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
+            // "Delete"
             child: Text('삭제'.tr()),
           ),
         ],

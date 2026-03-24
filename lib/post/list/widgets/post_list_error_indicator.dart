@@ -24,6 +24,7 @@ class PostListErrorIndicator extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
+            // "Failed to load posts"
             '게시글을 불러올 수 없습니다'.tr(),
             style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 16),
           ),
@@ -34,6 +35,7 @@ class PostListErrorIndicator extends StatelessWidget {
               FontAwesomeIcons.lightArrowRotateRight,
               size: 14,
             ),
+            // "Try Again"
             label: Text('다시 시도'.tr()),
           ),
         ],

@@ -50,6 +50,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     } catch (e) {
       debugPrint('WeatherScreen: 데이터 로드 실패 - $e');
       setState(() {
+        // "Unable to load weather data.\nPlease check your network connection."
         _errorMessage = '날씨 정보를 불러올 수 없습니다.\n네트워크 연결을 확인해주세요.'.tr();
         _isLoading = false;
       });
@@ -79,6 +80,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
         onPressed: () => Navigator.of(context).pop(),
       ),
       title: Text(
+        // "Philippines Weather"
         '필리핀 날씨'.tr(),
         style: text.titleLarge?.copyWith(
           color: color.onSurface,
@@ -99,6 +101,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   await _weatherService.clearCache();
                   await _loadWeatherData();
                 },
+          // "Refresh weather"
           tooltip: '날씨 새로고침'.tr(),
         ),
       ],
@@ -113,6 +116,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           CircularProgressIndicator(color: color.primary),
           const SizedBox(height: 16),
           Text(
+            // "Loading weather data..."
             '날씨 정보를 불러오는 중...'.tr(),
             style: TextStyle(color: color.onSurfaceVariant),
           ),
@@ -145,6 +149,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
             FilledButton.icon(
               onPressed: _loadWeatherData,
               icon: const FaIcon(FontAwesomeIcons.lightArrowsRotate, size: 16),
+              // "Try Again"
               label: Text('다시 시도'.tr()),
             ),
           ],

@@ -177,6 +177,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                             theme.textTheme.bodyMedium,
                           ),
                         ),
+                        // "View Profile"
                         child: Text('프로필 보기'.tr()),
                       ),
                     ),
@@ -217,6 +218,7 @@ void showProfileDialog(BuildContext context, UserModel otherUser) {
                           theme.textTheme.bodyMedium,
                         ),
                       ),
+                      // "Close"
                       child: Text('닫기'.tr()),
                     ),
                   ],
@@ -269,6 +271,7 @@ void showUserRecentPostsDialog({
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
+                      // "Recent Posts"
                       '최근 게시글'.tr(),
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
@@ -277,6 +280,7 @@ void showUserRecentPostsDialog({
                     IconButton(
                       onPressed: () => Navigator.of(context).pop(),
                       icon: const Icon(Icons.close),
+                      // "Close"
                       tooltip: '닫기'.tr(),
                     ),
                   ],
@@ -296,6 +300,7 @@ void showUserRecentPostsDialog({
 
                     if (asyncSnapshot.hasError) {
                       return Center(
+                        // "Error: {}"
                         child: Text('오류: {}'.tr(args: [asyncSnapshot.error.toString()])),
                       );
                     }
@@ -306,6 +311,7 @@ void showUserRecentPostsDialog({
                       return Center(
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
+                          // "No recent posts"
                           child: Text('최근 게시글이 없습니다'.tr()),
                         ),
                       );

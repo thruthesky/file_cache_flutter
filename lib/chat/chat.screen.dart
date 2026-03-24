@@ -33,8 +33,10 @@ class _ChatScreenState extends State<ChatScreen> {
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
             SizedBox(height: 16),
+            // "Login required"
             Text('로그인이 필요합니다'.tr()),
             Text(
+              // "Login to access all features"
               '로그인하여 모든 기능을 이용하세요'.tr(),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -46,6 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
               onPressed: () {
                 UserLoginScreen.push(context);
               },
+              // "Login"
               child: Text('로그인'.tr()),
             ),
           ],
@@ -76,6 +79,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
+                    // "Chat"
                     '채팅'.tr(),
                     style: theme.textTheme.titleLarge!.copyWith(
                       fontWeight: FontWeight.normal,
@@ -144,6 +148,7 @@ class _ChatScreenState extends State<ChatScreen> {
                               color: scheme.onSurfaceVariant,
                             ),
                             SizedBox(width: dialogItemSpacing),
+                            // "Contact Admin"
                             Text('운영자 문의'.tr()),
                           ],
                         ),

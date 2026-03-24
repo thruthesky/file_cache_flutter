@@ -51,6 +51,7 @@ class _CommentInputState extends State<CommentInput> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
+      // "Failed to create comment"
       ).showSnackBar(SnackBar(content: Text('${'댓글 작성 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSending = false);

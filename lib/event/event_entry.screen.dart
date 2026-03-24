@@ -109,6 +109,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         iconCount: 2,
       ),
       WheelSection(
+        // "Coupon"
         label: '쿠폰'.tr(),
         color: const Color(0xFF8BC78B),
         points: -1,
@@ -116,6 +117,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
         icon: FontAwesomeIcons.lightMugHot,
       ),
       WheelSection(
+        // "No Prize"
         label: '꽝'.tr(),
         color: const Color(0xFFB0B0B0),
         points: 0,
@@ -217,6 +219,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             ),
             const SizedBox(height: 16),
             Text(
+              // "[NO TRANSLATION: 축하합니다!]"
               '축하합니다!'.tr(),
               style: text.headlineSmall?.copyWith(
                 color: color.primary,
@@ -225,6 +228,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             ),
             const SizedBox(height: 8),
             Text(
+              // "[NO TRANSLATION: 스타벅스 쿠폰에 당첨되었습니다!]"
               '스타벅스 쿠폰에 당첨되었습니다!'.tr(),
               style: text.bodyLarge?.copyWith(color: color.onSurface),
               textAlign: TextAlign.center,
@@ -236,6 +240,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             width: double.infinity,
             child: FilledButton(
               onPressed: () => Navigator.of(ctx).pop(),
+              // "OK"
               child: Text('확인'.tr()),
             ),
           ),
@@ -262,6 +267,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        // "Event Entry"
         title: Text('이벤트응모'.tr()),
         actions: [
           IconButton(
@@ -269,6 +275,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
               if (_isWheelBusy) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
+                    // "[NO TRANSLATION: 원판이 회전 중입니다. 잠시만 기다려주세요.]"
                     content: Text('원판이 회전 중입니다. 잠시만 기다려주세요.'.tr()),
                   ),
                 );
@@ -315,6 +322,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             ),
             const SizedBox(width: 8),
             Text(
+              // "Loading..."
               '로딩 중...'.tr(),
               style: text.bodySmall?.copyWith(
                 color: color.onSurfaceVariant,
@@ -343,6 +351,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             const SizedBox(width: 8),
             Expanded(
               child: Text(
+                // "[NO TRANSLATION: 사용자 정보를 가져올 수 없습니다.]"
                 '사용자 정보를 가져올 수 없습니다.'.tr(),
                 style: text.bodySmall?.copyWith(color: color.error),
               ),
@@ -469,9 +478,12 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
 
         return SpinningWheel(
           sections: _sections,
+          // "[NO TRANSLATION: 원판을 돌려 스타벅스 쿠폰에 도전해 보세요!]"
           instructionText: '원판을 돌려 스타벅스 쿠폰에 도전해 보세요!'.tr(),
+          // "[NO TRANSLATION: 회전판의 당첨 영역은 실제 당첨 확률과 다를 수 있습니다.]"
           disclaimerText: '회전판의 당첨 영역은 실제 당첨 확률과 다를 수 있습니다.'.tr(),
           costNoticeText: '추첨을 할 때마다 $spinCost 포인트가 소진됩니다.',
+          // "[NO TRANSLATION: 원판 돌리기]"
           spinButtonText: '원판 돌리기'.tr(),
           onSpinRequested: _callSpinApi,
           onResult: (section) {
@@ -482,15 +494,23 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
             }
           },
           resultBuilder: (section) => _buildResultBanner(section),
+          // "[NO TRANSLATION: 연속 돌리기]"
           autoSpinButtonText: '연속 돌리기'.tr(),
+          // "[NO TRANSLATION: 중지]"
           autoSpinStopText: '중지'.tr(),
           autoSpinOptions: [
+            // "[NO TRANSLATION: 5회]"
             AutoSpinOption(label: '5회'.tr(), count: 5),
+            // "[NO TRANSLATION: 10회]"
             AutoSpinOption(label: '10회'.tr(), count: 10),
+            // "[NO TRANSLATION: 20회]"
             AutoSpinOption(label: '20회'.tr(), count: 20),
+            // "[NO TRANSLATION: 30회]"
             AutoSpinOption(label: '30회'.tr(), count: 30),
+            // "[NO TRANSLATION: 50회]"
             AutoSpinOption(label: '50회'.tr(), count: 50),
             AutoSpinOption(
+              // "[NO TRANSLATION: 스타벅스 쿠폰 나올 때까지]"
               label: '스타벅스 쿠폰 나올 때까지'.tr(),
               count: -1,
             ),
@@ -510,8 +530,10 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
     final isCoupon = section.points == -1;
     final String message;
     if (isMiss) {
+      // "[NO TRANSLATION: 아쉽게도 꽝입니다. 다시 도전해보세요!]"
       message = '아쉽게도 꽝입니다. 다시 도전해보세요!'.tr();
     } else if (isCoupon) {
+      // "[NO TRANSLATION: 스타벅스 쿠폰에 당첨되었습니다!]"
       message = '스타벅스 쿠폰에 당첨되었습니다!'.tr();
     } else {
       message = '${section.points}P 포인트를 획득했습니다!';
@@ -580,6 +602,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
               ),
               const SizedBox(width: 6),
               Text(
+                // "Event Coupons"
                 '이벤트 쿠폰'.tr(),
                 style: text.titleSmall?.copyWith(
                   color: color.onSurface,
@@ -646,6 +669,7 @@ class _EventEntryScreenState extends State<EventEntryScreen> {
                     ),
                   ),
                   icon: const FaIcon(FontAwesomeIcons.lightTicket, size: 16),
+                  // "Event Coupons"
                   label: Text('이벤트 쿠폰'.tr()),
                 ),
               ),

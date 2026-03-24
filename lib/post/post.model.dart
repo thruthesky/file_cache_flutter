@@ -1,3 +1,4 @@
+import '../file/file.functions.dart';
 import '../youtube/youtube.service.dart';
 import '../youtube/youtube.model.dart';
 
@@ -224,6 +225,9 @@ class Post {
     return result;
   }
 
+  factory Post.minimal({required int idx}) =>
+      Post.fromJson({'idx': idx});
+
   /// JSON에서 Post 객체 생성
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
@@ -247,13 +251,13 @@ class Post {
       blind: json['blind']?.toString() ?? '',
       hasImage: json['has_image']?.toString() ?? '',
       hasVideo: json['has_video']?.toString() ?? '',
-      imageUrl: json['varchar_17']?.toString(),
+      imageUrl: _toAbsoluteUrlOrNull(json['varchar_17']?.toString()),
       videoUrl: json['varchar_18']?.toString(),
-      thumbnail400x400: json['varchar_10']?.toString(),
-      thumbnail800x800: json['varchar_11']?.toString(),
-      thumbnail600: json['thumbnail_600']?.toString(),
-      thumbnail1000: json['varchar_12']?.toString(),
-      resolvedThumbnail: json['resolved_thumbnail']?.toString(),
+      thumbnail400x400: _toAbsoluteUrlOrNull(json['varchar_10']?.toString()),
+      thumbnail800x800: _toAbsoluteUrlOrNull(json['varchar_11']?.toString()),
+      thumbnail600: _toAbsoluteUrlOrNull(json['thumbnail_600']?.toString()),
+      thumbnail1000: _toAbsoluteUrlOrNull(json['varchar_12']?.toString()),
+      resolvedThumbnail: _toAbsoluteUrlOrNull(json['resolved_thumbnail']?.toString()),
       userName: json['user_name']?.toString() ?? '',
       userNickname: json['user_nickname']?.toString() ?? '',
       userFirebaseUid: json['user_firebase_uid']?.toString() ?? '',
@@ -427,6 +431,12 @@ class Post {
       reported: reported ?? this.reported,
       blocked: blocked ?? this.blocked,
     );
+  }
+
+  /// nullable String을 절대 URL로 변환 (null/빈 문자열이면 null 반환)
+  static String? _toAbsoluteUrlOrNull(String? value) {
+    if (value == null || value.isEmpty) return null;
+    return toAbsoluteUrl(value);
   }
 
   /// 안전한 int 변환

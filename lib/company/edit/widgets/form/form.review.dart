@@ -59,21 +59,28 @@ class CompanyReviewForm extends StatelessWidget {
         children: [
           _ReviewCard(
             icon: FontAwesomeIcons.buildingColumns,
+            // "Basic Info"
             title: '기본 정보'.tr(),
             rows: [
               _Row(
+                // "Business Name"
                 '업소명'.tr(),
+                // "(Not entered)"
                 name.isNotEmpty ? name : '(미입력)'.tr(),
                 missing: name.isEmpty,
               ),
               _Row(
+                // "Category"
                 '카테고리'.tr(),
+                // "(Not selected)"
                 category.isNotEmpty ? category : '(미선택)'.tr(),
                 missing: category.isEmpty,
               ),
+              // "Short Introduction"
               if (title.isNotEmpty) _Row('한줄 소개'.tr(), title),
               if (description.isNotEmpty)
                 _Row(
+                  // "Description"
                   '상세 설명'.tr(),
                   description.length > 80
                       ? '${description.substring(0, 80)}…'
@@ -84,26 +91,37 @@ class CompanyReviewForm extends StatelessWidget {
           const SizedBox(height: 12),
           _ReviewCard(
             icon: FontAwesomeIcons.locationDot,
+            // "Location & Contact"
             title: '위치 및 연락처'.tr(),
             rows: hasContact
                 ? [
+                    // "Area"
                     if (location.isNotEmpty) _Row('지역'.tr(), location),
+                    // "Address"
                     if (address.isNotEmpty) _Row('주소'.tr(), address),
+                    // "Phone"
                     if (phone.isNotEmpty) _Row('전화번호'.tr(), phone),
+                    // "Mobile"
                     if (mobile.isNotEmpty) _Row('휴대폰'.tr(), mobile),
+                    // "KakaoTalk"
                     if (kakao.isNotEmpty) _Row('카카오톡'.tr(), kakao),
+                    // "Telegram"
                     if (telegram.isNotEmpty) _Row('텔레그램'.tr(), telegram),
                   ]
+                // "No contact information"
                 : [_Row('', '연락처 정보가 없습니다'.tr(), missing: true)],
           ),
           if (kakaoChannelUrl.isNotEmpty || (kakaoQrCodeUrl != null && kakaoQrCodeUrl!.isNotEmpty)) ...[
             const SizedBox(height: 12),
             _ReviewCard(
               icon: FontAwesomeIcons.comment,
+              // "KakaoTalk"
               title: '카카오톡'.tr(),
               rows: [
+                // "Channel URL"
                 if (kakaoChannelUrl.isNotEmpty) _Row('채널 URL'.tr(), kakaoChannelUrl),
                 if (kakaoQrCodeUrl != null && kakaoQrCodeUrl!.isNotEmpty)
+                  // "QR Code", "Registered"
                   _Row('QR 코드'.tr(), '등록됨'.tr()),
               ],
             ),
@@ -119,6 +137,7 @@ class CompanyReviewForm extends StatelessWidget {
           _InfoBanner(
             icon: FontAwesomeIcons.circleInfo,
             color: Theme.of(context).colorScheme.primary,
+            // "Your listing will be reviewed by admin after saving.\nChanges to name, category, description, or ima..."
             text: '저장하면 관리자 검토 후 승인됩니다.\n업소명·카테고리·설명·이미지 변경 시 재심사가 필요합니다.'.tr(),
           ),
         ],
@@ -145,9 +164,13 @@ class _ImageReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final items = [
+      // "Logo"
       ('로고'.tr(), logoUrl, 1.0),
+      // "Cover Image"
       ('대표 이미지'.tr(), titleImageUrl, 16 / 9),
+      // "Business License"
       ('사업자등록증'.tr(), businessLicenseUrl, 4 / 3),
+      // "Office/Store"
       ('사무실/매장'.tr(), photoUrl, 4 / 3),
     ];
 
@@ -168,6 +191,7 @@ class _ImageReviewCard extends StatelessWidget {
                 FaIcon(FontAwesomeIcons.image, size: 13, color: scheme.primary),
                 const SizedBox(width: 8),
                 Text(
+                  // "Images"
                   '이미지'.tr(),
                   style: TextStyle(
                     fontSize: 13,
@@ -223,6 +247,7 @@ class _ImageReviewCard extends StatelessWidget {
                       )
                     else
                       Text(
+                        // "Not uploaded"
                         '미등록'.tr(),
                         style: TextStyle(
                           fontSize: 13,

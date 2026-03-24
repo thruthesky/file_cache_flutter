@@ -87,6 +87,7 @@ class _PointAdSelectionBottomSheetState
                   ),
                   const SizedBox(width: 8),
                   Text(
+                    // "Point Ad"
                     '포인트 광고'.tr(),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w600,
@@ -94,6 +95,7 @@ class _PointAdSelectionBottomSheetState
                   ),
                   const Spacer(),
                   Text(
+                    // "Current Points"
                     '${'보유 포인트'.tr()}: ${_formatPoints(widget.userPoints)}P',
                     style: theme.textTheme.labelMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
@@ -159,6 +161,7 @@ class _PointAdSelectionBottomSheetState
                               ? '선택 해제'
                               : '선택 확인')
                           .tr()
+                      // "[NO TRANSLATION: 광고 기간을 선택하세요]"
                       : '광고 기간을 선택하세요'.tr(),
                 ),
               ),
@@ -239,6 +242,7 @@ class _PointAdSelectionBottomSheetState
               ),
               const SizedBox(height: 4),
               Text(
+                // "[NO TRANSLATION: 일]"
                 '$days${'일'.tr()}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: secondaryColor,

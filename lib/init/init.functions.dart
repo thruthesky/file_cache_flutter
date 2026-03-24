@@ -8,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/chat/room/chat.room.screen.dart';
-import 'package:philgo/deeplink/deeplink.service.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/messaging/messaging.service.dart';
 import 'package:philgo/post/create/post.create.screen.dart';
@@ -174,33 +173,36 @@ void initializeReceiveShareService() {
 
       // 사용자가 (구글) 검색을 통해서 클릭한 경우, URL 에 정보가 들어온다.
       // When the user clicked through (google) search, it will have a url share.
-      if (data[0].type == SharedMediaType.url) {
-        if (data[0].path.contains('philgo.com')) {
-          final url = parsePhilgoUrl(data[0].path);
-          if (url != null && url.isPostView && url.idx != null) {
-            // 느린 기기에서 렉 방지를 위해 1초 딜레이
-            Timer(Duration(milliseconds: 1000), () {
-              if (globalContext.mounted) {
-                PostViewScreen.push(
-                  globalContext,
-                  Post.fromJson({'idx': url.idx}),
-                );
-              }
-            });
-            return;
-          }
-          if (url != null && url.isChatRoom && url.chatRoomId != null) {
-            Timer(Duration(milliseconds: 1000), () {
-              if (globalContext.mounted) {
-                ChatRoomScreen.push(globalContext, url.chatRoomId!);
-              }
-            });
-            return;
-          }
-          // 필고 URL이지만 특정 화면이 아닌 경우 무시 (홈으로)
-          return;
-        }
-      }
+      // if (data[0].type == SharedMediaType.url) {
+      //   if (data[0].path.contains('philgo.com')) {
+      //     final path = data[0].path;
+      //     final isPostView = path.contains('/post/view');
+
+      //     final uri = Uri.tryParse(path);
+      //     if (isPostView) {
+      //       final idx = uri!.queryParameters['idx'];
+      //       // 느린 기기에서 렉 방지를 위해 1초 딜레이
+      //       Timer(Duration(milliseconds: 1000), () {
+      //         if (globalContext.mounted) {
+      //           PostViewScreen.push(globalContext, Post.fromJson({'idx': idx}));
+      //         }
+      //       });
+      //       return;
+      //     }
+      //     final isChatRoom = path.contains('/chat');
+      //     if (isChatRoom) {
+      //       final uid = uri!.queryParameters['uid'];
+      //       Timer(Duration(milliseconds: 1000), () {
+      //         if (globalContext.mounted) {
+      //           ChatRoomScreen.push(globalContext, uid!);
+      //         }
+      //       });
+      //       return;
+      //     }
+      //     // 필고 URL이지만 특정 화면이 아닌 경우 무시 (홈으로)
+      //     return;
+      //   }
+      // }
       showReceiveShareDialog(globalContext, data);
     },
   );

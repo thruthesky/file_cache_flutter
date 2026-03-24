@@ -39,6 +39,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // "Account Withdrawal"
         title: Text('회원 탈퇴'.tr()),
         centerTitle: true,
         bottom: PreferredSize(
@@ -57,6 +58,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// 1단계: 삭제되는 데이터
             _SectionTitle(
+              // "Data to be deleted"
               title: '1. ${'삭제되는 데이터'.tr()}',
               isAnimated: _isAnimated,
               delay: 0,
@@ -64,27 +66,34 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
             const SizedBox(height: 16),
             _DataCategoryCard(
               icon: FontAwesomeIcons.lightCreditCard,
+              // "Account Information"
               title: '계정 정보'.tr(),
+              // "All personal information including email, name, profile photo, etc."
               description: '이메일, 이름, 프로필 사진 등 계정과 관련된 모든 개인 정보'.tr(),
               isAnimated: _isAnimated,
               index: 0,
             ),
             _DataCategoryCard(
               icon: FontAwesomeIcons.lightChartColumn,
+              // "Usage History"
               title: '이용 기록'.tr(),
+              // "Posts, comments, chat history, points, and other usage records."
               description: '게시글, 댓글, 채팅 기록, 포인트 등 서비스 이용 기록'.tr(),
               isAnimated: _isAnimated,
               index: 1,
             ),
             _DataCategoryCard(
               icon: FontAwesomeIcons.lightCloud,
+              // "Other Data"
               title: '기타 데이터'.tr(),
+              // "Business listings, bookmarks, notification settings, and other stored data."
               description: '업소 등록 정보, 북마크, 알림 설정 등 기타 저장된 데이터'.tr(),
               isAnimated: _isAnimated,
               index: 2,
             ),
             const SizedBox(height: 8),
             _buildInfoBox(
+              // "Payment-related data may be retained separately in accordance with applicable laws."
               message: '결제 관련 데이터는 관련 법률에 따라 별도 보관될 수 있습니다.'.tr(),
               icon: FontAwesomeIcons.lightCircleInfo,
               bgColor: color.secondaryContainer.withValues(alpha: 0.3),
@@ -94,6 +103,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// 2단계: 삭제 방법
             _SectionTitle(
+              // "Deletion Method"
               title: '2. ${'삭제 방법'.tr()}',
               isAnimated: _isAnimated,
               delay: 100,
@@ -101,6 +111,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
             const SizedBox(height: 16),
             _buildIconCard(
               icon: FontAwesomeIcons.lightEnvelope,
+              // "Request withdrawal via email."
               content: '이메일로 탈퇴를 요청합니다.'.tr(),
               delay: 700,
             ),
@@ -108,6 +119,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// 3단계: 처리 기간
             _SectionTitle(
+              // "Processing Period"
               title: '3. ${'처리 기간'.tr()}',
               isAnimated: _isAnimated,
               delay: 200,
@@ -120,6 +132,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
             ),
             const SizedBox(height: 8),
             _buildInfoBox(
+              // "Once withdrawal is processed, it cannot be undone. Please decide carefully."
               message: '탈퇴 처리가 완료되면 되돌릴 수 없습니다. 신중하게 결정해 주세요.'.tr(),
               icon: FontAwesomeIcons.lightTriangleExclamation,
               bgColor: color.errorContainer.withValues(alpha: 0.3),
@@ -129,6 +142,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// 4단계: 데이터 보관 예외
             _SectionTitle(
+              // "Data Retention Exceptions"
               title: '4. ${'데이터 보관 예외'.tr()}',
               isAnimated: _isAnimated,
               delay: 300,
@@ -144,12 +158,14 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
 
             /// 5단계: 문의
             _SectionTitle(
+              // "Contact"
               title: '5. ${'문의'.tr()}',
               isAnimated: _isAnimated,
               delay: 400,
             ),
             const SizedBox(height: 16),
             _buildContactCard(
+              // "For withdrawal inquiries, please contact philgohelp@gmail.com."
               content: '탈퇴 관련 문의는 philgohelp@gmail.com 으로 연락해 주세요.'.tr(),
               delay: 1100,
             ),
@@ -194,6 +210,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        // "Account Withdrawal Guide"
                         '회원 탈퇴 안내'.tr(),
                         style: text.titleLarge?.copyWith(
                           fontWeight: FontWeight.bold,
@@ -201,6 +218,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
+                        // "Please review the following before proceeding."
                         '탈퇴 전 아래 내용을 꼭 확인해 주세요.'.tr(),
                         style: text.bodyMedium?.copyWith(
                           color: color.onSurfaceVariant,
@@ -365,6 +383,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
           child: ElevatedButton.icon(
             onPressed: () => _sendWithdrawalEmail(),
             icon: const FaIcon(FontAwesomeIcons.lightEnvelope, size: 18),
+            // "Request Withdrawal"
             label: Text('탈퇴 요청하기'.tr()),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
@@ -390,6 +409,7 @@ class _AccountWithdrawalScreenState extends State<AccountWithdrawalScreen> {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
+        // "Unable to open email app."
         ).showSnackBar(SnackBar(content: Text('이메일 앱을 열 수 없습니다.'.tr())));
       }
     }

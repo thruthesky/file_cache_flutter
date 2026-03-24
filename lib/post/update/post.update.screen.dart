@@ -143,6 +143,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       setState(() => _existingUrls = List.from(_existingUrls)..add(url));
       ScaffoldMessenger.of(
         context,
+      // "Failed to delete file"
       ).showSnackBar(SnackBar(content: Text('${'파일 삭제 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isDeletingFile = false);
@@ -177,6 +178,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
         } catch (e) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
+              // "[NO TRANSLATION: 포인트 광고 등록 실패]"
               SnackBar(content: Text('${'포인트 광고 등록 실패'.tr()}: $e')),
             );
           }
@@ -189,6 +191,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
+      // "Failed to update post"
       ).showSnackBar(SnackBar(content: Text('${'게시글 수정 실패'.tr()}: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -214,6 +217,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(_latestPost),
         ),
+        // "Edit Post"
         title: Text('글 수정'.tr(), style: theme.textTheme.titleMedium),
         actions: [
           Padding(
@@ -251,6 +255,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
             TextFormField(
               controller: _titleController,
               decoration: InputDecoration(
+                // "Title"
                 hintText: '제목'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -263,6 +268,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               maxLength: 255,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
+                  // "Please enter a title"
                   return '제목을 입력하세요'.tr();
                 }
                 return null;
@@ -274,6 +280,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
             TextFormField(
               controller: _contentController,
               decoration: InputDecoration(
+                // "Please enter content"
                 hintText: '내용을 입력하세요'.tr(),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -287,6 +294,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
               minLines: 8,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
+                  // "Please enter content"
                   return '내용을 입력하세요'.tr();
                 }
                 return null;
@@ -338,10 +346,14 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                           child: Text(
                             _advertisementDays != null
                                 ? (widget.post.isAdActive
+                                    // "[NO TRANSLATION: 포인트 광고 연장]", "[NO TRANSLATION: 일]"
                                     ? '${'포인트 광고 연장'.tr()}: +$_advertisementDays${'일'.tr()}'
+                                    // "Point Ad", "[NO TRANSLATION: 일]"
                                     : '${'포인트 광고'.tr()}: $_advertisementDays${'일'.tr()}')
                                 : (widget.post.isAdActive
+                                    // "[NO TRANSLATION: 포인트 광고 중]"
                                     ? '${'포인트 광고 중'.tr()} (D-${widget.post.adRemainingDays})'
+                                    // "Point Ad"
                                     : '포인트 광고'.tr()),
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: (_advertisementDays != null ||
@@ -390,6 +402,7 @@ class _PostUpdateScreenState extends State<PostUpdateScreen> {
                   onError: (e) {
                     ScaffoldMessenger.of(
                       context,
+                    // "Upload failed"
                     ).showSnackBar(SnackBar(content: Text('${'업로드 실패'.tr()}: $e')));
                   },
                   child: FaIcon(
