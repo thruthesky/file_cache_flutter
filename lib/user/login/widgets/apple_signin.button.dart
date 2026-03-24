@@ -16,8 +16,13 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 /// Apple 로그인 버튼 (iOS/iPad 전용)
 class AppleSignInButton extends StatelessWidget {
   final bool loading;
+  final ValueChanged<bool>? onLoadingChanged;
 
-  const AppleSignInButton({super.key, required this.loading});
+  const AppleSignInButton({
+    super.key,
+    required this.loading,
+    this.onLoadingChanged,
+  });
 
   /// SHA256 해시 nonce 생성
   String _generateNonce([int length = 32]) {
@@ -80,56 +85,90 @@ class AppleSignInButton extends StatelessWidget {
   }
 
   /// Apple 소셜 로그인 + Firebase Auth + v7 user.socialLogin 등록
-  Future<UserModel> _signInWithApple(BuildContext context) async {
-    // nonce 생성 (리플레이 공격 방지)
-    final rawNonce = _generateNonce();
-    final nonce = _sha256ofString(rawNonce);
+  Future<void> _signInWithApple(BuildContext context) async {
+    onLoadingChanged?.call(true);
+    try {
+      // nonce 생성 (리플레이 공격 방지)
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
 
-    // Apple 로그인 요청
-    final appleCredential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-      nonce: nonce,
-    );
+      // Apple 로그인 요청
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
 
-    // Firebase OAuthCredential 생성
-    final oauthCredential = OAuthProvider('apple.com').credential(
-      idToken: appleCredential.identityToken,
-      rawNonce: rawNonce,
-    );
+      // identityToken null 체크
+      final idToken = appleCredential.identityToken;
+      if (idToken == null) {
+        throw Exception('Apple에서 identityToken을 받지 못했습니다.');
+      }
 
-    // Firebase 로그인
-    await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-    log(
-      'Apple 로그인 성공, Firebase 인증 완료. UID: ${FirebaseAuth.instance.currentUser?.uid}',
-    );
+      log('Apple identityToken 수신 완료, authorizationCode: ${appleCredential.authorizationCode.isNotEmpty}');
 
-    // v7 소셜 로그인 API 호출
-    final json = await ApiService.instance.v7api(
-      'user.socialLogin',
-      data: {'login_provider': 'apple'},
-    );
-    log('Apple 로그인 성공: v7 API 응답 수신');
+      // Firebase OAuthCredential 생성 (accessToken에 authorizationCode 전달)
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: idToken,
+        rawNonce: rawNonce,
+        accessToken: appleCredential.authorizationCode,
+      );
 
-    // 아이디 합치기 감지: Custom Token으로 v6 계정 전환
-    final merged = await MergeAccountService.handleMergedLogin(
-      json,
-      loginProvider: 'apple',
-    );
+      // Firebase 로그인
+      await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      log(
+        'Apple 로그인 성공, Firebase 인증 완료. UID: ${FirebaseAuth.instance.currentUser?.uid}',
+      );
 
-    if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Apple 로그인 성공!'.tr())));
-      context.pop();
+      // v7 소셜 로그인 API 호출
+      final json = await ApiService.instance.v7api(
+        'user.socialLogin',
+        data: {'login_provider': 'apple'},
+      );
+      log('Apple 로그인 성공: v7 API 응답 수신');
+
+      // 아이디 합치기 감지: Custom Token으로 v6 계정 전환
+      final merged = await MergeAccountService.handleMergedLogin(
+        json,
+        loginProvider: 'apple',
+      );
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Apple 로그인 성공!'.tr())));
+        context.pop();
+      }
+
+      if (merged) {
+        final meJson = await ApiService.instance.v7api('user.me');
+        UserModel.fromJson(meJson);
+      }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      // 사용자가 취소한 경우 에러 표시하지 않음
+      if (e.code == AuthorizationErrorCode.canceled) return;
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Apple 로그인 에러: ${e.message}'.tr()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      log('Apple 로그인 에러: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('로그인 에러 :  $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      onLoadingChanged?.call(false);
     }
-
-    if (merged) {
-      final meJson = await ApiService.instance.v7api('user.me');
-      return UserModel.fromJson(meJson);
-    }
-    return UserModel.fromJson(json);
   }
 }

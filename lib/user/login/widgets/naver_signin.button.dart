@@ -9,32 +9,29 @@ import 'package:philgo/api/api.service.dart';
 import 'package:philgo/user/user.model.dart';
 
 /// 네이버 로그인 버튼 (공식 디자인 가이드: 배경 #03C75A, 텍스트 #FFFFFF)
-class NaverSignInButton extends StatefulWidget {
+class NaverSignInButton extends StatelessWidget {
   final bool loading;
+  final ValueChanged<bool>? onLoadingChanged;
 
-  const NaverSignInButton({super.key, required this.loading});
-
-  @override
-  State<NaverSignInButton> createState() => _NaverSignInButtonState();
-}
-
-class _NaverSignInButtonState extends State<NaverSignInButton> {
-  bool _isProcessing = false;
+  const NaverSignInButton({
+    super.key,
+    required this.loading,
+    this.onLoadingChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDisabled = widget.loading || _isProcessing;
 
     return GestureDetector(
-      onTap: isDisabled ? null : _signInWithNaver,
+      onTap: loading ? null : () => _signInWithNaver(context),
       child: Container(
         height: 52,
         decoration: BoxDecoration(
           color: const Color(0xFF03C75A),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: isDisabled
+        child: loading
             ? const Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
@@ -64,10 +61,8 @@ class _NaverSignInButtonState extends State<NaverSignInButton> {
   }
 
   /// 네이버 소셜 로그인 + Firebase Custom Token + v7 user.socialLogin 등록
-  Future<void> _signInWithNaver() async {
-    if (_isProcessing) return;
-    setState(() => _isProcessing = true);
-
+  Future<void> _signInWithNaver(BuildContext context) async {
+    onLoadingChanged?.call(true);
     try {
       final result = await FlutterNaverLogin.logIn();
       debugPrint('네이버 로그인 결과: ${result.status}');
@@ -95,14 +90,24 @@ class _NaverSignInButtonState extends State<NaverSignInButton> {
         data: {'login_provider': 'naver'},
       );
 
-      if (mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('네이버 로그인 성공!'.tr())));
         context.pop();
       }
+    } catch (e) {
+      debugPrint('네이버 로그인 에러: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('로그인 에러 :  $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     } finally {
-      if (mounted) setState(() => _isProcessing = false);
+      onLoadingChanged?.call(false);
     }
   }
 }

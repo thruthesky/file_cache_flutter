@@ -117,7 +117,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               Column(
                 children: [
                   Image.asset(
-                        'assets/img/logo/philgo_wide_logo_icon.png',
+                        'assets/img/logo/philgo_app_logo.png',
                         height: 72,
                       )
                       .animate()
@@ -147,7 +147,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               const Spacer(),
 
               // 카카오 로그인 버튼
-              KakaoSignInButton(loading: isLoading)
+              KakaoSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) => setState(() => isLoading = v),
+              )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 200.ms)
                   .slideY(begin: 0.2, end: 0),
@@ -155,7 +158,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               const SizedBox(height: 12),
 
               // 네이버 로그인 버튼
-              NaverSignInButton(loading: isLoading)
+              NaverSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) => setState(() => isLoading = v),
+              )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 225.ms)
                   .slideY(begin: 0.2, end: 0),
@@ -163,7 +169,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               const SizedBox(height: 12),
 
               // Google 로그인 버튼
-              GoogleSignInButton(loading: isLoading)
+              GoogleSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) => setState(() => isLoading = v),
+              )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 250.ms)
                   .slideY(begin: 0.2, end: 0),
@@ -171,7 +180,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               // Apple 로그인 버튼 (iOS/iPad만 표시)
               if (Platform.isIOS) ...[
                 const SizedBox(height: 12),
-                AppleSignInButton(loading: isLoading)
+                AppleSignInButton(
+                  loading: isLoading,
+                  onLoadingChanged: (v) => setState(() => isLoading = v),
+                )
                     .animate()
                     .fadeIn(duration: 400.ms, delay: 300.ms)
                     .slideY(begin: 0.2, end: 0),
