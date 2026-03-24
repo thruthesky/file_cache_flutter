@@ -1157,9 +1157,9 @@ class ChatRoomMessageBubble extends StatelessWidget {
             SizedBox(height: bottomSheetItemSpacing),
             // Report option
             ListTile(
-              leading: const FaIcon(FontAwesomeIcons.triangleExclamation, color: Colors.red),
+              leading: FaIcon(FontAwesomeIcons.triangleExclamation, color: color.error),
               // "Report"
-              title: Text('신고'.tr(), style: const TextStyle(color: Colors.red)),
+              title: Text('신고'.tr(), style: TextStyle(color: color.error)),
               onTap: () {
                 Navigator.of(context).pop();
                 ChatService.instance.showChatMessageReportDialog(
@@ -1176,11 +1176,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
               Blocked(
                 otherUserUid: sender!.firebaseUid,
                 yes: () => ListTile(
-                  leading: FaIcon(FontAwesomeIcons.userPlus, color: Colors.green),
+                  leading: FaIcon(FontAwesomeIcons.userPlus, color: color.primary),
                   title: Text(
                     // "Unblock User"
                     '차단 해제'.tr(),
-                    style: TextStyle(color: Colors.green),
+                    style: TextStyle(color: color.primary),
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -1188,11 +1188,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
                   },
                 ),
                 no: () => ListTile(
-                  leading: FaIcon(FontAwesomeIcons.ban, color: Colors.orange),
+                  leading: FaIcon(FontAwesomeIcons.ban, color: color.error),
                   title: Text(
                     // "Block User"
                     '사용자 차단'.tr(),
-                    style: TextStyle(color: Colors.orange),
+                    style: TextStyle(color: color.error),
                   ),
                   onTap: () {
                     Navigator.of(context).pop();
@@ -1285,11 +1285,11 @@ class ChatRoomMessageBubble extends StatelessWidget {
 
             // Unblock option
             ListTile(
-              leading: const FaIcon(FontAwesomeIcons.userPlus, color: Colors.green),
+              leading: FaIcon(FontAwesomeIcons.userPlus, color: color.primary),
               title: Text(
                 // "Unblock User"
                 '차단 해제'.tr(),
-                style: const TextStyle(color: Colors.green),
+                style: TextStyle(color: color.primary),
               ),
               // "Unblock this user to view their messages."
               subtitle: Text('이 사용자의 차단을 해제하면 메시지를 볼 수 있습니다.'.tr()),
