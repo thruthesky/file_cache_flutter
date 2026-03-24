@@ -28,7 +28,7 @@ Theme provides: blue text, no background.
 
 ## FAB (Floating Action Button)
 
-Compact comic-style FAB specs:
+Compact flat FAB specs:
 
 | Size | Dimensions | Icon Size |
 |------|-----------|-----------|
@@ -52,10 +52,9 @@ Container(
 ## SnackBar
 
 ```dart
-showComicSuccessSnackBar(context, '성공메시지'.tr());
-showComicErrorSnackBar(context, '에러메시지'.tr());
-showComicInfoSnackBar(context, '정보메시지'.tr());
-showComicWarningSnackBar(context, '경고메시지'.tr());
+ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(content: Text('메시지'.tr())),
+);
 ```
 
 ## Card Styling
