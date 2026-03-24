@@ -133,11 +133,11 @@ class ApiService {
 
     // v7 에러 판별: success == false일 때만 에러
     if (json['success'] == false) {
-      final serverMessage = json['message'] ?? '알 수 없는 오류';
+      final serverMessage = (json['message'] ?? '알 수 없는 오류').toString();
       throw ApiException(
-        'api_error',
+        serverMessage,
         'API 오류',
-        ApiException.translateError(serverMessage.toString()),
+        ApiException.translateError(serverMessage),
       );
     }
 

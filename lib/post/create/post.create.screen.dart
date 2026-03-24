@@ -14,6 +14,7 @@ import 'package:philgo/point/widgets/point_ad_selection_bottom_sheet.dart';
 import 'package:philgo/post/create/widgets/wanted_hiring_form.dart';
 import 'package:philgo/post/post.service.dart';
 import 'package:philgo/post/view/post.view.screen.dart';
+import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -426,10 +427,25 @@ class _PostCreateScreenState extends State<PostCreateScreen> {
       PostViewScreen.push(context, post);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      // "Failed to create post"
-      ).showSnackBar(SnackBar(content: Text('${'게시글 작성 실패'.tr()}: $e')));
+      // 닉네임 미설정 에러: 회원정보 페이지 이동 버튼 표시
+      if (e is ApiException && e.code == 'NICKNAME_REQUIRED') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('${'게시글 작성 실패'.tr()}: $e'),
+            action: SnackBarAction(
+              label: '회원정보'.tr(),
+              onPressed: () {
+                Navigator.of(context).pop();
+                UserEditScreen.push(context);
+              },
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${'게시글 작성 실패'.tr()}: $e')),
+        );
+      }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
