@@ -46,10 +46,11 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
     final isLoggedIn = FirebaseAuth.instance.currentUser != null;
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Wrap(
         spacing: 0,
         runSpacing: 0,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
           // Search item (always first)
           _buildSearchItem(),
@@ -100,7 +101,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                   vertical: 4,
                 ),
                 child: FaIcon(
-                  FontAwesomeIcons.lightBell,
+                  FontAwesomeIcons.solidBell,
                   size: 14,
                   color: color.onSurfaceVariant,
                 ),
