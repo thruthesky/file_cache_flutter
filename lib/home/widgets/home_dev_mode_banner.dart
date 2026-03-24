@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:philgo/app.config.dart';
 import 'package:philgo/setting/setting.service.dart';
@@ -7,10 +6,13 @@ import 'package:provider/provider.dart';
 
 /// 홈 개발 모드 배너 - API 연결 상태 + 유저 정보 표시
 ///
-/// 디버그 모드에서만 표시되며, 현재 연결된 API 엔드포인트와 로그인 유저를 보여준다.
+/// 기본적으로 숨겨져 있으며, 내 정보 아이콘 롱 프레스로 토글한다.
 /// 프로덕션 API에 연결되어 있으면 빨간색 경고를 강하게 표시한다.
 class HomeDevModeBanner extends StatefulWidget {
   const HomeDevModeBanner({super.key});
+
+  /// 배너 표시 여부 (내 정보 아이콘 롱 프레스로 토글)
+  static final visible = ValueNotifier<bool>(false);
 
   @override
   State<HomeDevModeBanner> createState() => _HomeDevModeBannerState();
@@ -20,6 +22,20 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
   static const _env = String.fromEnvironment('ENV');
 
   bool _dismissed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    HomeDevModeBanner.visible.addListener(_onVisibilityChanged);
+  }
+
+  @override
+  void dispose() {
+    HomeDevModeBanner.visible.removeListener(_onVisibilityChanged);
+    super.dispose();
+  }
+
+  void _onVisibilityChanged() => setState(() {});
 
   bool get _isProduction {
     final uri = Uri.tryParse(Config.v7ApiEndpoint);
@@ -31,7 +47,7 @@ class _HomeDevModeBannerState extends State<HomeDevModeBanner> {
 
   @override
   Widget build(BuildContext context) {
-    if (!kDebugMode || _dismissed) return const SizedBox.shrink();
+    if (!HomeDevModeBanner.visible.value || _dismissed) return const SizedBox.shrink();
 
     final isProd = _isProduction;
     final userState = context.watch<UserState>();

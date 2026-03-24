@@ -1,8 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/home/widgets/home_dev_mode_banner.dart';
+import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +22,7 @@ class HomeProfileMenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => UserEditScreen.push(context),
+      onLongPress: () => _toggleDevBanner(context),
       child: SizedBox(
         width: 56,
         child: Column(
@@ -38,6 +43,15 @@ class HomeProfileMenuItem extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// kDebugMode이거나 관리자 로그인 시 디버그 배너 토글
+  void _toggleDevBanner(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final isAdmin = uid.isNotEmpty &&
+        (SettingsState.of(context).settings?.adminUids.contains(uid) ?? false);
+    if (!kDebugMode && !isAdmin) return;
+    HomeDevModeBanner.visible.value = !HomeDevModeBanner.visible.value;
   }
 
   Widget _buildAvatar(String photoUrl) {
