@@ -84,7 +84,7 @@ flutter:
   uses-material-design: true
   generate: true # Add this line
   assets:
-    - assets/img/logo/philgo_v6_app_logo.png
+    - assets/img/logo/philgo_app_logo.png
     - assets/img/logo/philgo_wide_logo_icon.png
     - assets/img/logo/philgo_wide_logo.png
     - shorebird.yaml

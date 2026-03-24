@@ -217,48 +217,90 @@ class _MenuScreenState extends State<MenuScreen> {
                         return Column(
                           spacing: 28,
                           children: [
-                            // 계정 삭제
-                            Center(
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  AccountWithdrawalScreen.push(context);
-                                },
-                                icon: FaIcon(
-                                  FontAwesomeIcons.lightTrashCan,
-                                  size: 14,
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                                label: Text(
-                                  // "Delete Account"
-                                  '계정 삭제'.tr(),
-                                  style: TextStyle(
-                                    color: scheme.onSurfaceVariant,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
-
                             // 로그아웃
                             OutlinedButton.icon(
                               onPressed: () async {
-                                await UserService.signOut();
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('로그아웃'.tr()),
+                                    content: Text('로그아웃 하시겠습니까?'.tr()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, false),
+                                        child: Text('취소'.tr()),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        child: Text('로그아웃'.tr()),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirmed == true) {
+                                  await UserService.signOut();
+                                }
                               },
                               icon: FaIcon(
                                 FontAwesomeIcons.lightRightFromBracket,
                                 size: 16,
-                                color: scheme.error,
+                                color: scheme.error.withValues(alpha: 0.6),
                               ),
                               label: Text(
-                                // "Logout"
                                 '로그아웃'.tr(),
-                                style: TextStyle(color: scheme.error),
+                                style: TextStyle(
+                                  color: scheme.error.withValues(alpha: 0.6),
+                                ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: scheme.error.withValues(alpha: 0.4),
+                                  color: scheme.error.withValues(alpha: 0.25),
                                 ),
                                 minimumSize: const Size(double.infinity, 48),
+                              ),
+                            ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
+
+                            // 계정 삭제
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('계정 삭제'.tr()),
+                                      content: Text('정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'.tr()),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: Text('취소'.tr()),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          child: Text(
+                                            '계정 삭제'.tr(),
+                                            style: TextStyle(color: scheme.error),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirmed == true) {
+                                    if (!context.mounted) return;
+                                    AccountWithdrawalScreen.push(context);
+                                  }
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.lightTrashCan,
+                                  size: 12,
+                                  color: scheme.onSurfaceVariant.withValues(alpha: 0.35),
+                                ),
+                                label: Text(
+                                  '계정 삭제'.tr(),
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant.withValues(alpha: 0.35),
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
                             ).animate().fadeIn(duration: 400.ms, delay: 700.ms),
                           ],
@@ -1055,9 +1097,9 @@ class _MenuScreenState extends State<MenuScreen> {
     return _buildMenuGrid(items, context);
   }
 
-  /// 4열 메뉴 그리드 빌드
+  /// 5열 메뉴 그리드 빌드
   Widget _buildMenuGrid(List<_MenuItemData> items, BuildContext context) {
-    const crossAxisCount = 4;
+    const crossAxisCount = 5;
     List<List<_MenuItemData>> rows = [];
     for (var i = 0; i < items.length; i += crossAxisCount) {
       rows.add(
