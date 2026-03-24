@@ -1,12 +1,17 @@
+import 'dart:io' show Platform;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+
 import 'package:philgo/globals.dart';
+import 'package:philgo/user/login/legal_texts.dart';
+import 'package:philgo/user/login/widgets/apple_signin.button.dart';
 import 'package:philgo/user/login/widgets/google_signin.button.dart';
 import 'package:philgo/user/login/widgets/kakao_signin.button.dart';
+import 'package:philgo/user/login/widgets/naver_signin.button.dart';
 
 class UserLoginScreen extends StatefulWidget {
   static const String routeName = '/login';
@@ -22,11 +27,66 @@ class UserLoginScreen extends StatefulWidget {
 class _UserLoginScreenState extends State<UserLoginScreen> {
   bool isLoading = false;
 
-  Future<void> _openUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
+  void _showLegalBottomSheet(String title, String content) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            // 핸들 바
+            Padding(
+              padding: const EdgeInsets.only(top: 12, bottom: 8),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: color.onSurfaceVariant.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            // 제목 & 닫기 버튼
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: text.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  IconButton(
+                    icon: FaIcon(FontAwesomeIcons.lightXmark, size: 18),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // 본문
+            Expanded(
+              child: SingleChildScrollView(
+                controller: scrollController,
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  content,
+                  style: text.bodyMedium?.copyWith(height: 1.6),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -56,10 +116,9 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               // 로고 & 타이틀
               Column(
                 children: [
-                  FaIcon(
-                        FontAwesomeIcons.lightCircleUser,
-                        size: 72,
-                        color: color.primary,
+                  Image.asset(
+                        'assets/img/logo/philgo_app_logo.png',
+                        height: 72,
                       )
                       .animate()
                       .fadeIn(duration: 400.ms)
@@ -88,18 +147,47 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               const Spacer(),
 
               // 카카오 로그인 버튼
-              KakaoSignInButton(loading: isLoading)
+              KakaoSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
+              )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 200.ms)
                   .slideY(begin: 0.2, end: 0),
 
               const SizedBox(height: 12),
 
+              // 네이버 로그인 버튼
+              NaverSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
+              )
+                  .animate()
+                  .fadeIn(duration: 400.ms, delay: 225.ms)
+                  .slideY(begin: 0.2, end: 0),
+
+              const SizedBox(height: 12),
+
               // Google 로그인 버튼
-              GoogleSignInButton(loading: isLoading)
+              GoogleSignInButton(
+                loading: isLoading,
+                onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
+              )
                   .animate()
                   .fadeIn(duration: 400.ms, delay: 250.ms)
                   .slideY(begin: 0.2, end: 0),
+
+              // Apple 로그인 버튼 (iOS/iPad만 표시)
+              if (Platform.isIOS) ...[
+                const SizedBox(height: 12),
+                AppleSignInButton(
+                  loading: isLoading,
+                  onLoadingChanged: (v) { if (mounted) setState(() => isLoading = v); },
+                )
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 300.ms)
+                    .slideY(begin: 0.2, end: 0),
+              ],
 
               const SizedBox(height: 24),
 
@@ -108,7 +196,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
-                    onTap: () => _openUrl('https://philgo.com/help/terms'),
+                    onTap: () => _showLegalBottomSheet('이용약관'.tr(), termsOfServiceText),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -130,7 +218,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     child: Text('|', style: text.bodySmall?.copyWith(color: color.onSurfaceVariant)),
                   ),
                   GestureDetector(
-                    onTap: () => _openUrl('https://philgo.com/help/privacy'),
+                    onTap: () => _showLegalBottomSheet('개인정보처리방침'.tr(), privacyPolicyText),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -148,7 +236,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     ),
                   ),
                 ],
-              ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
+              ).animate().fadeIn(duration: 400.ms, delay: 350.ms),
 
               const SizedBox(height: 32),
             ],

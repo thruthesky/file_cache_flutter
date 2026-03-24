@@ -74,6 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     Consumer<UserState>(
                           builder: (context, userState, _) {
                             return _buildSection(
+                              context,
                               // "My Profile"
                               title: '내 정보'.tr(),
                               icon: FontAwesomeIcons.lightCircleUser,
@@ -81,6 +82,13 @@ class _MenuScreenState extends State<MenuScreen> {
                                 context,
                                 userState.user,
                               ),
+                            );
+                            return GestureDetector(
+                              onTap: () => userState.user != null
+                                  ? UserEditScreen.push(context)
+                                  : UserLoginScreen.push(context),
+                              behavior: HitTestBehavior.opaque,
+                              child: section,
                             );
                           },
                         )
@@ -210,13 +218,14 @@ class _MenuScreenState extends State<MenuScreen> {
                                 icon: FaIcon(
                                   FontAwesomeIcons.lightTrashCan,
                                   size: 14,
-                                  color: color.onSurfaceVariant,
+                                  color: scheme.onSurfaceVariant,
                                 ),
                                 label: Text(
                                   // "Delete Account"
                                   '계정 삭제'.tr(),
-                                  style: text.bodySmall?.copyWith(
-                                    color: color.onSurfaceVariant,
+                                  style: TextStyle(
+                                    color: scheme.onSurfaceVariant,
+                                    fontSize: 13,
                                   ),
                                 ),
                               ),
@@ -230,18 +239,16 @@ class _MenuScreenState extends State<MenuScreen> {
                               icon: FaIcon(
                                 FontAwesomeIcons.lightRightFromBracket,
                                 size: 16,
-                                color: color.error,
+                                color: scheme.error,
                               ),
                               label: Text(
                                 // "Logout"
                                 '로그아웃'.tr(),
-                                style: text.labelLarge?.copyWith(
-                                  color: color.error,
-                                ),
+                                style: TextStyle(color: scheme.error),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: color.error.withValues(alpha: 0.4),
+                                  color: scheme.error.withValues(alpha: 0.4),
                                 ),
                                 minimumSize: const Size(double.infinity, 48),
                               ),
@@ -269,9 +276,9 @@ class _MenuScreenState extends State<MenuScreen> {
       child: Row(
         children: [
           Image.asset(
-            'assets/img/logo/philgo_wide_logo_icon.png',
-            width: 40,
-            height: 40,
+            'assets/img/logo/philgo_app_logo.png',
+            width: 32,
+            height: 32,
           ),
           const SizedBox(width: 8),
           // "Menu"
@@ -351,7 +358,7 @@ class _MenuScreenState extends State<MenuScreen> {
         onTap: () => UserLoginScreen.push(context),
         child: Row(
           children: [
-            _buildDefaultAvatar(),
+            _buildDefaultAvatar(context),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -360,7 +367,7 @@ class _MenuScreenState extends State<MenuScreen> {
                   Text(
                     // "Please login"
                     '로그인 해주세요'.tr(),
-                    style: text.titleSmall?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -368,8 +375,8 @@ class _MenuScreenState extends State<MenuScreen> {
                   Text(
                     // "Login to access all features"
                     '로그인하여 모든 기능을 이용하세요'.tr(),
-                    style: text.bodySmall?.copyWith(
-                      color: color.onSurfaceVariant,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: scheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -378,7 +385,7 @@ class _MenuScreenState extends State<MenuScreen> {
             FaIcon(
               FontAwesomeIcons.lightChevronRight,
               size: 16,
-              color: color.onSurfaceVariant,
+              color: scheme.onSurfaceVariant,
             ),
           ],
         ),
@@ -1027,9 +1034,9 @@ class _MenuScreenState extends State<MenuScreen> {
     return _buildMenuGrid(items, context);
   }
 
-  /// 4열 메뉴 그리드 빌드
+  /// 5열 메뉴 그리드 빌드
   Widget _buildMenuGrid(List<_MenuItemData> items, BuildContext context) {
-    const crossAxisCount = 4;
+    const crossAxisCount = 5;
     List<List<_MenuItemData>> rows = [];
     for (var i = 0; i < items.length; i += crossAxisCount) {
       rows.add(

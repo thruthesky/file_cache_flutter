@@ -40,6 +40,7 @@ description: 필고(Philgo) v7 시스템 통합 개발 스킬. PHP 백엔드(PSR
    - [app/v7-app-point-advertisement.md](references/app/v7-app-point-advertisement.md) — Point advertisement (post promotion)
    - [app/v7-app-weather.md](references/app/v7-app-weather.md) — Weather forecast (5 cities, Open-Meteo API)
    - [app/v7-app-search.md](references/app/v7-app-search.md) — Search (Google CSE WebView + SearchDialog)
+   - [app/v7-app-debug-banner.md](references/app/v7-app-debug-banner.md) — 홈 화면 디버그 배너 (롱 프레스 토글)
 
 ### After Completing Each Task
 
@@ -625,6 +626,16 @@ PointAdSelectionBottomSheet(기간 선택 바텀시트),
 ForumScreen 목록 상단 광고 위젯, PostListTile D-day 뱃지 표시,
 전체 파일 경로 요약을 포함합니다.
 백엔드 로직(비용 계산, 적격 게시판, DB 필드)은 → [v7-point.md](references/v7-point.md) 11장 참조.
+
+### Flutter 앱 홈 화면 디버그 배너 → [app/v7-app-debug-banner.md](references/app/v7-app-debug-banner.md)
+
+홈 화면의 개발자/관리자 전용 디버그 배너(HomeDevModeBanner) 기능을 다룹니다.
+배너는 기본적으로 숨겨져 있으며, 홈 퀵 메뉴의 "내 정보" 아이콘을 롱 프레스하면
+토글됩니다. kDebugMode(디버그 빌드)이거나 관리자(adminUids)로 로그인한 경우에만
+롱 프레스가 동작합니다. 배너는 API 연결 상태(프로덕션/개발), ENV 환경변수,
+설정 리로드 타이머, 로그인 유저 상세 정보를 표시합니다.
+`HomeDevModeBanner.visible` (static ValueNotifier<bool>)로 표시를 제어하고,
+`HomeProfileMenuItem._toggleDevBanner()`에서 조건 체크 및 토글을 수행합니다.
 
 ### 웹 문서 → [references/web/](references/web/)
 

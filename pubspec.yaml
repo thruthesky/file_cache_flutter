@@ -15,8 +15,6 @@ dependencies:
   cupertino_icons: ^1.0.8
   device_info_plus: ^12.3.0
   dio: ^5.7.0
-  easy_phone_sign_in:
-    path: packages/easy_phone_sign_in
   file_cache_flutter: ^0.0.1
   file_picker: ^10.3.3
   firebase_analytics: ^11.6.0
@@ -27,6 +25,8 @@ dependencies:
   firebase_messaging: ^15.2.8
   firebase_storage: ^12.4.10
   google_sign_in: ^6.2.2
+  sign_in_with_apple: ^6.1.4
+  crypto: ^3.0.6
   firebase_ui_database: ^1.5.3
   flutter:
     sdk: flutter
@@ -61,11 +61,10 @@ dependencies:
   video_player: ^2.11.0
   webview_flutter: ^4.13.0
   kakao_flutter_sdk_user: ^1.10.0
+  flutter_naver_login: ^2.1.1
   easy_localization: ^3.0.8
 
 dependency_overrides:
-  file_cache_flutter:
-    path: packages/file_cache_flutter
   font_awesome_flutter:
     path: packages/font_awesome_flutter
 
@@ -85,7 +84,7 @@ flutter:
   uses-material-design: true
   generate: true # Add this line
   assets:
-    - assets/img/logo/philgo_v6_app_logo.png
+    - assets/img/logo/philgo_app_logo.png
     - assets/img/logo/philgo_wide_logo_icon.png
     - assets/img/logo/philgo_wide_logo.png
     - shorebird.yaml

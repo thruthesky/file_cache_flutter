@@ -9,7 +9,6 @@ import 'package:philgo/api/api.service.dart';
 import 'package:philgo/globals.dart';
 import 'package:philgo/user/merge/merge_account.model.dart';
 import 'package:philgo/user/merge/merge_account.service.dart';
-import 'package:philgo/user/user.service.dart';
 
 /// 아이디 합치기 화면
 ///
@@ -44,6 +43,9 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
   String? _verificationId;
   int? _resendToken;
 
+  /// 소셜 계정의 ID Token (전화번호 인증 전에 미리 저장)
+  String? _socialIdToken;
+
   @override
   void dispose() {
     _phoneController.dispose();
@@ -65,6 +67,10 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
     });
 
     try {
+      // 소셜 계정의 ID Token을 미리 저장 (전화번호 인증 시 Firebase 사용자가 바뀌므로)
+      _socialIdToken =
+          await FirebaseAuth.instance.currentUser?.getIdToken();
+
       final e164 = MergeAccountService.formatE164(_countryCode, phone);
       _v6Account = await MergeAccountService.findV6Account(
         phoneNumber: e164,
@@ -164,12 +170,13 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
   }
 
   /// Phone Auth 크레덴셜로 합치기 실행
+  ///
+  /// 1. 전화번호 인증 → phone ID token 획득
+  /// 2. 미리 저장한 소셜 ID Token으로 mergeAccount API 호출
+  /// 3. 소셜 ID Token으로 socialLogin → merged → Custom Token → v6 로그인
   Future<void> _mergeWithCredential(PhoneAuthCredential credential) async {
     try {
-      // 전화번호 인증용 별도 Firebase 인스턴스로 로그인하여 ID Token 획득
-      // 현재 소셜 로그인 상태를 유지하면서 전화번호 인증만 수행
-      final currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
+      if (_socialIdToken == null) {
         setState(() {
           _loading = false;
           _errorMessage = '로그인 상태가 아닙니다.'.tr();
@@ -177,8 +184,8 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
         return;
       }
 
-      // 임시로 전화번호 계정에 링크하여 phone ID token 획득
-      // 별도 앱 인스턴스 대신 signInWithCredential 후 getIdToken 사용
+      // 전화번호 계정으로 로그인하여 phone ID token 획득
+      // (이 시점에서 Firebase 현재 사용자가 전화번호 계정으로 바뀜)
       final phoneResult = await FirebaseAuth.instance.signInWithCredential(
         credential,
       );
@@ -192,21 +199,27 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
         return;
       }
 
-      // 원래 소셜 계정으로 다시 돌아와서 mergeAccount 호출
-      // (signInWithCredential이 현재 사용자를 바꿨으므로,
-      //  phone ID token만 얻은 것이고 mergeAccount는 phone_id_token만 필요)
-      // 주의: 이 시점에서 Firebase Auth 사용자가 전화번호 사용자로 바뀌었으므로,
-      // mergeAccount API는 세션 기반이 아닌 phone_id_token만으로 동작해야 함
-      await MergeAccountService.mergeAccount(phoneIdToken: phoneIdToken);
+      // 미리 저장한 소셜 ID Token으로 mergeAccount 호출
+      // (skipPatchToken: true로 현재 전화번호 사용자 토큰이 아닌 소셜 토큰 사용)
+      await MergeAccountService.mergeAccount(
+        phoneIdToken: phoneIdToken,
+        socialIdToken: _socialIdToken!,
+      );
+
+      log('아이디 합치기 완료, v6 계정으로 자동 전환 시작');
+
+      // 합치기 완료 후 바로 v6 계정으로 로그인
+      await MergeAccountService.loginAsV6Account(
+        socialIdToken: _socialIdToken!,
+      );
 
       setState(() {
         _step = _MergeStep.complete;
         _loading = false;
       });
 
-      // 3초 후 로그아웃 + 로그인 화면으로 이동
-      Future.delayed(const Duration(seconds: 3), () async {
-        await UserService.signOut();
+      // 잠시 후 홈으로 이동 (이미 v6 계정으로 로그인된 상태)
+      Future.delayed(const Duration(seconds: 2), () {
         if (mounted) {
           context.go('/');
         }
@@ -381,14 +394,15 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
           children: [
             // 국가 코드
             SizedBox(
-              width: 80,
+              width: 100,
               child: DropdownButtonFormField<String>(
+                isExpanded: true,
                 initialValue: _countryCode,
                 decoration: InputDecoration(
                   labelText: '국가'.tr(),
                   border: const OutlineInputBorder(),
                   contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
+                    horizontal: 8,
                     vertical: 16,
                   ),
                 ),
@@ -625,7 +639,7 @@ class _MergeAccountScreenState extends State<MergeAccountScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.'.tr(),
+            '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.'.tr(),
             style: text.bodyMedium?.copyWith(
               color: color.onSurfaceVariant,
             ),

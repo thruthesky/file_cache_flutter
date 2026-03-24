@@ -75,6 +75,14 @@
 				<string>kakaocf75184c7c72f507d6bb5e39627925d3</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>philgo-naver</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
@@ -89,6 +97,8 @@
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
 		<string>kakaoplus</string>
+		<string>naversearchapp</string>
+		<string>naversearchthirdlogin</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
@@ -156,5 +166,13 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NidUrlScheme</key>
+	<string>philgo-naver</string>
+	<key>NidClientID</key>
+	<string>fWJ9mE2JUBZonuvuFKrV</string>
+	<key>NidClientSecret</key>
+	<string>uxQmhExQ8z</string>
+	<key>NidAppName</key>
+	<string>필고</string>
 </dict>
 </plist>

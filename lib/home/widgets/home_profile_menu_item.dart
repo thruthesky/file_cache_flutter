@@ -8,6 +8,7 @@ import 'package:philgo/globals.dart';
 import 'package:philgo/home/widgets/home_dev_mode_banner.dart';
 import 'package:philgo/setting/setting.state.dart';
 import 'package:philgo/user/edit/user.edit.screen.dart';
+import 'package:philgo/user/login/user.login.screen.dart';
 import 'package:philgo/user/user.state.dart';
 import 'package:provider/provider.dart';
 
@@ -20,28 +21,35 @@ class HomeProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => UserEditScreen.push(context),
-      onLongPress: () => _toggleDevBanner(context),
-      child: SizedBox(
-        width: 56,
-        child: Column(
-          children: [
-            Selector<UserState, String>(
-              selector: (_, state) => state.user?.photoUrl ?? '',
-              builder: (context, photoUrl, _) => _buildAvatar(photoUrl),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              '내 정보'.tr(),
-              style: text.labelSmall?.copyWith(fontSize: 10),
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
+    return Selector<UserState, ({String photoUrl, bool loggedIn})>(
+      selector: (_, state) => (
+        photoUrl: state.user?.photoUrl ?? '',
+        loggedIn: state.user != null,
       ),
+      builder: (context, data, _) {
+        return GestureDetector(
+          onTap: () => data.loggedIn
+              ? UserEditScreen.push(context)
+              : UserLoginScreen.push(context),
+          onLongPress: () => _toggleDevBanner(context),
+          child: SizedBox(
+            width: 56,
+            child: Column(
+              children: [
+                _buildAvatar(data.photoUrl),
+                const SizedBox(height: 3),
+                Text(
+                  data.loggedIn ? '내 정보'.tr() : '로그인'.tr(),
+                  style: text.labelSmall?.copyWith(fontSize: 10),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

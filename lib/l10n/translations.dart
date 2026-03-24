@@ -101,6 +101,8 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': '소셜 계정으로 간편하게 로그인하세요',
     '카카오로 로그인': '카카오로 로그인',
     'Google로 로그인': 'Google로 로그인',
+    'Apple로 로그인': 'Apple로 로그인',
+    'Apple 로그인 성공!': 'Apple 로그인 성공!',
     '이용약관': '이용약관',
     '개인정보처리방침': '개인정보처리방침',
 
@@ -301,7 +303,7 @@ class Translations {
     '전화번호 인증 토큰을 가져올 수 없습니다.': '전화번호 인증 토큰을 가져올 수 없습니다.',
     '인증 코드 재전송': '인증 코드 재전송',
     '아이디 합치기가 완료되었습니다!': '아이디 합치기가 완료되었습니다!',
-    '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.': '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.',
+    '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.': '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.',
     '게시글 보기': '게시글 보기',
 
     // 다른 사용자 프로필
@@ -517,6 +519,7 @@ class Translations {
     '제목을 입력하세요': '제목을 입력하세요',
     '내용을 입력하세요': '내용을 입력하세요',
     '게시글 작성 실패': '게시글 작성 실패',
+    '회원정보': '회원정보',
     '업로드 실패': '업로드 실패',
     '글 수정': '글 수정',
     '게시글 수정 실패': '게시글 수정 실패',
@@ -915,6 +918,8 @@ class Translations {
     '소셜 계정으로 간편하게 로그인하세요': 'Sign in with your social account',
     '카카오로 로그인': 'Sign in with Kakao',
     'Google로 로그인': 'Sign in with Google',
+    'Apple로 로그인': 'Sign in with Apple',
+    'Apple 로그인 성공!': 'Apple sign-in successful!',
     '이용약관': 'Terms of Service',
     '개인정보처리방침': 'Privacy Policy',
 
@@ -1118,7 +1123,7 @@ class Translations {
     '전화번호 인증 토큰을 가져올 수 없습니다.': 'Failed to get phone verification token.',
     '인증 코드 재전송': 'Resend Code',
     '아이디 합치기가 완료되었습니다!': 'Account merge completed!',
-    '잠시 후 로그아웃됩니다. 다시 로그인하면 기존 계정으로 이용할 수 있습니다.': 'You will be logged out shortly. Log in again to use your existing account.',
+    '기존 계정으로 자동 로그인되었습니다. 잠시 후 홈으로 이동합니다.': 'Auto-logged in to your existing account. Redirecting to home shortly.',
     '게시글 보기': 'View Post',
 
     // 다른 사용자 프로필
@@ -1333,6 +1338,7 @@ class Translations {
     '제목을 입력하세요': 'Please enter a title',
     '내용을 입력하세요': 'Please enter content',
     '게시글 작성 실패': 'Failed to create post',
+    '회원정보': 'Profile',
     '업로드 실패': 'Upload failed',
     '글 수정': 'Edit Post',
     '게시글 수정 실패': 'Failed to update post',
