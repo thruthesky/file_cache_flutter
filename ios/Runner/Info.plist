@@ -166,13 +166,13 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
-	<key>naverServiceAppUrlScheme</key>
+	<key>NidUrlScheme</key>
 	<string>philgo-naver</string>
-	<key>naverConsumerKey</key>
+	<key>NidClientID</key>
 	<string>fWJ9mE2JUBZonuvuFKrV</string>
-	<key>naverConsumerSecret</key>
+	<key>NidClientSecret</key>
 	<string>uxQmhExQ8z</string>
-	<key>naverServiceAppName</key>
+	<key>NidAppName</key>
 	<string>필고</string>
 </dict>
 </plist>
