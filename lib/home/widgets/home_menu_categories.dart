@@ -16,7 +16,7 @@ class HomeMenuCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // +1 for the search item at the end
+    // +1 for the search item at the beginning
     final totalCount = Config.homeTopCategories.length + 1;
 
     return SizedBox(
@@ -27,8 +27,8 @@ class HomeMenuCategories extends StatelessWidget {
         itemCount: totalCount,
         separatorBuilder: (_, _) => const SizedBox(width: 0),
         itemBuilder: (context, index) {
-          // 마지막 아이템: 검색 버튼
-          if (index == totalCount - 1) {
+          // 첫 번째 아이템: 검색 버튼
+          if (index == 0) {
             return GestureDetector(
               onTap: () async {
                 final searchTerm = await SearchDialog.show(context);
@@ -62,9 +62,9 @@ class HomeMenuCategories extends StatelessWidget {
             );
           }
 
-          // 카테고리 아이템
+          // 카테고리 아이템 (index - 1 because search is at index 0)
           final (postId, category, label) =
-              Config.homeTopCategories[index];
+              Config.homeTopCategories[index - 1];
           return GestureDetector(
             onTap: () {
               AppNavigationState.of(
