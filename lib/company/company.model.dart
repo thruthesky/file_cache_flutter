@@ -1,4 +1,5 @@
 import 'package:philgo/api/api.service.dart';
+import 'package:philgo/file/file.functions.dart';
 
 /// 업소록 데이터 모델
 ///
@@ -71,11 +72,11 @@ class CompanyModel {
       mobileNumber: (json['mobile_number'] as String?) ?? '',
       kakaotalkId: (json['kakaotalk_id'] as String?) ?? '',
       telegramId: (json['telegram_id'] as String?) ?? '',
-      logoUrl: (json['logo_url'] as String?) ?? '',
-      photoUrl: (json['photo_url'] as String?) ?? '',
-      titleImageUrl: (json['title_image_url'] as String?) ?? '',
-      businessLicenseUrl: (json['business_license_url'] as String?) ?? '',
-      kakaotalkQrCodeUrl: (json['kakaotalk_qr_code_url'] as String?) ?? '',
+      logoUrl: _normalizeUrl((json['logo_url'] as String?) ?? ''),
+      photoUrl: _normalizeUrl((json['photo_url'] as String?) ?? ''),
+      titleImageUrl: _normalizeUrl((json['title_image_url'] as String?) ?? ''),
+      businessLicenseUrl: _normalizeUrl((json['business_license_url'] as String?) ?? ''),
+      kakaotalkQrCodeUrl: _normalizeUrl((json['kakaotalk_qr_code_url'] as String?) ?? ''),
       kakaotalkQrCode: (json['kakaotalk_qr_code'] as String?) ?? '',
       status: (json['status'] as String?) ?? '',
       showQrCode: ApiService.toInt(json['show_qr_code']),
@@ -95,4 +96,10 @@ class CompanyModel {
 
   /// QR 코드 활성화 여부
   bool get qrCodeEnabled => status == 'a' && showQrCode == 1;
+
+  /// 이미지 URL을 v7BaseUrl 기반으로 정규화
+  static String _normalizeUrl(String url) {
+    if (url.isEmpty) return '';
+    return toAbsoluteUrl(url);
+  }
 }
