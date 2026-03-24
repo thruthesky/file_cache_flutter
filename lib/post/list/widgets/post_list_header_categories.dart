@@ -103,7 +103,7 @@ class _PostListHeaderCategoriesState extends State<PostListHeaderCategories> {
                 child: FaIcon(
                   FontAwesomeIcons.solidBell,
                   size: 14,
-                  color: color.onSurfaceVariant,
+                  color: color.primary,
                 ),
               ),
             ),

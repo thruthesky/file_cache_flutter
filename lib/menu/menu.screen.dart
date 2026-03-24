@@ -73,8 +73,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     // 내 정보 섹션
                     Consumer<UserState>(
                           builder: (context, userState, _) {
-                            return _buildSection(
-                              context,
+                            final section = _buildSection(
                               // "My Profile"
                               title: '내 정보'.tr(),
                               icon: FontAwesomeIcons.lightCircleUser,
@@ -209,48 +208,103 @@ class _MenuScreenState extends State<MenuScreen> {
                         return Column(
                           spacing: 28,
                           children: [
-                            // 계정 삭제
-                            Center(
-                              child: TextButton.icon(
-                                onPressed: () {
-                                  AccountWithdrawalScreen.push(context);
-                                },
-                                icon: FaIcon(
-                                  FontAwesomeIcons.lightTrashCan,
-                                  size: 14,
-                                  color: scheme.onSurfaceVariant,
-                                ),
-                                label: Text(
-                                  // "Delete Account"
-                                  '계정 삭제'.tr(),
-                                  style: TextStyle(
-                                    color: scheme.onSurfaceVariant,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
-
                             // 로그아웃
                             OutlinedButton.icon(
                               onPressed: () async {
-                                await UserService.signOut();
+                                final confirmed = await showDialog<bool>(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text('로그아웃'.tr()),
+                                    content: Text('로그아웃 하시겠습니까?'.tr()),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, false),
+                                        child: Text('취소'.tr()),
+                                      ),
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context, true),
+                                        child: Text('로그아웃'.tr()),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                                if (confirmed == true) {
+                                  await UserService.signOut();
+                                }
                               },
                               icon: FaIcon(
                                 FontAwesomeIcons.lightRightFromBracket,
                                 size: 16,
-                                color: scheme.error,
+                                color: color.error.withValues(alpha: 0.6),
                               ),
                               label: Text(
-                                // "Logout"
                                 '로그아웃'.tr(),
-                                style: TextStyle(color: scheme.error),
+                                style: TextStyle(
+                                  color: color.error.withValues(alpha: 0.6),
+                                ),
                               ),
                               style: OutlinedButton.styleFrom(
                                 side: BorderSide(
-                                  color: scheme.error.withValues(alpha: 0.4),
+                                  color: color.error.withValues(alpha: 0.25),
                                 ),
                                 minimumSize: const Size(double.infinity, 48),
+                              ),
+                            ).animate().fadeIn(duration: 400.ms, delay: 650.ms),
+
+                            // 계정 삭제
+                            Center(
+                              child: TextButton.icon(
+                                onPressed: () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text('계정 삭제'.tr()),
+                                      content: Text(
+                                        '정말로 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+                                            .tr(),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, false),
+                                          child: Text('취소'.tr()),
+                                        ),
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context, true),
+                                          child: Text(
+                                            '계정 삭제'.tr(),
+                                            style: TextStyle(
+                                              color: color.error,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirmed == true) {
+                                    if (!context.mounted) return;
+                                    AccountWithdrawalScreen.push(context);
+                                  }
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.lightTrashCan,
+                                  size: 12,
+                                  color: color.onSurfaceVariant.withValues(
+                                    alpha: 0.35,
+                                  ),
+                                ),
+                                label: Text(
+                                  '계정 삭제'.tr(),
+                                  style: TextStyle(
+                                    color: color.onSurfaceVariant.withValues(
+                                      alpha: 0.35,
+                                    ),
+                                    fontSize: 12,
+                                  ),
+                                ),
                               ),
                             ).animate().fadeIn(duration: 400.ms, delay: 700.ms),
                           ],
@@ -354,41 +408,36 @@ class _MenuScreenState extends State<MenuScreen> {
   /// 프로필 카드 내용
   Widget _buildProfileContent(BuildContext context, UserModel? user) {
     if (user == null) {
-      return GestureDetector(
-        onTap: () => UserLoginScreen.push(context),
-        child: Row(
-          children: [
-            _buildDefaultAvatar(context),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    // "Please login"
-                    '로그인 해주세요'.tr(),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+      return Row(
+        children: [
+          _buildDefaultAvatar(),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  // "Please login"
+                  '로그인 해주세요'.tr(),
+                  style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  // "Login to access all features"
+                  '로그인하여 모든 기능을 이용하세요'.tr(),
+                  style: text.bodySmall?.copyWith(
+                    color: color.onSurfaceVariant,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    // "Login to access all features"
-                    '로그인하여 모든 기능을 이용하세요'.tr(),
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-            FaIcon(
-              FontAwesomeIcons.lightChevronRight,
-              size: 16,
-              color: scheme.onSurfaceVariant,
-            ),
-          ],
-        ),
+          ),
+          FaIcon(
+            FontAwesomeIcons.lightChevronRight,
+            size: 16,
+            color: color.onSurfaceVariant,
+          ),
+        ],
       );
     }
 
@@ -419,9 +468,7 @@ class _MenuScreenState extends State<MenuScreen> {
             children: [
               Text(
                 user.displayName,
-                style: text.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: text.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
               if (user.id.isNotEmpty) ...[
                 const SizedBox(height: 2),
@@ -600,11 +647,17 @@ class _MenuScreenState extends State<MenuScreen> {
         isHighlighted: true,
       ),
       // "Notices"
-      _MenuItemData(FontAwesomeIcons.lightBullhorn, '공지'.tr(),
-          onTap: () => NoticeScreen.push(context)),
+      _MenuItemData(
+        FontAwesomeIcons.lightBullhorn,
+        '공지'.tr(),
+        onTap: () => NoticeScreen.push(context),
+      ),
       // "Exchange Rate"
-      _MenuItemData(FontAwesomeIcons.lightCoins, '환율'.tr(),
-          onTap: () => ExchangeRateScreen.push(context)),
+      _MenuItemData(
+        FontAwesomeIcons.lightCoins,
+        '환율'.tr(),
+        onTap: () => ExchangeRateScreen.push(context),
+      ),
       _MenuItemData(
         FontAwesomeIcons.lightCloudSun,
         // "Weather"
@@ -804,8 +857,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     width: 56,
                     height: 56,
                     fit: BoxFit.cover,
-                    errorWidget: ($, $$, $$$) =>
-                        _buildCompanyPlaceholderIcon(),
+                    errorWidget: ($, $$, $$$) => _buildCompanyPlaceholderIcon(),
                   )
                 : _buildCompanyPlaceholderIcon(),
           ),
@@ -1069,46 +1121,51 @@ class _MenuScreenState extends State<MenuScreen> {
 
   /// 개별 메뉴 아이템 위젯
   Widget _buildMenuItem(_MenuItemData item, BuildContext context) {
-    return GestureDetector(
-      onTap: item.onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          /// 아이콘 배경
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color:
-                  item.backgroundColor ??
-                  (item.isHighlighted
-                      ? color.primary.withValues(alpha: 0.1)
-                      : color.surfaceContainerHigh.withValues(alpha: 0.5)),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: Center(
-              child: FaIcon(
-                item.icon,
-                size: 22,
-                color:
-                    item.iconColor ??
-                    (item.isHighlighted
-                        ? color.primary
-                        : color.onSurfaceVariant),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: item.onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// 아이콘 배경
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color:
+                      item.backgroundColor ??
+                      (item.isHighlighted
+                          ? color.primary.withValues(alpha: 0.1)
+                          : color.primary.withValues(alpha: 0.06)),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: FaIcon(
+                    item.icon,
+                    size: 22,
+                    color:
+                        item.iconColor ??
+                        (item.isHighlighted
+                            ? color.primary
+                            : color.primary.withValues(alpha: 0.7)),
+                  ),
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 8),
+              const SizedBox(height: 8),
 
-          /// 아이콘 라벨
-          Text(
-            item.label,
-            style: text.bodySmall?.copyWith(
-              color: color.onSurface,
-            ),
-            textAlign: TextAlign.center,
+              /// 아이콘 라벨
+              Text(
+                item.label,
+                style: text.bodySmall?.copyWith(color: color.onSurface),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
