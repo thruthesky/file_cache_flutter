@@ -286,9 +286,9 @@ class _MenuScreenState extends State<MenuScreen> {
       child: Row(
         children: [
           Image.asset(
-            'assets/img/logo/philgo_wide_logo_icon.png',
-            width: 40,
-            height: 40,
+            'assets/img/logo/philgo_app_logo.png',
+            width: 32,
+            height: 32,
           ),
           const SizedBox(width: 8),
           // "Menu"
