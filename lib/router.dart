@@ -51,11 +51,6 @@ final router = GoRouter(
     // final result = parsePhilgoUrl(state.uri.toString());
     // if (result == null) return null;
 
-    // // 게시글 보기: /post/view?idx=123 또는 /post/view.php?idx=123
-    // if (result.isPostView && result.idx != null) {
-    //   return '${PostViewScreen.routeName}?idx=${result.idx}&post_id=${result.postId ?? ''}';
-    // }
-
     // // 게시판 목록 → 포럼 탭으로 이동
     // if (result.isPostList && result.postId != null) {
     //   final navState = context.read<AppNavigationState>();
@@ -177,16 +172,7 @@ final router = GoRouter(
       path: CompanyViewScreen.routeName,
       name: CompanyViewScreen.routeName,
       builder: (context, state) {
-        // 1. extra에서 CompanyModel 가져오기 (일반 네비게이션)
-        if (state.extra is CompanyModel) {
-          return CompanyViewScreen(company: state.extra as CompanyModel);
-        }
-        // 2. query parameters fallback (딥링크)
-        final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        return CompanyViewScreen(
-          key: ValueKey(idx),
-          company: CompanyModel.minimal(idx: idx),
-        );
+        return CompanyViewScreen(key: UniqueKey(), state: state);
       },
     ),
     GoRoute(

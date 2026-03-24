@@ -24,9 +24,9 @@ class CompanyViewScreen extends StatefulWidget {
   static Function(BuildContext ctx, {required CompanyModel company}) push =
       (ctx, {required company}) => ctx.push(routeName, extra: company);
 
-  final CompanyModel company;
+  final GoRouterState state;
 
-  const CompanyViewScreen({super.key, required this.company});
+  const CompanyViewScreen({super.key, required this.state});
 
   @override
   State<CompanyViewScreen> createState() => _CompanyViewScreenState();
@@ -46,7 +46,15 @@ class _CompanyViewScreenState extends State<CompanyViewScreen> {
   @override
   void initState() {
     super.initState();
-    _company = widget.company;
+    // 1. extra에서 CompanyModel 가져오기 (일반 네비게이션)
+    if (widget.state.extra is CompanyModel) {
+      _company = widget.state.extra as CompanyModel;
+    } else {
+      // 2. query parameters fallback (딥링크)
+      final idx =
+          int.tryParse(widget.state.uri.queryParameters['idx'] ?? '') ?? 0;
+      _company = CompanyModel.minimal(idx: idx);
+    }
     _scrollController.addListener(_onScroll);
     _loadCompany();
     _loadReviews();
