@@ -192,7 +192,10 @@ final router = GoRouter(
         }
         // 2. query parameters fallback (딥링크)
         final idx = int.tryParse(state.uri.queryParameters['idx'] ?? '') ?? 0;
-        return CompanyViewScreen(key: ValueKey(idx), company: CompanyModel.minimal(idx: idx));
+        return CompanyViewScreen(
+          key: ValueKey(idx),
+          company: CompanyModel.minimal(idx: idx),
+        );
       },
     ),
     GoRoute(

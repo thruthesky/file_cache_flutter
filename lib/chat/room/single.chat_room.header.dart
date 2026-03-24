@@ -637,21 +637,16 @@ class SingleChatRoomHeader extends StatelessWidget {
                     final diff = DateTime.now().difference(lastSeen);
                     final String timeText;
                     if (diff.inMinutes < 1) {
-                      // "just now"
                       timeText = '방금 전'.tr();
                     } else if (diff.inMinutes < 60) {
-                      // "{분}m ago"
-                      timeText = '{분}분 전'.tr(args: ['${diff.inMinutes}']);
+                      timeText = '{}분 전'.tr(args: ['${diff.inMinutes}']);
                     } else if (diff.inHours < 24) {
-                      // "{시간}h ago"
-                      timeText = '{시간}시간 전'.tr(args: ['${diff.inHours}']);
+                      timeText = '{}시간 전'.tr(args: ['${diff.inHours}']);
                     } else {
-                      // "{일}d ago"
-                      timeText = '{일}일 전'.tr(args: ['${diff.inDays}']);
+                      timeText = '{}일 전'.tr(args: ['${diff.inDays}']);
                     }
                     return Text(
-                      // "Last seen: {시간}"
-                      '마지막 접속: {시간}'.tr(args: [timeText]),
+                      '마지막 접속: {}'.tr(args: [timeText]),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
