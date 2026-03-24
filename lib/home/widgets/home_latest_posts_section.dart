@@ -264,6 +264,13 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
+            Text(
+              '·  ',
+              style: text.bodyLarge?.copyWith(
+                color: color.outline,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Expanded(
               child: Text(
                 post.subject,
@@ -281,12 +288,6 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
                 style: text.labelSmall?.copyWith(color: color.outline),
               ),
             ],
-            const SizedBox(width: 4),
-            FaIcon(
-              FontAwesomeIcons.chevronRight,
-              size: 8,
-              color: color.outline.withValues(alpha: 0.5),
-            ),
           ],
         ),
       ),
