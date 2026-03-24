@@ -116,7 +116,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
       return const Padding(
         padding: EdgeInsets.all(16),
         child: SizedBox(
-          height: 170,
+          height: 190,
           child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
         ),
       );
@@ -132,7 +132,7 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
         Listener(
           onPointerDown: (_) => _stopAutoSlideTimer(),
           child: SizedBox(
-            height: 170,
+            height: 190,
             child: CarouselView(
               enableSplash: false,
               controller: _controller,
@@ -261,13 +261,13 @@ class _HomeLatestPostsSectionState extends State<HomeLatestPostsSection> {
     return InkWell(
       onTap: () => PostViewScreen.push(context, post),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
             Expanded(
               child: Text(
                 post.subject,
-                style: text.bodyMedium,
+                style: text.bodyLarge,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
