@@ -650,6 +650,8 @@ ForumScreen 목록 상단 광고 위젯, PostListTile D-day 뱃지 표시,
 | **코멘트 스레드 세로선** | [web/v7-comment-thread-line.md](references/web/v7-comment-thread-line.md) | ✅ 완료 |
 | **전체 메뉴 페이지** | [web/v7-menu.md](references/web/v7-menu.md) | ✅ 완료 |
 | **AI 답변 시스템 + AI 챗봇** | [web/v7-ai-answer.md](references/web/v7-ai-answer.md) — AI 답변(1~13장) + AI 챗봇 필립(14장~, `/ai` 페이지, Enhanced Prompt, Firebase RTDB) | ✅ 완료 |
+| **광고 배너 표시** | [web/v7-advertisement-web.md](references/web/v7-advertisement-web.md) — 홈페이지/게시판 광고 배너 4종(Top, Wing, Square, Small) 표시, SSR 렌더링, JS 로테이션, CSS, 반응형 | ✅ 완료 |
+| **광고 연락처 + QR 디코딩** | [web/v7-ad-contact.md](references/web/v7-ad-contact.md) — 관리자 광고 연락처 6종(카카오톡/텔레그램/SMS/위챗/라인/페이스북), jsQR 클라이언트 측 QR 디코딩, `/post/adv` 광고 보기 페이지, DB 필드 매핑(varchar_10~16, text_2/3, varchar_20) | ✅ 완료 |
 
 ### 1:1 채팅 시스템 → [web/v7-chat.md](references/web/v7-chat.md)
 
@@ -915,6 +917,7 @@ info 콘텐츠(`group_id='info'`)는 `content` 필드에 마크다운으로만 �
 | Info access_code | [api/v7-info-access-code.md](references/api/v7-info-access-code.md) — access_code(UNIQUE KEY) 기반 콘텐츠 식별, 로컬→프로덕션 동기화, 웹/앱 공유 레지스트리. `info.getByAccessCode`, `info.upsertByAccessCode`, `info.registry`, `info.listByPrefix` 4개 API. 동기화 스크립트(export/import). **콘텐츠 마크다운 구조/품질은 philgo-content 스킬 참조** | ✅ 완료 |
 | Report | [api/v7-report.md](references/api/v7-report.md) — 글/코멘트 신고 시스템. sf_post_data의 report + text_10(REPORTER_LIST_FIELD) 컬럼 사용. 신고(report.report), 목록(report.list, 관리자), 해제(report.dismiss, 관리자). PostController/PostService가 ReportService로 위임하여 하위 호환 유지 | ✅ 완료 |
 | ID Merge | [api/v7-id-merge.md](references/api/v7-id-merge.md) — v7 소셜 로그인 계정을 v6 전화번호 계정으로 병합. `user.mergeAccount` API (preview/실행 모드). 별도 Firebase App Phone Auth + 메인 앱 RecaptchaVerifier 하이브리드 인증. firebase_uid 기반 v6 계정 검색, `firebase_uid`+`id` 모두 `merged_` 접두사로 UNIQUE 충돌 방지, 탈퇴 계정 병합 차단, Firebase RTDB 채팅 데이터 마이그레이션(chat/joins, users, user-private). Vue.js 폼은 네이티브 HTML 사용(Web Awesome 호환 문제) | ✅ 완료 |
+| Advertisement | [api/v7-advertisement-api.md](references/api/v7-advertisement-api.md) — 광고 시스템 API. company+company_meta(group='advertisement') DB 구조, BannerEntity(resolveClickUrl → /post/adv?idx=N), AdvertisementService(listFiltered, get, getBannerInfo, 요청 단위 캐시), AdvertisementController(CRUD + 배너 관리 + 마사지 배너), 배너 4종(top/wing/square/small), 관리자 광고 페이지(ads.php, ads-update.php, ads-create.php) | ✅ 완료 |
 
 > 새 모듈을 추가할 때마다 `references/api/<module>.md` 문서를 작성합니다.
 
