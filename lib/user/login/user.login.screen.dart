@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -5,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:philgo/globals.dart';
+import 'package:philgo/user/login/widgets/apple_signin.button.dart';
 import 'package:philgo/user/login/widgets/google_signin.button.dart';
 import 'package:philgo/user/login/widgets/kakao_signin.button.dart';
 
@@ -101,6 +104,15 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                   .fadeIn(duration: 400.ms, delay: 250.ms)
                   .slideY(begin: 0.2, end: 0),
 
+              // Apple 로그인 버튼 (iOS/iPad만 표시)
+              if (Platform.isIOS) ...[
+                const SizedBox(height: 12),
+                AppleSignInButton(loading: isLoading)
+                    .animate()
+                    .fadeIn(duration: 400.ms, delay: 300.ms)
+                    .slideY(begin: 0.2, end: 0),
+              ],
+
               const SizedBox(height: 24),
 
               // 이용약관 & 개인정보처리방침
@@ -148,7 +160,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     ),
                   ),
                 ],
-              ).animate().fadeIn(duration: 400.ms, delay: 300.ms),
+              ).animate().fadeIn(duration: 400.ms, delay: 350.ms),
 
               const SizedBox(height: 32),
             ],

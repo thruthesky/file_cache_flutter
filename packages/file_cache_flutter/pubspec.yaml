@@ -1,7 +1,7 @@
-name: easy_phone_sign_in
-description: "Phone number sign-in package for easy phone sign-in with firebase auth."
-version: 0.0.17
-homepage: https://github.com/thruthesky/easy_phone_sign_in
+name: file_cache_flutter
+description: "File cache flutter package."
+version: 0.0.1
+homepage: https://github.com/thruthesky/file_cache_flutter
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
